@@ -126,8 +126,6 @@ export default function ProviderProfile({ params }) {
                   src={provider.image || "/placeholder.svg"}
                   alt={provider.name}
                   className="h-64 w-full object-cover"
-                  width={400}
-                  height={400}
                 />
                 {provider.verified && (
                   <div className="absolute right-2 top-2 rounded-full bg-white p-1 shadow-md">

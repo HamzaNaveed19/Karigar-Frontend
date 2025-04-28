@@ -13,7 +13,7 @@ function Services({ provider }) {
           {provider.services.map((service, index) => (
             <div
               key={index}
-              className="flex items-center justify-between rounded-lg border p-4 transition-all hover:border-emerald-200 hover:bg-emerald-50"
+              className="flex items-center justify-between rounded-lg border pt-2 pb-2 pl-4 pr-4 transition-all hover:border-emerald-200 hover:bg-emerald-50"
             >
               <div>
                 <h3 className="font-medium">{service.name}</h3>
@@ -26,7 +26,7 @@ function Services({ provider }) {
                 <div className="font-medium text-emerald-600">
                   {service.price}
                 </div>
-                <Button size="sm" className="mt-2">
+                <Button size="sm" className="mt-1">
                   Book
                 </Button>
               </div>
