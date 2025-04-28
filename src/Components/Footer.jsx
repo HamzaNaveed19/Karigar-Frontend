@@ -93,7 +93,7 @@ function Footer() {
               </li>
               <li className="flex items-start">
                 <MapPin className="h-5 w-5 text-gray-500 mr-2 mt-0.5" />
-                <span className="text-gray-600">Karachi, Pakistan</span>
+                <span className="text-gray-600">Lahore, Pakistan</span>
               </li>
             </ul>
           </div>
