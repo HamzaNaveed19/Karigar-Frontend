@@ -8,7 +8,7 @@ import Settings from "../Components/User/Settings";
 
 export default function ProfilePage() {
   const [profileImage, setProfileImage] = useState(
-    "/placeholder.svg?height=200&width=200"
+    "/placeholder.png?height=200&width=200"
   );
 
   // Mock user data

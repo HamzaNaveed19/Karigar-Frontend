@@ -87,7 +87,7 @@ export default function ProviderProfile({ params }) {
       {/* Provider Header - Mobile View */}
       <div className="mb-6 block md:hidden">
         <div className="flex items-center gap-4">
-          <div className="relative h-20 w-20  rounded-full">
+          <div className="h-32 w-32 overflow-hidden rounded-full border-4 border-white shadow-lg">
             <img
               src={provider.image || "/placeholder.png"}
               alt={provider.name}
