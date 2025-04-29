@@ -1,13 +1,13 @@
 import React from "react";
-import DashLayout from ".//components/DashLayout";
+import DashLayout from "./DashLayout";
 
-function App() {
+const DashboardPage = () => {
   return (
     <DashLayout>
       <h1 className="text-xl font-bold">Welcome to the Dashboard</h1>
       <p>This is your dashboard content.</p>
     </DashLayout>
   );
-}
+};
 
-export default App;
+export default DashboardPage;
