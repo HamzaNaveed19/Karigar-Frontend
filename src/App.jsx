@@ -15,7 +15,7 @@ const App = () => {
       <Footer></Footer>
     </>
   );
-  //return <ProviderProfilePage></ProviderProfilePage>;
+  // return <ProviderProfilePage></ProviderProfilePage>;
 };
 
 export default App;
