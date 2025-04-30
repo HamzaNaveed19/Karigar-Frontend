@@ -3,7 +3,7 @@ import CategoryCard from "./CategoryCard";
 
 function Categories() {
   return (
-    <section className="py-16 md:py-20 lg:py-24 bg-gradient-to-b from-gray-50 to-white">
+    <section className="py-8 md:py-12  bg-gradient-to-b from-gray-50 to-white">
       <div className="container px-5 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-4xl text-center mb-12 lg:mb-16">
           <h2 className="text-4xl font-bold ">Popular Services</h2>
@@ -12,7 +12,7 @@ function Categories() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
           <CategoryCard
             icon="Wrench"
             title="Plumbing"

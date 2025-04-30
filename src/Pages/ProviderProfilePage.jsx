@@ -14,7 +14,7 @@ export default function ProviderProfile({ params }) {
     profession: "Electrician",
     rating: 4.9,
     reviews: 124,
-    image: "/placeholder.png?height=300&width=300",
+    personalImage: "/placeholder.png?height=300&width=300",
     location: "Lahore",
     verified: true,
     completedJobs: 187,
@@ -89,7 +89,7 @@ export default function ProviderProfile({ params }) {
         <div className="flex items-center gap-4">
           <div className="h-32 w-32 overflow-hidden rounded-full border-4 border-white shadow-lg">
             <img
-              src={provider.image || "/placeholder.png"}
+              src={provider.personalImage || "/placeholder.png"}
               alt={provider.name}
               className="h-full w-full object-cover rounded-full"
               width={80}
@@ -123,7 +123,7 @@ export default function ProviderProfile({ params }) {
               {/* Desktop Profile Image */}
               <div className="relative hidden md:block">
                 <img
-                  src={provider.image || "/placeholder.svg"}
+                  src={provider.personalImage || "/placeholder.svg"}
                   alt={provider.name}
                   className="h-64 w-full object-cover"
                 />

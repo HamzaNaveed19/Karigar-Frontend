@@ -5,7 +5,7 @@ function HeroSection() {
     <img
       src="/landing.png"
       alt="Karigar service providers"
-      className="w-full  max-h-[105vh] "
+      className="w-full  max-h-[90vh] "
     />
   );
 }

@@ -1,55 +1,61 @@
 import React from "react";
-import { Search, MapPin, Star } from "lucide-react";
+import { Search, Star, CalendarCheck } from "lucide-react";
 
 function HowItWorks() {
   return (
-    <section className="py-12 md:py-8">
+    <section className="py-16 md:py-20 bg-emerald-100/50">
       <div className="container px-4 md:px-6">
-        <div className="flex flex-col items-center justify-center space-y-4 text-center">
-          <div className="space-y-2">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
-              How Karigar Works
-            </h2>
-            <p className="max-w-[900px] text-gray-500 md:text-xl/relaxed">
-              Simple steps to find and book the perfect service provider
-            </p>
-          </div>
+        {/* Header */}
+        <div className="mx-auto max-w-3xl text-center mb-16">
+          <h2 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+            How Karigar Works
+          </h2>
+          <p className="mt-4 text-xl text-emerald-800">
+            Simple steps to find and book the perfect service provider
+          </p>
         </div>
-        <div className="mt-8 grid gap-8 md:grid-cols-3">
-          <div className="flex flex-col items-center space-y-4 text-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-              <Search className="h-8 w-8" />
+
+        <div className="relative">
+          <div className="hidden md:block absolute top-12 left-1/4 right-1/4 h-1 bg-emerald-300"></div>
+
+          <div className="grid gap-10 md:grid-cols-3">
+            <div className="group relative flex flex-col items-center text-center">
+              <div className="relative z-10 flex h-20 w-20 items-center justify-center rounded-full bg-white text-emerald-600 border-4 border-emerald-300 shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl">
+                <Search className="h-10 w-10" />
+              </div>
+              <div className="mt-8 space-y-3">
+                <h3 className="text-2xl font-bold text-gray-900">1. Search</h3>
+                <p className="text-lg text-gray-600 leading-relaxed">
+                  Find the service you need from
+                  <br /> our wide range of categories
+                </p>
+              </div>
             </div>
-            <div className="space-y-2">
-              <h3 className="text-xl font-bold">Search</h3>
-              <p className="text-gray-800">
-                Find the service you need from our
-                <br /> wide range of categories
-              </p>
+
+            <div className="group relative flex flex-col items-center text-center">
+              <div className="relative z-10 flex h-20 w-20 items-center justify-center rounded-full bg-white text-emerald-600 border-4 border-emerald-300 shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl">
+                <Star className="h-10 w-10" />
+              </div>
+              <div className="mt-8 space-y-3">
+                <h3 className="text-2xl font-bold text-gray-900">2. Compare</h3>
+                <p className="text-lg text-gray-600 leading-relaxed">
+                  Select from verified providers <br />
+                  based on reviews and ratings
+                </p>
+              </div>
             </div>
-          </div>
-          <div className="flex flex-col items-center space-y-4 text-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-              <Star className="h-8 w-8" />
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-xl font-bold">Choose</h3>
-              <p className="text-gray-800">
-                Select from verified providers based
-                <br /> on reviews and ratings
-              </p>
-            </div>
-          </div>
-          <div className="flex flex-col items-center space-y-4 text-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-              <MapPin className="h-8 w-8" />
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-xl font-bold">Book</h3>
-              <p className="text-gray-800">
-                Schedule an appointment and get <br />
-                your work done professionally
-              </p>
+
+            <div className="group relative flex flex-col items-center text-center">
+              <div className="relative z-10 flex h-20 w-20 items-center justify-center rounded-full bg-white text-emerald-600 border-4 border-emerald-300 shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl">
+                <CalendarCheck className="h-10 w-10" />
+              </div>
+              <div className="mt-8 space-y-3">
+                <h3 className="text-2xl font-bold text-gray-900">3. Book</h3>
+                <p className="text-lg text-gray-600 leading-relaxed">
+                  Schedule an appointment and get <br />
+                  your work done professionally
+                </p>
+              </div>
             </div>
           </div>
         </div>
