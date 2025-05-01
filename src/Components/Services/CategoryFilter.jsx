@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Wrench,
@@ -17,7 +17,7 @@ import {
 
 const CategoryFilter = ({ initialCategory = "All" }) => {
   const navigate = useNavigate();
-  const [activeCategory, setActiveCategory] = useState(initialCategory);
+  const [activeCategory, setActiveCategory] = useState(initialCategory.trim());
 
   {
     /*We need to get these from db*/

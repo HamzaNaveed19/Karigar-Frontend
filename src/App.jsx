@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ProviderProfilePage from "./Pages/ProviderProfilePage";
 import UserProfilePage from "./Pages/UserProfilePage";
 import Footer from "./Components/Footer";
@@ -6,9 +6,19 @@ import BookingsPage from "./Pages/BookingsPage";
 import HomePage from "./Pages/HomePage";
 import Header from "./Components/Header";
 import ServicesProviderPage from "./Components/Services/ServicesProviderPage";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 
 const App = () => {
+  function ScrollToTop() {
+    const { pathname } = useLocation();
+
+    useEffect(() => {
+      window.scrollTo(0, 0);
+    }, [pathname]);
+
+    return null;
+  }
+
   // return (
   //   <>
   //     <Header></Header>
@@ -22,8 +32,9 @@ const App = () => {
   return (
     <>
       <Header></Header>
+      <ScrollToTop></ScrollToTop>
       <Routes>
-        <Route path="/" element={<ServicesProviderPage />}></Route>
+        <Route path="/" element={<HomePage></HomePage>}></Route>
         <Route path="services/:category?" element={<ServicesProviderPage />} />
       </Routes>
       <Footer></Footer>

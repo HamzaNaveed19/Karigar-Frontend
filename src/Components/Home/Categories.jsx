@@ -6,40 +6,40 @@ function Categories() {
     <section className="py-8 md:py-12  bg-gradient-to-b from-gray-50 to-white">
       <div className="container px-5 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-4xl text-center mb-12 lg:mb-16">
-          <h2 className="text-4xl font-bold ">Popular Services</h2>
+          <h2 className="text-4xl font-bold ">Popular Professions</h2>
           <p className="mt-4 text-lg">
-            Browse through our most requested service categories
+            Browse through our most requested profession categories
           </p>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
           <CategoryCard
             icon="Wrench"
-            title="Plumbing"
+            title="Plumber"
             description="Pipe repairs, installations"
             color="blue"
           />
           <CategoryCard
             icon="Zap"
-            title="Electrical"
+            title="Electrician"
             description="Wiring, fixtures, repairs"
             color="yellow"
           />
           <CategoryCard
             icon="Paintbrush"
-            title="Painting"
+            title="Painter"
             description="Interior & exterior"
             color="red"
           />
           <CategoryCard
             icon="Hammer"
-            title="Carpentry"
+            title="Carpenter"
             description="Furniture, repairs"
             color="amber"
           />
           <CategoryCard
             icon="Shirt"
-            title="Tailoring"
+            title="Tailor"
             description="Alterations, stitching"
             color="purple"
           />
@@ -51,7 +51,7 @@ function Categories() {
           />
           <CategoryCard
             icon="Utensils"
-            title="Cooking"
+            title="Cook"
             description="Catering, home chefs"
             color="orange"
           />
@@ -69,13 +69,13 @@ function Categories() {
           />
           <CategoryCard
             icon="Sparkles"
-            title="Cleaning"
+            title="Cleaner"
             description="Home & office"
             color="teal"
           />
           <CategoryCard
             icon="Truck"
-            title="Moving"
+            title="Mover"
             description="Relocation services"
             color="indigo"
           />

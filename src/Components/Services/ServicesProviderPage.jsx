@@ -66,12 +66,20 @@ const allProviders = [
   },
 ];
 
+const LoadingSpinner = () => (
+  <div className="flex justify-center items-center py-12">
+    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
+  </div>
+);
+
 export default function ServicesProviderPage() {
   const { category = "all" } = useParams();
   const [filteredProviders, setFilteredProviders] = useState(allProviders);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    setIsLoading(true);
     const formattedCategory = category
       .split("-")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -98,6 +106,7 @@ export default function ServicesProviderPage() {
     }
 
     setFilteredProviders(filtered);
+    setIsLoading(false);
   }, [category, searchQuery]);
 
   const handleSearchChange = (e) => {
@@ -133,9 +142,7 @@ export default function ServicesProviderPage() {
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
           <Input
             type="search"
-            placeholder={`Search ${
-              category === "all" ? "all" : category + "s"
-            }`}
+            placeholder={`Search By name or location`}
             className="w-full pl-8"
             value={searchQuery}
             onChange={handleSearchChange}
@@ -147,7 +154,9 @@ export default function ServicesProviderPage() {
         </Button>
       </div>
 
-      {filteredProviders.length > 0 ? (
+      {isLoading ? (
+        <LoadingSpinner></LoadingSpinner>
+      ) : filteredProviders.length > 0 ? (
         <>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 grid-cols-2">
             {filteredProviders.map((provider, index) => (
