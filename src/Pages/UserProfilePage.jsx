@@ -21,11 +21,13 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 md:py-12">
+    <div className="container mx-auto px-4 py-4">
       <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-800">My Profile</h1>
-          <p className="text-gray-500">
+          <h1 className="text-xl font-semibold text-gray-500">
+            Personal Profile
+          </h1>
+          <p className="text-sm text-gray-500">
             Manage your personal information and settings
           </p>
         </div>

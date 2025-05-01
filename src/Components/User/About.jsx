@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Card from "../../UI/Card";
 import CardContent from "../../UI/CardContent";
 import { Input } from "../../UI/Input";
-import { User, Mail, Phone, MapPin, Edit, Save } from "lucide-react";
+import { User, Mail, Phone, MapPin, Edit, Save, User2Icon } from "lucide-react";
 import Button from "../../UI/Button";
 
 function About({ user }) {
@@ -26,7 +26,6 @@ function About({ user }) {
   const handleSave = () => {
     console.log("Saving data:", formData);
     setIsEditing(false);
-    // Add any success/error handling as needed
   };
 
   return (
@@ -34,10 +33,11 @@ function About({ user }) {
       <CardContent className="p-6">
         <div className="mb-6 flex justify-between items-center">
           <div>
-            <h2 className="text-xl font-bold text-gray-800">
+            <h2 className="flex gap-2 text-lg font-bold text-gray-800">
+              <User2Icon></User2Icon>
               Personal Information
             </h2>
-            <p className="text-gray-500">
+            <p className="text-gray-500 text-xs">
               Update your personal details and contact information.
             </p>
           </div>
@@ -84,8 +84,7 @@ function About({ user }) {
                 type="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                disabled={!isEditing}
-                className={!isEditing ? "bg-gray-50" : ""}
+                disabled={true}
               />
             </div>
             <div className="space-y-2">
@@ -142,10 +141,7 @@ function About({ user }) {
             >
               Cancel
             </Button>
-            <Button
-              className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 flex items-center gap-2"
-              onClick={handleSave}
-            >
+            <Button className="flex items-center gap-2" onClick={handleSave}>
               <Save className="h-4 w-4" />
               Save Changes
             </Button>

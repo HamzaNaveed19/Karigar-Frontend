@@ -130,9 +130,9 @@ export default function BookingsPage() {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-8 md:py-12">
-      <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between">
-        <h1 className="text-3xl font-bold">My Bookings</h1>
+    <div className="container mx-auto px-4 py-4">
+      <div className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between">
+        <h1 className="text-xl font-semibold text-gray-500">Bookings</h1>
       </div>
 
       {/* Search and Filter */}
@@ -157,7 +157,7 @@ export default function BookingsPage() {
           <TabsTrigger value="past">Past Bookings</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="upcoming" className="mt-6">
+        <TabsContent value="upcoming">
           {upcomingBookings.length === 0 ? (
             <NoBooking type={"upcoming"}></NoBooking>
           ) : (
@@ -165,7 +165,7 @@ export default function BookingsPage() {
           )}
         </TabsContent>
 
-        <TabsContent value="past" className="mt-6">
+        <TabsContent value="past">
           {pastBookings.length === 0 ? (
             <NoBooking type={"past"}></NoBooking>
           ) : (

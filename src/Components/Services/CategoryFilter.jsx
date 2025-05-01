@@ -31,10 +31,10 @@ const CategoryFilter = ({ initialCategory = "All" }) => {
     { name: "Tailor", icon: Shirt },
     { name: "Mechanic", icon: Car },
     { name: "Cook", icon: Utensils },
-    { name: "Tech Support", icon: Laptop },
+    { name: "Technician", icon: Laptop },
     { name: "Salon", icon: Scissors },
     { name: "Cleaner", icon: Sparkles },
-    { name: "Moving", icon: Truck },
+    { name: "Mover", icon: Truck },
   ];
 
   const handleClick = (category) => {

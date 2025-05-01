@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Search, User, Calendar, HardHat, X } from "lucide-react";
 import Button from "../UI/Button";
+import { Link } from "react-router-dom";
 
 function Header() {
   const [showMobileSearch, setShowMobileSearch] = useState(false);
@@ -10,12 +11,14 @@ function Header() {
       <div className="container flex h-16 items-center justify-between px-4 md:px-6">
         {!showMobileSearch ? (
           <>
-            <div className="flex items-center gap-2">
-              <HardHat className="h-6 w-6 text-emerald-600" />
-              <span className="text-xl font-bold text-emerald-600">
-                Karigar
-              </span>
-            </div>
+            <Link to={"/"}>
+              <div className="flex items-center gap-2">
+                <HardHat className="h-6 w-6 text-emerald-600" />
+                <span className="text-xl font-bold text-emerald-600">
+                  Karigar
+                </span>
+              </div>
+            </Link>
 
             <div className="hidden sm:flex flex-1 items-center justify-center px-2 sm:px-6">
               <div className="relative w-full max-w-xl">
@@ -35,23 +38,26 @@ function Header() {
               >
                 <Search className="h-5 w-5 text-gray-600" />
               </button>
-
-              <Button
-                variant="ghost"
-                size="sm"
-                className="hidden md:flex items-center gap-1"
-              >
-                <Calendar className="h-4 w-4" />
-                <span>Bookings</span>
-              </Button>
+              <Link to={"/bookings"}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="hidden md:flex items-center gap-1"
+                >
+                  <Calendar className="h-4 w-4" />
+                  <span>Bookings</span>
+                </Button>
+              </Link>
 
               <Button variant="outline" size="sm">
                 Become a Provider
               </Button>
 
-              <Button size="sm" className="flex items-center">
-                <User className="h-4 w-5" />
-              </Button>
+              <Link to={"profile/"}>
+                <Button size="sm" className="flex items-center">
+                  <User className="h-4 w-5" />
+                </Button>
+              </Link>
             </div>
           </>
         ) : (

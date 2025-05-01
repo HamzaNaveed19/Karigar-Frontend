@@ -28,11 +28,9 @@ const BookingCard = ({ booking }) => {
     >
       <CardContent>
         {/* Header */}
-        <div className="border-b p-2">
+        <div className="border-b p-1">
           <div className="mb-2 flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-900">
-              {booking.service}
-            </h3>
+            <h3 className="font-semibold text-gray-900">{booking.service}</h3>
             <BookingStatusBadge status={booking.status} />
           </div>
         </div>
@@ -102,7 +100,7 @@ const BookingCard = ({ booking }) => {
         )}
 
         {/* Footer */}
-        <div className="border-t p-2">
+        <div className="border-t p-1">
           <Button
             variant="ghost"
             size="sm"

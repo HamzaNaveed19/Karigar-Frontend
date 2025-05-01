@@ -16,13 +16,13 @@ function Categories() {
           <CategoryCard
             icon="Wrench"
             title="Plumber"
-            description="Pipe repairs, installations"
+            description="Pipe installations"
             color="blue"
           />
           <CategoryCard
             icon="Zap"
             title="Electrician"
-            description="Wiring, fixtures, repairs"
+            description="Wiring & fixtures,"
             color="yellow"
           />
           <CategoryCard
@@ -57,8 +57,8 @@ function Categories() {
           />
           <CategoryCard
             icon="Laptop"
-            title="Tech Support"
-            description="Computer & phone repair"
+            title="Technician"
+            description="Computer repair"
             color="sky"
           />
           <CategoryCard

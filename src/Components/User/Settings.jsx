@@ -4,7 +4,18 @@ import CardContent from "../../UI/CardContent";
 import { Input } from "../../UI/Input";
 import Button from "../../UI/Button";
 import Badge from "../../UI/Badge";
-import { Lock, X } from "lucide-react";
+import {
+  Languages,
+  Lock,
+  MessageCircleIcon,
+  X,
+  Mail,
+  Smartphone,
+  Bell,
+  MapPin,
+  Check,
+  ChevronDown,
+} from "lucide-react";
 
 function Settings() {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -61,29 +72,43 @@ function Settings() {
       <Card className="border border-gray-200 shadow-sm">
         <CardContent className="p-6">
           <div className="mb-6">
-            <h2 className="text-xl font-bold text-gray-800">
+            <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
               Account Settings
             </h2>
-            <p className="text-gray-500">
+            <p className="text-gray-500 text-xs mt-1">
               Manage your account settings and preferences.
             </p>
           </div>
 
-          <div className="space-y-6">
-            <div className="rounded-lg border border-gray-200 p-5 bg-white">
+          <div className="space-y-4">
+            {/* Password & Security Section */}
+            <div className="rounded-lg border border-gray-200 p-4 bg-white">
               <div className="flex items-start justify-between">
                 <div>
-                  <h3 className="mb-1 font-medium text-gray-800 flex items-center gap-2">
-                    <Lock className="h-5 w-5 text-emerald-600" />
+                  <h1 className="text-sm mb-1 font-medium text-gray-800 flex items-center gap-2">
+                    <Lock className="h-4 w-4 text-emerald-600" />
                     Password & Security
-                  </h3>
-                  <p className="text-sm text-gray-500">
+                  </h1>
+                  <p className="text-xs text-gray-500">
                     Change your password to keep your account secure.
                   </p>
                 </div>
                 <Button
                   variant="outline"
-                  className="flex items-center gap-2 border-emerald-500 text-emerald-600 hover:bg-emerald-50"
+                  className="text-xs flex items-center gap-2 border-emerald-500 text-emerald-600 hover:bg-emerald-50"
                   onClick={() => setIsPasswordModalOpen(true)}
                 >
                   Change Password
@@ -91,14 +116,16 @@ function Settings() {
               </div>
             </div>
 
-            <div className="rounded-lg border border-gray-200 p-5 bg-white">
-              <h3 className="mb-3 font-medium text-gray-800">
+            {/* Language Preference Section */}
+            <div className="rounded-lg border border-gray-200 p-4 bg-white">
+              <h3 className="flex gap-2 text-sm mb-3 font-medium text-gray-800">
+                <Languages className="h-4 w-4 text-emerald-600" />
                 Language Preference
               </h3>
               <div className="flex flex-wrap gap-2">
                 <Badge
                   variant="outline"
-                  className={`cursor-pointer px-3 py-1 ${
+                  className={`cursor-pointer px-3 py-1 flex items-center gap-1 ${
                     language === "English"
                       ? "bg-emerald-50 text-emerald-600 border-emerald-200"
                       : "hover:bg-emerald-50"
@@ -107,11 +134,12 @@ function Settings() {
                     setLanguage("English"), setChangesMade(true);
                   }}
                 >
+                  {language === "English" && <Check className="h-3 w-3" />}
                   English
                 </Badge>
                 <Badge
                   variant="outline"
-                  className={`cursor-pointer px-3 py-1 ${
+                  className={`cursor-pointer px-3 py-1 flex items-center gap-1 ${
                     language === "Urdu"
                       ? "bg-emerald-50 text-emerald-600 border-emerald-200"
                       : "hover:bg-emerald-50"
@@ -121,24 +149,30 @@ function Settings() {
                     setChangesMade(true);
                   }}
                 >
+                  {language === "Urdu" && <Check className="h-3 w-3" />}
                   اردو
                 </Badge>
               </div>
             </div>
 
-            <div className="rounded-lg border border-gray-200 p-5 bg-white">
-              <h3 className="mb-3 font-medium text-gray-800">
+            {/* Notification Preferences Section */}
+            <div className="rounded-lg border border-gray-200 p-4 bg-white">
+              <h3 className="text-sm flex gap-2 mb-3 font-medium text-gray-800">
+                <Bell className="h-4 w-4 text-emerald-600" />
                 Notification Preferences
               </h3>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium text-gray-700">
-                      Email Notifications
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      Receive booking updates via email
-                    </p>
+                  <div className="flex items-center gap-3">
+                    <Mail className="h-4 w-4 text-gray-400" />
+                    <div>
+                      <p className="font-medium text-gray-700">
+                        Email Notifications
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Receive booking updates via email
+                      </p>
+                    </div>
                   </div>
                   <label className="relative inline-flex cursor-pointer items-center">
                     <input
@@ -151,13 +185,16 @@ function Settings() {
                   </label>
                 </div>
                 <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium text-gray-700">
-                      SMS Notifications
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      Receive booking updates via SMS
-                    </p>
+                  <div className="flex items-center gap-3">
+                    <Smartphone className="h-4 w-4 text-gray-400" />
+                    <div>
+                      <p className="font-medium text-gray-700">
+                        SMS Notifications
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Receive booking updates via SMS
+                      </p>
+                    </div>
                   </div>
                   <label className="relative inline-flex cursor-pointer items-center">
                     <input
@@ -170,13 +207,16 @@ function Settings() {
                   </label>
                 </div>
                 <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium text-gray-700">
-                      Marketing Communications
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      Receive offers and updates
-                    </p>
+                  <div className="flex items-center gap-3">
+                    <MessageCircleIcon className="h-4 w-4 text-gray-400" />
+                    <div>
+                      <p className="font-medium text-gray-700">
+                        Marketing Communications
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Receive offers and updates
+                      </p>
+                    </div>
                   </div>
                   <label className="relative inline-flex cursor-pointer items-center">
                     <input
@@ -191,44 +231,58 @@ function Settings() {
               </div>
             </div>
 
-            <div className="rounded-lg border border-gray-200 p-5 bg-white">
-              <h3 className="mb-3 font-medium text-gray-800">
+            {/* Location Settings Section */}
+            <div className="rounded-lg border border-gray-200 p-4 bg-white">
+              <h3 className="flex gap-2 mb-3 font-medium text-gray-800">
+                <MapPin className="h-4 w-4 text-emerald-600" />
                 Location Settings
               </h3>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium text-gray-700">
-                      Default Location
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      Set your default location for services
-                    </p>
+                  <div className="flex items-center gap-3">
+                    <div>
+                      <p className="font-medium text-gray-700">
+                        Default Location
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Set your default location for services
+                      </p>
+                    </div>
                   </div>
                   <Button
                     variant="outline"
                     size="sm"
-                    className="border-gray-300"
+                    className="border-gray-300 flex items-center gap-1"
                   >
-                    Change
+                    Change <ChevronDown className="h-3 w-3" />
                   </Button>
                 </div>
-                <Input
-                  value={location}
-                  onChange={(e) => {
-                    setLocation(e.target.value);
-                    setChangesMade(true);
-                  }}
-                  className="bg-gray-50"
-                />
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    value={location}
+                    onChange={(e) => {
+                      setLocation(e.target.value);
+                      setChangesMade(true);
+                    }}
+                    className="bg-gray-50 pl-10"
+                  />
+                </div>
               </div>
             </div>
           </div>
 
           {changesMade && (
-            <div className="mt-6 flex justify-end">
+            <div className="mt-6 flex justify-end gap-3">
               <Button
-                className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700"
+                variant="outline"
+                className="border-gray-300"
+                onClick={() => setChangesMade(false)}
+              >
+                Discard
+              </Button>
+              <Button
+                className="flex items-center gap-1"
                 onClick={handleSaveSettings}
               >
                 Save Settings
@@ -260,8 +314,9 @@ function Settings() {
                 <div className="space-y-2">
                   <label
                     htmlFor="new-password"
-                    className="text-sm font-medium text-gray-700"
+                    className="text-sm font-medium text-gray-700 flex items-center gap-2"
                   >
+                    <Lock className="h-4 w-4 text-gray-500" />
                     New Password
                   </label>
                   <Input
@@ -270,14 +325,15 @@ function Settings() {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     required
-                    className="focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                    className="focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 pl-10"
                   />
                 </div>
                 <div className="space-y-2">
                   <label
                     htmlFor="confirm-password"
-                    className="text-sm font-medium text-gray-700"
+                    className="text-sm font-medium text-gray-700 flex items-center gap-2"
                   >
+                    <Lock className="h-4 w-4 text-gray-500" />
                     Confirm New Password
                   </label>
                   <Input
@@ -286,12 +342,12 @@ function Settings() {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
-                    className="focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                    className="focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 pl-10"
                   />
                 </div>
 
                 {passwordError && (
-                  <div className="rounded-md bg-red-50 p-3 text-sm text-red-600 border border-red-100">
+                  <div className="rounded-md bg-red-50 p-3 text-sm text-red-600 border border-red-100 flex items-start gap-2">
                     {passwordError}
                   </div>
                 )}
@@ -301,13 +357,13 @@ function Settings() {
                     type="button"
                     variant="outline"
                     onClick={() => setIsPasswordModalOpen(false)}
-                    className="border-gray-300 hover:bg-gray-50"
+                    className="text-xs border-gray-300 hover:bg-gray-50"
                   >
                     Cancel
                   </Button>
                   <Button
                     type="submit"
-                    className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700"
+                    className="text-xs flex items-center gap-1"
                   >
                     Update Password
                   </Button>
