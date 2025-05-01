@@ -4,7 +4,7 @@ import { Search, Star, CalendarCheck } from "lucide-react";
 function HowItWorks() {
   return (
     <section className="py-16 md:py-20 bg-emerald-100/50">
-      <div className="container px-4 md:px-6">
+      <div className=" px-4 md:px-6">
         {/* Header */}
         <div className="mx-auto max-w-3xl text-center mb-16">
           <h2 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">

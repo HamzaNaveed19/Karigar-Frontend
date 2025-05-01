@@ -93,7 +93,7 @@ function Categories() {
 
   return (
     <section className="py-8 md:py-12 bg-gradient-to-b from-gray-50 to-white">
-      <div className="container px-5 sm:px-6 lg:px-8">
+      <div className=" px-5 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-4xl text-center mb-12 lg:mb-16">
           <h2 className="text-4xl font-bold">Popular Professions</h2>
           <p className="mt-4 text-lg">
