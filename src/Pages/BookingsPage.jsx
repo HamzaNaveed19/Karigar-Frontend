@@ -135,8 +135,7 @@ export default function BookingsPage() {
         <h1 className="text-xl font-semibold text-gray-500">Bookings</h1>
       </div>
 
-      {/* Search and Filter */}
-      <div className="mb-6 flex flex-col gap-4 md:flex-row">
+      <div className="mb-4 flex flex-col gap-4 md:flex-row">
         <div className="relative flex-1">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
           <Input

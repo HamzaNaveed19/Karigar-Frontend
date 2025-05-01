@@ -21,8 +21,8 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-4">
-      <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between">
+    <div className="container mx-auto px-4 py-6">
+      {/* <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-xl font-semibold text-gray-500">
             Personal Profile
@@ -31,7 +31,7 @@ export default function ProfilePage() {
             Manage your personal information and settings
           </p>
         </div>
-      </div>
+      </div> */}
 
       <div className="grid gap-8 md:grid-cols-4">
         {/* Profile Sidebar */}
@@ -79,7 +79,6 @@ export default function ProfilePage() {
           </CardContent>
         </Card>
 
-        {/* Profile Content */}
         <div className="md:col-span-3">
           <Tabs defaultValue="personal" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
