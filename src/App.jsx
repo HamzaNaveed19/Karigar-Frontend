@@ -6,6 +6,7 @@ import BookingsPage from "./Pages/BookingsPage";
 import HomePage from "./Pages/HomePage";
 import Header from "./Components/Header";
 import ServicesProviderPage from "./Components/Services/ServicesProviderPage";
+import { Routes, Route } from "react-router-dom";
 
 const App = () => {
   // return (
@@ -21,7 +22,10 @@ const App = () => {
   return (
     <>
       <Header></Header>
-      <ServicesProviderPage category={"Plumber"}></ServicesProviderPage>
+      <Routes>
+        <Route path="/" element={<ServicesProviderPage />}></Route>
+        <Route path="services/:category?" element={<ServicesProviderPage />} />
+      </Routes>
       <Footer></Footer>
     </>
   );
