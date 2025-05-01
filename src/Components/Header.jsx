@@ -53,7 +53,7 @@ function Header() {
                 Become a Provider
               </Button>
 
-              <Link to={"profile/"}>
+              <Link to={"user/"}>
                 <Button size="sm" className="flex items-center">
                   <User className="h-4 w-5" />
                 </Button>

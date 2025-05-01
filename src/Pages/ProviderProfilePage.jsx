@@ -13,11 +13,11 @@ export default function ProviderProfile({ params }) {
     name: "Ahmed Khan",
     profession: "Electrician",
     rating: 4.9,
-    reviews: 124,
-    personalImage: "/placeholder.png?height=300&width=300",
+    personalImage: "/placeholder2.png?height=300&width=300",
     location: "Lahore",
     verified: true,
     completedJobs: 187,
+    totalReviews: 3,
     memberSince: "January 2022",
     about:
       "Professional electrician with over 10 years of experience. Specializing in residential and commercial electrical installations, repairs, and maintenance.",
@@ -29,6 +29,7 @@ export default function ProviderProfile({ params }) {
       "Electrical Troubleshooting",
       "Panel Upgrades",
     ],
+    experience: 5,
     education: "Diploma in Electrical Engineering, Punjab Technical College",
     languages: ["English", "Urdu", "Punjabi"],
     services: [
@@ -83,7 +84,7 @@ export default function ProviderProfile({ params }) {
   };
 
   return (
-    <div className=" mx-auto px-4 py-8 md:py-12">
+    <div className=" mx-auto px-4 py-6">
       {/* Provider Header - Mobile View */}
       <div className="mb-6 block md:hidden">
         <div className="flex items-center gap-4">
@@ -118,60 +119,82 @@ export default function ProviderProfile({ params }) {
       <div className="grid gap-8 md:grid-cols-3">
         {/* Provider Info */}
         <div className="md:col-span-1">
-          <Card className="sticky top-20">
+          <Card className="sticky top-20 overflow-hidden border border-gray-100 shadow-sm">
             <CardContent className="p-0">
-              {/* Desktop Profile Image */}
-              <div className="relative hidden md:block">
-                <img
-                  src={provider.personalImage || "/placeholder.svg"}
-                  alt={provider.name}
-                  className="h-64 w-full object-cover"
-                />
-                {provider.verified && (
-                  <div className="absolute right-2 top-2 rounded-full bg-white p-1 shadow-md">
-                    <CheckCircle className="h-5 w-5 text-emerald-600" />
+              <div className="relative h-20 w-full md:h-20"></div>
+
+              <div className="px-5 pb-5">
+                <div className="relative -mt-12 mb-4 flex justify-center">
+                  <div className="h-48 w-48 rounded-full border-4 border-white bg-white shadow-lg">
+                    <img
+                      src={provider.personalImage}
+                      alt={provider.name}
+                      className="h-full w-full rounded-full object-cover"
+                    />
                   </div>
-                )}
-              </div>
-
-              {/* Desktop Profile Info */}
-              <div className="hidden p-4 md:block">
-                <h1 className="text-2xl font-bold">{provider.name}</h1>
-                <p className="mb-2 text-gray-500">{provider.profession}</p>
-                <div className="mb-4 flex items-center">
-                  <Star className="mr-1 h-5 w-5 fill-amber-400 text-amber-400" />
-                  <span className="font-medium">{provider.rating}</span>
-                  <span className="ml-1 text-sm text-gray-500">
-                    ({provider.reviews} reviews)
-                  </span>
                 </div>
-              </div>
 
-              {/* Stats - Both Mobile & Desktop */}
-              <div className="border-b border-t p-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex flex-col">
-                    <span className="text-sm text-gray-500">
-                      Completed Jobs
+                {/* Profile Info */}
+                <div className="text-center">
+                  <h1 className="text-xl font-bold text-gray-800">
+                    {provider.name}
+                  </h1>
+                  <div className="flex items-center justify-center gap-1">
+                    <p className="text-sm text-emerald-600">
+                      {provider.profession}
+                    </p>
+                    {provider.verified && (
+                      <CheckCircle className="h-4 w-4 text-emerald-500" />
+                    )}
+                  </div>
+                </div>
+
+                {/* Rating and Location */}
+                <div className="mt-4 flex items-center justify-center gap-4">
+                  <div className="flex items-center">
+                    <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                    <span className="ml-1 text-sm font-medium text-gray-800">
+                      {provider.rating}
                     </span>
-                    <span className="font-medium">
+                    <span className="ml-1 text-xs text-gray-500">
+                      ({provider.totalReviews})
+                    </span>
+                  </div>
+                  <div className="flex items-center text-sm text-gray-600">
+                    <MapPin className="h-4 w-4 text-gray-400" />
+                    <span className="ml-1">{provider.location}</span>
+                  </div>
+                </div>
+
+                <div className="mt-6 grid grid-cols-2 gap-3">
+                  <div className="rounded-lg bg-gray-50 p-3 text-center">
+                    <p className="text-xs font-medium text-gray-500">
+                      Experience
+                    </p>
+                    <p className="text-sm font-semibold text-gray-800">
+                      {provider.experience}+ years
+                    </p>
+                  </div>
+                  <div className="rounded-lg bg-gray-50 p-3 text-center">
+                    <p className="text-xs font-medium text-gray-500">
+                      Jobs Completed
+                    </p>
+                    <p className="text-sm font-semibold text-gray-800">
                       {provider.completedJobs}
-                    </span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-sm text-gray-500">Member Since</span>
-                    <span className="font-medium">{provider.memberSince}</span>
+                    </p>
                   </div>
                 </div>
-              </div>
 
-              <div className="p-4">
-                <div className="mb-4 flex items-center text-gray-700">
-                  <MapPin className="mr-2 h-4 w-4" />
-                  {provider.location}
+                <div className="mt-6">
+                  <Button className="w-full bg-emerald-600 hover:bg-emerald-700">
+                    Book Now
+                  </Button>
                 </div>
-                <div className="space-y-2">
-                  <Button className="w-full">Book Now</Button>
+
+                <div className="mt-4 text-center">
+                  <p className="text-xs text-gray-500">
+                    Member since {provider.memberSince}
+                  </p>
                 </div>
               </div>
             </CardContent>

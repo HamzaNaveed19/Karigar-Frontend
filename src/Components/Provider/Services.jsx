@@ -1,14 +1,18 @@
 import React from "react";
 import Card from "../../UI/Card";
 import CardContent from "../../UI/CardContent";
-import { Clock } from "lucide-react";
+import { Clock, Hammer } from "lucide-react";
 import Button from "../../UI/Button";
 
 function Services({ provider }) {
   return (
     <Card>
       <CardContent className="p-6">
-        <h2 className="mb-4 text-xl font-bold">Services Offered</h2>
+        <h2 className="flex items-center gap-2 mb-4 text-xl font-bold">
+          <Hammer className="h-5 w-5 text-emerald-600" />
+          Services Offered
+        </h2>
+
         <div className="space-y-4">
           {provider.services.map((service, index) => (
             <div

@@ -21,18 +21,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-6">
-      {/* <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-xl font-semibold text-gray-500">
-            Personal Profile
-          </h1>
-          <p className="text-sm text-gray-500">
-            Manage your personal information and settings
-          </p>
-        </div>
-      </div> */}
-
+    <div className="mx-auto px-4 py-6">
       <div className="grid gap-8 md:grid-cols-4">
         {/* Profile Sidebar */}
         <Card className="md:col-span-1 border border-gray-200 shadow-sm pt-12">
