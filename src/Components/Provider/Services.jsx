@@ -1,10 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import Card from "../../UI/Card";
 import CardContent from "../../UI/CardContent";
 import { Clock, Hammer } from "lucide-react";
-import Button from "../../UI/Button";
+import BookingModal from "../Booking/BookingModal";
 
 function Services({ provider }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleBook = (bookingDetails) => {
+    console.log("Booking details:", bookingDetails);
+
+    alert(
+      `Booked for ${bookingDetails.date.toDateString()} at ${
+        bookingDetails.time
+      }`
+    );
+  };
+
   return (
     <Card>
       <CardContent className="p-6">
@@ -15,14 +27,17 @@ function Services({ provider }) {
 
         <div className="space-y-4">
           {provider.services.map((service, index) => (
-            <div
+            <button
+              onClick={() => {
+                setIsModalOpen(true);
+              }}
               key={index}
-              className="flex items-center justify-between rounded-lg border pt-2 pb-2 pl-4 pr-4 transition-all hover:border-emerald-200 hover:bg-emerald-50"
+              className="w-full flex items-center justify-between rounded-lg border pt-4 pb-4 pl-4 pr-4 transition-all hover:border-emerald-200 hover:bg-emerald-50"
             >
               <div>
-                <h3 className="font-medium text-sm">{service.name}</h3>
-                <div className="flex items-center text-sm text-gray-500">
-                  <Clock className="mr-1 h-4 w-4" />
+                <h3 className="font-medium text-sm mb-1">{service.name}</h3>
+                <div className="flex items-center text-xs text-gray-500">
+                  <Clock className="mr-1 h-3 w-3" />
                   {service.duration}
                 </div>
               </div>
@@ -30,13 +45,16 @@ function Services({ provider }) {
                 <div className="font-medium text-emerald-600">
                   {service.price}
                 </div>
-                <Button size="sm" className="mt-1">
-                  Book
-                </Button>
               </div>
-            </div>
+            </button>
           ))}
         </div>
+
+        <BookingModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onBook={handleBook}
+        />
       </CardContent>
     </Card>
   );

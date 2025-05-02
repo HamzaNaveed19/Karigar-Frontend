@@ -81,21 +81,20 @@ export default function CategoryCard({ icon, title, description, color }) {
   const colors = colorMap[color] || colorMap.gray;
 
   return (
-    <Link to={`/services/${title.toLowerCase()}`}>
+    <Link
+      to={`/services/${title.toLowerCase()}`}
+      className={`group relative overflow-hidden rounded-xl ${colors.bg} ${colors.border} p-4 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1 border ${colors.hover}`}
+    >
       <div
-        className={`group relative overflow-hidden rounded-xl ${colors.bg} ${colors.border} p-4 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1 border ${colors.hover}`}
+        className={`relative flex h-14 w-14 items-center justify-center rounded-lg ${colors.iconBg} ${colors.iconColor}`}
       >
-        <div
-          className={`relative flex h-14 w-14 items-center justify-center rounded-lg ${colors.iconBg} ${colors.iconColor}`}
-        >
-          {IconComponent && <IconComponent className="h-6 w-6" />}
-        </div>
-        <h3 className="text-sm mt-1 font-semibold text-gray-900">{title}</h3>
-        <p className="text-sm text-gray-600">{description}</p>
-        <div
-          className={`absolute bottom-0 left-0 right-0 h-1 ${colors.iconBg} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
-        ></div>
+        {IconComponent && <IconComponent className="h-6 w-6" />}
       </div>
+      <h3 className="text-sm mt-1 font-semibold text-gray-900">{title}</h3>
+      <p className="text-sm text-gray-600">{description}</p>
+      <div
+        className={`absolute bottom-0 left-0 right-0 h-1 ${colors.iconBg} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
+      ></div>
     </Link>
   );
 }

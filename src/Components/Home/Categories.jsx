@@ -6,15 +6,9 @@ function Categories() {
   //const [categories, setCategories] = useState([]);
   const categories = [
     {
-      name: "All",
-      icon: "MoreHorizontal",
-      description: "All service categories",
-      color: "gray",
-    },
-    {
       name: "Plumber",
       icon: "Wrench",
-      description: "Pipe installations & repairs",
+      description: "Pipe install & repairs",
       color: "blue",
     },
     {
@@ -76,6 +70,12 @@ function Categories() {
       icon: "Truck",
       description: "Relocation services",
       color: "indigo",
+    },
+    {
+      name: "All",
+      icon: "MoreHorizontal",
+      description: "All service categories",
+      color: "gray",
     },
   ];
 
