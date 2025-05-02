@@ -20,7 +20,7 @@ function Services({ provider }) {
               className="flex items-center justify-between rounded-lg border pt-2 pb-2 pl-4 pr-4 transition-all hover:border-emerald-200 hover:bg-emerald-50"
             >
               <div>
-                <h3 className="font-medium">{service.name}</h3>
+                <h3 className="font-medium text-sm">{service.name}</h3>
                 <div className="flex items-center text-sm text-gray-500">
                   <Clock className="mr-1 h-4 w-4" />
                   {service.duration}

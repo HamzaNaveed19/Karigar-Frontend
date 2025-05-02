@@ -1,7 +1,17 @@
 import React, { useState } from "react";
-import { Search, User, Calendar, HardHat, X } from "lucide-react";
+import {
+  Search,
+  User,
+  Calendar,
+  HardHat,
+  X,
+  Bell,
+  Calendar1,
+  CalendarFold,
+} from "lucide-react";
 import Button from "../UI/Button";
 import { Link } from "react-router-dom";
+import Notifications from "./Notifications";
 
 function Header() {
   const [showMobileSearch, setShowMobileSearch] = useState(false);
@@ -31,25 +41,28 @@ function Header() {
               </div>
             </div>
 
-            <div className="flex items-center gap-2 md:gap-4">
+            <div className="flex items-center">
               <button
                 className="sm:hidden p-2 rounded-full hover:bg-gray-100"
                 onClick={() => setShowMobileSearch(true)}
               >
                 <Search className="h-5 w-5 text-gray-600" />
               </button>
+
+              <Notifications />
+
               <Link to={"/bookings"}>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="hidden md:flex items-center gap-1"
+                  className="md:flex items-center gap-1 mr-3"
                 >
-                  <Calendar className="h-4 w-4" />
-                  <span>Bookings</span>
+                  <CalendarFold className="h-5 w-5" />
+                  <span className="hidden md:block">Bookings</span>
                 </Button>
               </Link>
 
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="mr-3">
                 Become a Provider
               </Button>
 

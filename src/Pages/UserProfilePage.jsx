@@ -24,8 +24,8 @@ export default function ProfilePage() {
     <div className="mx-auto px-4 py-6">
       <div className="grid gap-8 md:grid-cols-4">
         {/* Profile Sidebar */}
-        <Card className="md:col-span-1 border border-gray-200 shadow-sm pt-12">
-          <CardContent className="p-6">
+        <Card className="md:sticky top-20 h-[54vh] md:col-span-1 border border-gray-200 shadow-sm pt-12">
+          <CardContent className=" p-6">
             <div className="flex flex-col items-center">
               <div className="relative mb-4 group">
                 <div className="h-32 w-32 overflow-hidden rounded-full border-4 border-white shadow-lg">

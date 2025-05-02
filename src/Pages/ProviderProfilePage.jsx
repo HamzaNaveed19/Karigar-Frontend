@@ -10,7 +10,7 @@ import Reviews from "../Components/Provider/Reviews";
 export default function ProviderProfile({ params }) {
   const provider = {
     id: 1,
-    name: "Ahmed Khan",
+    name: "Fakhar Rashid",
     profession: "Electrician",
     rating: 4.9,
     personalImage: "/placeholder2.png?height=300&width=300",
@@ -85,37 +85,6 @@ export default function ProviderProfile({ params }) {
 
   return (
     <div className=" mx-auto px-4 py-6">
-      {/* Provider Header - Mobile View */}
-      <div className="mb-6 block md:hidden">
-        <div className="flex items-center gap-4">
-          <div className="h-32 w-32 overflow-hidden rounded-full border-4 border-white shadow-lg">
-            <img
-              src={provider.personalImage || "/placeholder.png"}
-              alt={provider.name}
-              className="h-full w-full object-cover rounded-full"
-              width={80}
-              height={80}
-            />
-            {provider.verified && (
-              <div className="absolute -right-1 bottom-0 rounded-full bg-white p-1 shadow-sm">
-                <CheckCircle className="h-4 w-4 text-emerald-600" />
-              </div>
-            )}
-          </div>
-          <div>
-            <h1 className="text-xl font-bold">{provider.name}</h1>
-            <p className="text-gray-500">{provider.profession}</p>
-            <div className="flex items-center">
-              <Star className="mr-1 h-4 w-4 fill-amber-400 text-amber-400" />
-              <span className="font-medium">{provider.rating}</span>
-              <span className="ml-1 text-sm text-gray-500">
-                ({provider.reviews})
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div className="grid gap-8 md:grid-cols-3">
         {/* Provider Info */}
         <div className="md:col-span-1">
@@ -125,16 +94,15 @@ export default function ProviderProfile({ params }) {
 
               <div className="px-5 pb-5">
                 <div className="relative -mt-12 mb-4 flex justify-center">
-                  <div className="h-48 w-48 rounded-full border-4 border-white bg-white shadow-lg">
+                  <div className="h-52 w-52 rounded-full border-4 border-white bg-white shadow-lg">
                     <img
                       src={provider.personalImage}
                       alt={provider.name}
-                      className="h-full w-full rounded-full object-cover"
+                      className=" h-full w-full rounded-full object-cover"
                     />
                   </div>
                 </div>
 
-                {/* Profile Info */}
                 <div className="text-center">
                   <h1 className="text-xl font-bold text-gray-800">
                     {provider.name}
@@ -149,7 +117,6 @@ export default function ProviderProfile({ params }) {
                   </div>
                 </div>
 
-                {/* Rating and Location */}
                 <div className="mt-4 flex items-center justify-center gap-4">
                   <div className="flex items-center">
                     <Star className="h-4 w-4 fill-amber-400 text-amber-400" />

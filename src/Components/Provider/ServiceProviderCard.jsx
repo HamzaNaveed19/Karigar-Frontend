@@ -112,7 +112,7 @@ export default function ServiceProviderCard({
 
             <div
               className={`mb-3 grid grid-cols-3 gap-1 text-center ${
-                onPage ? "text-[10px]" : "text-xs"
+                onPage ? "text-[11px]" : "text-sm"
               }`}
             >
               <div className="rounded-lg bg-emerald-50 p-2">
