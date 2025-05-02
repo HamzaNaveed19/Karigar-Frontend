@@ -4,6 +4,7 @@ import UserProfilePage from "./Pages/UserProfilePage";
 import Footer from "./Components/Footer";
 import BookingsPage from "./Pages/BookingsPage";
 import HomePage from "./Pages/HomePage";
+import ServiceProviderDashboard from "./Pages/ServiceProviderDashboard";
 import Header from "./Components/Header";
 
 const App = () => {
@@ -11,7 +12,9 @@ const App = () => {
     <>
       <Header></Header>
       {/* <BookingsPage></BookingsPage> */}
-      <HomePage></HomePage>
+      {/* <HomePage></HomePage> */}
+
+      <ServiceProviderDashboard/>
       <Footer></Footer>
     </>
   );
