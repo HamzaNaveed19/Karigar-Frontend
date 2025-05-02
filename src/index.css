@@ -16,3 +16,54 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+.custom-calendar {
+  width: 100% !important;
+  max-width: none !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 0.75rem !important;
+  padding: 0.5rem !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+}
+
+.react-datepicker__month-container {
+  width: 100% !important;
+}
+
+.react-datepicker__header {
+  background-color: white !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  padding: 0.5rem 0 0 !important;
+}
+
+.react-datepicker__day-names {
+  display: flex !important;
+  justify-content: space-around !important;
+  margin: 0.5rem 0 !important;
+  color: #6b7280 !important;
+  font-size: 0.875rem !important;
+}
+
+.react-datepicker__week {
+  display: flex !important;
+  justify-content: space-around !important;
+  margin: 0.5rem 0 !important;
+}
+
+.custom-day {
+  flex: 1 !important;
+  height: 2rem !important;
+  margin: 0 0rem !important;
+  transition: all 0.2s ease !important;
+  font-size: 0.875rem !important;
+}
+
+.custom-day:hover {
+  color: white !important;
+  background-color: #45c285c2 !important;
+}
+
+.selected-day {
+  background-color: #059669 !important;
+  color: white !important;
+}

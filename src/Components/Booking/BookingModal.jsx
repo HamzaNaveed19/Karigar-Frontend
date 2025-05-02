@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X, Calendar as CalendarIcon, Clock } from "lucide-react";
+import { X, Calendar as CalendarIcon, Clock, Check } from "lucide-react";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -28,34 +28,48 @@ export default function BookingModal({ isOpen, onClose, onBook }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 ">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-3xl overflow-hidden p-4">
-        <div className="flex justify-between items-center p-4 border-b">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-3xl overflow-hidden">
+        <div className="flex justify-between items-center p-6 border-b border-gray-100">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">
+            <h3 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+              <CalendarIcon className="text-emerald-600" size={20} />
               Book Appointment
             </h3>
             <p className="text-sm text-gray-500 mt-1">
-              Select your preferred date and time
+              Select your preferred date and time slot
             </p>
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-gray-400 hover:bg-gray-100 p-2 rounded-full transition-colors"
           >
             <X size={20} />
           </button>
         </div>
 
-        <div className="flex flex-col md:flex-row p-4">
+        <div className="flex flex-col md:flex-row p-6 gap-8">
           <div className="w-full md:w-1/2">
-            <div className="flex items-center gap-2 mb-2">
-              <CalendarIcon className="text-emerald-600" size={16} />
-              <label className="text-xs font-medium text-gray-700">
-                SELECT DATE
-              </label>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-emerald-50 rounded-lg">
+                <CalendarIcon className="text-emerald-600" size={18} />
+              </div>
+              <div>
+                <label className="text-xs font-medium uppercase tracking-wider text-gray-600">
+                  Select Date
+                </label>
+                {selectedDate && (
+                  <p className="text-sm text-emerald-600  flex items-center gap-1">
+                    {selectedDate.toLocaleDateString("en-US", {
+                      weekday: "long",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </p>
+                )}
+              </div>
             </div>
-            <div className="rounded-lg overflow-hidden">
+            <div className=" border-gray-200 rounded-lg overflow-hidden">
               <ReactDatePicker
                 selected={selectedDate}
                 onChange={(date) => {
@@ -65,29 +79,43 @@ export default function BookingModal({ isOpen, onClose, onBook }) {
                 minDate={minDate}
                 maxDate={maxDate}
                 inline
-                renderDayContents={(day) => (
-                  <span className="text-xs ">{day}</span>
-                )}
+                calendarClassName="custom-calendar"
+                dayClassName={(date) =>
+                  `custom-day text-sm p-1 rounded-md transition-colors ${
+                    selectedDate &&
+                    date.toDateString() === selectedDate.toDateString()
+                      ? "selected-day"
+                      : ""
+                  }`
+                }
               />
             </div>
           </div>
 
           <div className="w-full md:w-1/2">
-            <div className="flex items-center gap-2 mb-2">
-              <Clock className="text-emerald-600" size={16} />
-              <label className="text-xs font-medium text-gray-700">
-                AVAILABLE TIME SLOTS
-              </label>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-emerald-50 rounded-lg">
+                <Clock className="text-emerald-600" size={18} />
+              </div>
+              <div>
+                <label className="text-xs font-medium uppercase tracking-wider text-gray-600">
+                  Available Time Slots
+                </label>
+
+                <p className="text-sm text-emerald-600 flex items-center gap-1">
+                  {selectedTime ? selectedTime : "--:-- --"}
+                </p>
+              </div>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {timeSlots.map((time) => (
                 <button
                   key={time}
                   onClick={() => setSelectedTime(time)}
-                  className={`py-2 px-3 rounded-md border text-xs transition-all ${
+                  className={`py-2.5 px-3 rounded-lg border text-sm font-medium transition-all flex items-center justify-center gap-1 ${
                     selectedTime === time
-                      ? "bg-emerald-100 border-emerald-500 text-emerald-900"
-                      : "border-gray-200 hover:border-emerald-300 text-gray-700"
+                      ? "bg-emerald-100 border-emerald-600 text-emerald-800 shadow-sm"
+                      : "border-gray-200 hover:border-emerald-300 text-gray-700 hover:bg-emerald-50"
                   }`}
                 >
                   {time}
@@ -97,16 +125,20 @@ export default function BookingModal({ isOpen, onClose, onBook }) {
           </div>
         </div>
 
-        <div className="p-4 border-t flex flex-col sm:flex-row justify-end gap-2">
+        <div className="p-6 border-t border-gray-100 bg-gray-50 flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 border border-gray-300 rounded-md text-xs text-gray-700 hover:bg-gray-50"
+            className="px-5 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors flex items-center gap-1"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
-            className="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 text-xs"
+            className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1 ${
+              selectedDate && selectedTime
+                ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm"
+                : "bg-gray-200 text-gray-500 cursor-not-allowed"
+            }`}
             disabled={!selectedDate || !selectedTime}
           >
             Confirm Booking
