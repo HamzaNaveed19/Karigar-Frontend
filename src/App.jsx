@@ -6,16 +6,17 @@ import BookingsPage from "./Pages/BookingsPage";
 import HomePage from "./Pages/HomePage";
 import ServiceProviderDashboard from "./Pages/ServiceProviderDashboard";
 import Header from "./Components/Header";
+import Bookings from "./Pages/Bookings";
 
 const App = () => {
   return (
     <>
-      <Header></Header>
+      {/* <Header></Header> */}
       {/* <BookingsPage></BookingsPage> */}
       {/* <HomePage></HomePage> */}
 
-      <ServiceProviderDashboard/>
-      <Footer></Footer>
+      <Bookings/>
+      {/* <Footer></Footer> */}
     </>
   );
   // return <ProviderProfilePage></ProviderProfilePage>;
