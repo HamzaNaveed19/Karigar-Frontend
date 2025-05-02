@@ -7,6 +7,7 @@ import HomePage from "./Pages/HomePage";
 import ServiceProviderDashboard from "./Pages/ServiceProviderDashboard";
 import Header from "./Components/Header";
 import Bookings from "./Pages/Bookings";
+import Analytics from "./Pages/Analytics";
 
 const App = () => {
   return (
@@ -15,7 +16,7 @@ const App = () => {
       {/* <BookingsPage></BookingsPage> */}
       {/* <HomePage></HomePage> */}
 
-      <Bookings/>
+      <Analytics/>
       {/* <Footer></Footer> */}
     </>
   );
