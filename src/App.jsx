@@ -7,6 +7,7 @@ import HomePage from "./Pages/HomePage";
 import Header from "./Components/Header";
 import ServicesProviderPage from "./Components/Services/ServicesProviderPage";
 import { Routes, Route, useLocation } from "react-router-dom";
+import { AuthModal } from "./Components/Authentication/AuthModal";
 
 const App = () => {
   function ScrollToTop() {
@@ -32,6 +33,7 @@ const App = () => {
   return (
     <>
       <Header></Header>
+      <AuthModal isOpen={true}></AuthModal>
       <ScrollToTop></ScrollToTop>
       <Routes>
         <Route path="/" element={<HomePage></HomePage>}></Route>

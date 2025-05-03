@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X, Calendar as CalendarIcon, Clock, Check } from "lucide-react";
+import { X, Calendar as CalendarIcon, Clock } from "lucide-react";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -114,7 +114,7 @@ export default function BookingModal({ isOpen, onClose, onBook }) {
                   onClick={() => setSelectedTime(time)}
                   className={`py-2.5 px-3 rounded-lg border text-sm font-medium transition-all flex items-center justify-center gap-1 ${
                     selectedTime === time
-                      ? "bg-emerald-100 border-emerald-600 text-emerald-800 shadow-sm"
+                      ? "bg-emerald-100 border-emerald-400 text-emerald-600 shadow-sm"
                       : "border-gray-200 hover:border-emerald-300 text-gray-700 hover:bg-emerald-50"
                   }`}
                 >

@@ -64,6 +64,8 @@ body {
 }
 
 .selected-day {
-  background-color: #059669 !important;
-  color: white !important;
+  background-color: #d1fae5 !important;
+  border: 0.1px solid #34d399;
+  color: #059669 !important;
+  font-weight: bold;
 }
