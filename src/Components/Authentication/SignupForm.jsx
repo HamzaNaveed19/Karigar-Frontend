@@ -1,6 +1,7 @@
 import { User, Mail, Phone, Lock, MapPin, Eye, EyeOff } from "lucide-react";
 import { Input } from "../../UI/Input";
 import Field from "./Field";
+import { AddressForm } from "./AddressForm";
 
 export const SignupForm = ({
   formData,
@@ -10,8 +11,9 @@ export const SignupForm = ({
   showPassword,
   setShowPassword,
   signupStep,
+  setFormData,
 }) => (
-  <div className="flex h-[400px] overflow-hidden rounded-lg border border-emerald-200">
+  <div className="flex h-[400px] overflow-hidden rounded-lg  ">
     <div className="hidden w-1/2 bg-gradient-to-b from-white to-emerald-50 md:block">
       <div className="flex h-full items-center justify-center">
         <img
@@ -81,23 +83,13 @@ export const SignupForm = ({
           </Field>
         </div>
       ) : (
-        <div className="space-y-4 w-full">
-          <h3 className="text-xl font-bold text-gray-900">
-            Complete Your Profile
-          </h3>
-          <p className="text-sm text-gray-600">Almost there!</p>
-          <Field icon={MapPin} label="Address" error={errors.address}>
-            <textarea
-              name="address"
-              className="w-full rounded-lg border border-gray-300 p-3 text-sm focus:border-emerald-500 focus:ring-emerald-500"
-              rows={4}
-              placeholder="Enter your full address"
-              value={formData.address}
-              onChange={handleInputChange}
-              disabled={isSubmitting}
-            />
-          </Field>
-        </div>
+        <AddressForm
+          formData={formData}
+          errors={errors}
+          handleInputChange={handleInputChange}
+          isSubmitting={isSubmitting}
+          setFormData={setFormData}
+        ></AddressForm>
       )}
     </div>
   </div>

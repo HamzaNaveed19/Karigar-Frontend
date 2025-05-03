@@ -20,7 +20,12 @@ export const AuthModal = ({ isOpen, onClose, mode, onModeChange }) => {
     email: "",
     phone: "",
     password: "",
-    address: "",
+    street: "",
+    city: "",
+    state: "",
+    postalCode: "",
+    country: "",
+    addressDetails: "",
   });
 
   const [errors, setErrors] = useState({
@@ -93,7 +98,7 @@ export const AuthModal = ({ isOpen, onClose, mode, onModeChange }) => {
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+
       setShowOTP(true);
     } catch (error) {
       setFormError("An error occurred. Please try again.");
@@ -105,6 +110,8 @@ export const AuthModal = ({ isOpen, onClose, mode, onModeChange }) => {
   const handleVerifyOTP = async (otp) => {
     setIsSubmitting(true);
     setFormError("");
+
+    console.log(formData);
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -186,8 +193,8 @@ export const AuthModal = ({ isOpen, onClose, mode, onModeChange }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="w-full m-4 md:w-1/2 rounded-2xl bg-white p-6 shadow-xl">
-        <div className="mb-2 flex w-full justify-end">
+      <div className="w-full m-2 md:w-[120vh] rounded-2xl bg-white pb-8 pl-4 pr-4 pt-4 shadow-xl">
+        <div className=" flex w-full justify-end">
           <button
             onClick={onClose}
             className="rounded-full p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-700 self-center"
@@ -218,7 +225,10 @@ export const AuthModal = ({ isOpen, onClose, mode, onModeChange }) => {
             isSubmitting={isSubmitting}
           />
         ) : mode === "login" ? (
-          <form onSubmit={handleLogin} className="space-y-6">
+          <form
+            onSubmit={handleLogin}
+            className="space-y-6 justify-end flex-col"
+          >
             <LoginForm
               formData={formData}
               errors={errors}
@@ -230,19 +240,24 @@ export const AuthModal = ({ isOpen, onClose, mode, onModeChange }) => {
               setRememberMe={setRememberMe}
             />
 
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? "Logging in..." : "Login"}
-            </Button>
-
-            <div className="text-center text-sm text-gray-600">
-              Don't have an account?{" "}
-              <button
-                type="button"
-                className="font-medium text-emerald-600 hover:underline"
-                onClick={toggleMode}
+            <div className="flex w-full">
+              <div className="text-center text-sm text-gray-600 w-1/2">
+                Don't have an account?{" "}
+                <button
+                  type="button"
+                  className="font-medium text-emerald-600 hover:underline"
+                  onClick={toggleMode}
+                >
+                  Sign up
+                </button>
+              </div>
+              <Button
+                className="w-1/2 ml-16 mr-4 text-sm"
+                type="submit"
+                disabled={isSubmitting}
               >
-                Sign up
-              </button>
+                {isSubmitting ? "Logging in..." : "Login"}
+              </Button>
             </div>
           </form>
         ) : (
@@ -255,28 +270,30 @@ export const AuthModal = ({ isOpen, onClose, mode, onModeChange }) => {
               showPassword={showPassword}
               setShowPassword={setShowPassword}
               signupStep={signupStep}
+              setFormData={setFormData}
             />
 
             {signupStep === 1 ? (
               <>
-                <Button
-                  type="button"
-                  className="w-full"
-                  onClick={handleNextStep}
-                  disabled={isSubmitting}
-                >
-                  Continue <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-
-                <div className="text-center text-sm text-gray-600">
-                  Already have an account?{" "}
-                  <button
+                <div className="w-full flex">
+                  <div className="w-1/2 text-center text-sm text-gray-600">
+                    Already have an account?{" "}
+                    <button
+                      type="button"
+                      className="font-medium text-emerald-600 hover:underline"
+                      onClick={toggleMode}
+                    >
+                      Login
+                    </button>
+                  </div>
+                  <Button
                     type="button"
-                    className="font-medium text-emerald-600 hover:underline"
-                    onClick={toggleMode}
+                    className="w-1/2 ml-16 mr-4 text-sm"
+                    onClick={handleNextStep}
+                    disabled={isSubmitting}
                   >
-                    Login
-                  </button>
+                    Continue <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
                 </div>
               </>
             ) : (
@@ -293,7 +310,7 @@ export const AuthModal = ({ isOpen, onClose, mode, onModeChange }) => {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1"
+                  className="flex-1 ml-10 mr-4 text-sm"
                 >
                   {isSubmitting ? "Sending OTP..." : "Sign Up"}
                 </Button>

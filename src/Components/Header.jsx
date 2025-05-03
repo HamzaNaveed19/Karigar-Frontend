@@ -7,7 +7,7 @@ import { AuthModal } from "./Authentication/AuthModal";
 
 function Header() {
   const [showMobileSearch, setShowMobileSearch] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [mode, setMode] = useState("");
 
