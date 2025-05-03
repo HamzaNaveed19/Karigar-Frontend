@@ -8,6 +8,8 @@ import ServiceProviderDashboard from "./Pages/ServiceProviderDashboard";
 import Header from "./Components/Header";
 import Bookings from "./Pages/Bookings";
 import Analytics from "./Pages/Analytics";
+import Profile from "./Pages/Profile/Profile";
+import Services from "./Pages/Services/Services";
 
 const App = () => {
   return (
@@ -16,7 +18,7 @@ const App = () => {
       {/* <BookingsPage></BookingsPage> */}
       {/* <HomePage></HomePage> */}
 
-      <Analytics/>
+      <Services/>
       {/* <Footer></Footer> */}
     </>
   );
