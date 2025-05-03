@@ -1,10 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { useSelector, useDispatch } from "react-redux"
-import { useTranslation } from "react-i18next"
-import { Camera, Upload } from "react-feather"
-import { updateProfile, uploadDocument } from "../../redux/slices/profileSlice"
+import { useState, useEffect } from "react"
+import { Camera, Upload } from "lucide-react"
 
 // Predefined options
 const professionOptions = [
@@ -113,26 +110,79 @@ const skillOptions = {
 }
 
 const Profile = () => {
-  const { data: profile, loading, uploadLoading } = useSelector((state) => state.profile)
-  const dispatch = useDispatch()
-  const { t } = useTranslation()
+  // Hardcoded dummy data
+  // TODO: Replace with API call to fetch profile data
+  const dummyProfile = {
+    name: "Ahmed Khan",
+    email: "ahmed@example.com",
+    phone: "+92 300 1234567",
+    personalImage: "/placeholder.svg?height=200&width=200",
+    verificationDocuments: {
+      frontPic: "/placeholder.svg?height=300&width=500",
+      backPic: "/placeholder.svg?height=300&width=500",
+    },
+    location: {
+      latitude: 31.5204,
+      longitude: 74.3587,
+      address: "123 Main Street, Lahore, Pakistan",
+    },
+    profession: "Electrician",
+    about:
+      "Experienced electrician with expertise in residential and commercial electrical systems. Providing reliable and efficient services for over 5 years.",
+    services: [
+      { id: "1", name: "Basic Electrical Repair", price: 1500, duration: 60 },
+      { id: "2", name: "Wiring Installation", price: 3000, duration: 120 },
+      { id: "3", name: "Circuit Breaker Replacement", price: 2000, duration: 90 },
+    ],
+    skills: ["Electrical Wiring", "Circuit Repair", "Lighting Installation", "Troubleshooting"],
+    experience: 5,
+    languages: ["English", "Urdu", "Punjabi"],
+    education: "Diploma in Electrical Engineering",
+    rating: 4.8,
+    totalReviews: 27,
+    completedJobs: 42,
+  }
+
+  const [profile, setProfile] = useState(dummyProfile)
+  const [loading, setLoading] = useState(false)
+  const [uploadLoading, setUploadLoading] = useState(false)
 
   const [formData, setFormData] = useState({
-    name: profile?.name || "",
-    email: profile?.email || "",
-    phone: profile?.phone || "",
+    name: "",
+    email: "",
+    phone: "",
     location: {
-      address: profile?.location?.address || "",
+      address: "",
     },
-    profession: profile?.profession || "",
-    about: profile?.about || "",
-    experience: profile?.experience || 0,
-    education: profile?.education || "",
-    languages: profile?.languages || [],
-    skills: profile?.skills || [],
+    profession: "",
+    about: "",
+    experience: 0,
+    education: "",
+    languages: [],
+    skills: [],
   })
 
   const [activeTab, setActiveTab] = useState("personal")
+
+  useEffect(() => {
+    // Initialize form data with profile data
+    if (profile) {
+      setFormData({
+        name: profile.name || "",
+        email: profile.email || "",
+        phone: profile.phone || "",
+        location: {
+          address: profile.location?.address || "",
+        },
+        profession: profile.profession || "",
+        about: profile.about || "",
+        experience: profile.experience || 0,
+        education: profile.education || "",
+        languages: profile.languages || [],
+        skills: profile.skills || [],
+      })
+    }
+  }, [profile])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -169,13 +219,37 @@ const Profile = () => {
   const handleFileUpload = (e, type) => {
     const file = e.target.files[0]
     if (file) {
-      dispatch(uploadDocument({ type, file }))
+      setUploadLoading(true)
+
+      // TODO: Replace with API call to upload file
+      // Simulate API call with setTimeout
+      setTimeout(() => {
+        const updatedProfile = { ...profile }
+
+        if (type === "personalImage") {
+          updatedProfile.personalImage = URL.createObjectURL(file)
+        } else if (type === "frontPic") {
+          updatedProfile.verificationDocuments.frontPic = URL.createObjectURL(file)
+        } else if (type === "backPic") {
+          updatedProfile.verificationDocuments.backPic = URL.createObjectURL(file)
+        }
+
+        setProfile(updatedProfile)
+        setUploadLoading(false)
+      }, 1000)
     }
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    dispatch(updateProfile(formData))
+    setLoading(true)
+
+    // TODO: Replace with API call to update profile
+    // Simulate API call with setTimeout
+    setTimeout(() => {
+      setProfile({ ...profile, ...formData })
+      setLoading(false)
+    }, 1000)
   }
 
   if (!profile) {
@@ -189,7 +263,7 @@ const Profile = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">{t("common.profile")}</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Profile</h1>
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -242,7 +316,7 @@ const Profile = () => {
               }`}
               onClick={() => setActiveTab("personal")}
             >
-              {t("profile.personalInfo")}
+              Personal Information
             </button>
             <button
               className={`py-3 px-4 font-medium text-sm ${
@@ -252,7 +326,7 @@ const Profile = () => {
               }`}
               onClick={() => setActiveTab("professional")}
             >
-              {t("profile.professionalInfo")}
+              Professional Information
             </button>
             <button
               className={`py-3 px-4 font-medium text-sm ${
@@ -262,7 +336,7 @@ const Profile = () => {
               }`}
               onClick={() => setActiveTab("verification")}
             >
-              {t("profile.verificationDocs")}
+              Verification Documents
             </button>
           </div>
         </div>
@@ -274,7 +348,7 @@ const Profile = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                    {t("profile.name")}
+                    Name
                   </label>
                   <input
                     type="text"
@@ -288,7 +362,7 @@ const Profile = () => {
                 </div>
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                    {t("profile.email")}
+                    Email
                   </label>
                   <input
                     type="email"
@@ -302,7 +376,7 @@ const Profile = () => {
                 </div>
                 <div>
                   <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                    {t("profile.phone")}
+                    Phone
                   </label>
                   <input
                     type="tel"
@@ -316,7 +390,7 @@ const Profile = () => {
                 </div>
                 <div>
                   <label htmlFor="location.address" className="block text-sm font-medium text-gray-700 mb-1">
-                    {t("profile.address")}
+                    Address
                   </label>
                   <input
                     type="text"
@@ -338,7 +412,7 @@ const Profile = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="profession" className="block text-sm font-medium text-gray-700 mb-1">
-                    {t("profile.profession")}
+                    Profession
                   </label>
                   <select
                     id="profession"
@@ -358,7 +432,7 @@ const Profile = () => {
                 </div>
                 <div>
                   <label htmlFor="experience" className="block text-sm font-medium text-gray-700 mb-1">
-                    {t("profile.experience")}
+                    Experience
                   </label>
                   <select
                     id="experience"
@@ -378,7 +452,7 @@ const Profile = () => {
                 </div>
                 <div>
                   <label htmlFor="education" className="block text-sm font-medium text-gray-700 mb-1">
-                    {t("profile.education")}
+                    Education
                   </label>
                   <input
                     type="text"
@@ -391,7 +465,7 @@ const Profile = () => {
                 </div>
                 <div>
                   <label htmlFor="languages" className="block text-sm font-medium text-gray-700 mb-1">
-                    {t("profile.languages")}
+                    Languages
                   </label>
                   <select
                     id="languages"
@@ -412,7 +486,7 @@ const Profile = () => {
                 </div>
                 <div className="md:col-span-2">
                   <label htmlFor="skills" className="block text-sm font-medium text-gray-700 mb-1">
-                    {t("profile.skills")}
+                    Skills
                   </label>
                   <select
                     id="skills"
@@ -439,7 +513,7 @@ const Profile = () => {
                 </div>
                 <div className="md:col-span-2">
                   <label htmlFor="about" className="block text-sm font-medium text-gray-700 mb-1">
-                    {t("profile.about")}
+                    About
                   </label>
                   <textarea
                     id="about"
@@ -459,7 +533,7 @@ const Profile = () => {
             <div className="p-6 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t("profile.uploadIdFront")}</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Upload ID Front</label>
                   <div className="border-2 border-dashed border-gray-300 rounded-md p-6 flex flex-col items-center">
                     {profile.verificationDocuments?.frontPic ? (
                       <div className="relative w-full">
@@ -505,7 +579,7 @@ const Profile = () => {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t("profile.uploadIdBack")}</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Upload ID Back</label>
                   <div className="border-2 border-dashed border-gray-300 rounded-md p-6 flex flex-col items-center">
                     {profile.verificationDocuments?.backPic ? (
                       <div className="relative w-full">
@@ -583,10 +657,10 @@ const Profile = () => {
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     ></path>
                   </svg>
-                  {t("common.loading")}
+                  Loading...
                 </span>
               ) : (
-                t("profile.saveChanges")
+                "Save Changes"
               )}
             </button>
           </div>

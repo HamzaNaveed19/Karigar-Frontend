@@ -1,19 +1,72 @@
 "use client"
 
 import { useState } from "react"
-import { useSelector, useDispatch } from "react-redux"
-import { useTranslation } from "react-i18next"
-import { Plus, Edit, Trash, AlertCircle } from "react-feather"
-import { addService, updateService, deleteService, predefinedServices } from "../../redux/slices/servicesSlice"
-import ServiceModal from "../../components/services/ServiceModal"
-import ConfirmModal from "../../components/common/ConfirmModal"
+import { Plus, Edit, Trash, AlertCircle } from "lucide-react"
+import ServiceModal from "../../Components/Services/ServiceModal"
+import ConfirmModal from "../../Components/Common/ConfirmModal"
+
+// Predefined service options
+const predefinedServices = {
+  Electrician: [
+    "Basic Electrical Repair",
+    "Wiring Installation",
+    "Circuit Breaker Replacement",
+    "Lighting Installation",
+    "Fan Installation",
+    "Electrical Troubleshooting",
+  ],
+  Plumber: [
+    "Pipe Repair",
+    "Drain Cleaning",
+    "Toilet Repair",
+    "Faucet Installation",
+    "Water Heater Repair",
+    "Bathroom Fixture Installation",
+  ],
+  Carpenter: [
+    "Furniture Repair",
+    "Door Installation",
+    "Cabinet Installation",
+    "Shelving Installation",
+    "Wooden Floor Repair",
+    "Custom Furniture Building",
+  ],
+  Painter: [
+    "Interior Painting",
+    "Exterior Painting",
+    "Wall Texture Application",
+    "Wallpaper Installation",
+    "Paint Removal",
+    "Decorative Painting",
+  ],
+  Tutor: [
+    "Mathematics Tutoring",
+    "Science Tutoring",
+    "English Language Tutoring",
+    "Computer Skills Training",
+    "Test Preparation",
+    "Homework Help",
+  ],
+}
 
 const Services = () => {
-  const { data: services, loading, actionLoading } = useSelector((state) => state.services)
-  const { data: profile } = useSelector((state) => state.profile)
-  const dispatch = useDispatch()
-  const { t } = useTranslation()
+  // Hardcoded dummy data
+  // TODO: Replace with API call to fetch services
+  const dummyServices = [
+    { id: "1", name: "Basic Electrical Repair", price: 1500, duration: 60 },
+    { id: "2", name: "Wiring Installation", price: 3000, duration: 120 },
+    { id: "3", name: "Circuit Breaker Replacement", price: 2000, duration: 90 },
+  ]
 
+  // Hardcoded profile data (just for profession)
+  // TODO: Replace with API call to fetch profile or pass from parent component
+  const dummyProfile = {
+    profession: "Electrician",
+  }
+
+  const [services, setServices] = useState(dummyServices)
+  const [loading, setLoading] = useState(false)
+  const [actionLoading, setActionLoading] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false)
   const [currentService, setCurrentService] = useState(null)
@@ -37,38 +90,60 @@ const Services = () => {
   }
 
   const handleServiceSubmit = (serviceData) => {
-    if (modalMode === "add") {
-      dispatch(addService(serviceData))
-    } else {
-      dispatch(updateService({ id: currentService.id, ...serviceData }))
-    }
-    setIsModalOpen(false)
+    setActionLoading(true)
+
+    // TODO: Replace with API call to add/update service
+    setTimeout(() => {
+      if (modalMode === "add") {
+        // Generate a fake ID for new service
+        const newService = {
+          id: Date.now().toString(),
+          ...serviceData,
+        }
+        setServices([...services, newService])
+      } else {
+        // Update existing service
+        const updatedServices = services.map((service) =>
+          service.id === currentService.id ? { ...service, ...serviceData } : service,
+        )
+        setServices(updatedServices)
+      }
+      setActionLoading(false)
+      setIsModalOpen(false)
+    }, 1000)
   }
 
   const handleDeleteConfirm = () => {
-    dispatch(deleteService(currentService.id))
-    setIsConfirmModalOpen(false)
+    setActionLoading(true)
+
+    // TODO: Replace with API call to delete service
+    setTimeout(() => {
+      const filteredServices = services.filter((service) => service.id !== currentService.id)
+      setServices(filteredServices)
+      setActionLoading(false)
+      setIsConfirmModalOpen(false)
+    }, 1000)
   }
 
   // Get predefined service options based on profession
-  const serviceOptions = profile?.profession ? predefinedServices[profile.profession] || [] : []
+  const serviceOptions = dummyProfile?.profession ? predefinedServices[dummyProfile.profession] || [] : []
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">{t("common.services")}</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Services</h1>
         <button
           onClick={handleAddClick}
           className="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 flex items-center"
         >
           <Plus className="h-4 w-4 mr-2" />
-          {t("services.addService")}
+          Add Service
         </button>
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <div className="px-6 py-4 border-b">
-          <h2 className="text-lg font-medium text-gray-900">{t("services.yourServices")}</h2>
+          <h2 className="text-lg font-medium text-gray-900">Your Services</h2>
         </div>
 
         {loading ? (
@@ -84,25 +159,25 @@ const Services = () => {
                     scope="col"
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
-                    {t("services.serviceName")}
+                    Service Name
                   </th>
                   <th
                     scope="col"
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
-                    {t("services.price")}
+                    Price
                   </th>
                   <th
                     scope="col"
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
-                    {t("services.duration")}
+                    Duration
                   </th>
                   <th
                     scope="col"
                     className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
-                    {t("services.actions")}
+                    Actions
                   </th>
                 </tr>
               </thead>
@@ -124,11 +199,11 @@ const Services = () => {
                         className="text-indigo-600 hover:text-indigo-900 mr-4"
                       >
                         <Edit className="h-4 w-4" />
-                        <span className="sr-only">{t("services.editService")}</span>
+                        <span className="sr-only">Edit Service</span>
                       </button>
                       <button onClick={() => handleDeleteClick(service)} className="text-red-600 hover:text-red-900">
                         <Trash className="h-4 w-4" />
-                        <span className="sr-only">{t("services.deleteService")}</span>
+                        <span className="sr-only">Delete Service</span>
                       </button>
                     </td>
                   </tr>
@@ -139,12 +214,12 @@ const Services = () => {
         ) : (
           <div className="flex flex-col items-center justify-center h-64 text-gray-500">
             <AlertCircle className="h-12 w-12 text-gray-400 mb-3" />
-            <p>{t("services.noServices")}</p>
+            <p>No services added yet</p>
             <button
               onClick={handleAddClick}
               className="mt-4 px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
             >
-              {t("services.addService")}
+              Add Service
             </button>
           </div>
         )}
@@ -166,9 +241,9 @@ const Services = () => {
         isOpen={isConfirmModalOpen}
         onClose={() => setIsConfirmModalOpen(false)}
         onConfirm={handleDeleteConfirm}
-        title={t("services.deleteService")}
-        message={t("services.confirmDelete")}
-        confirmText={t("common.delete")}
+        title="Delete Service"
+        message="Are you sure you want to delete this service? This action cannot be undone."
+        confirmText="Delete"
         confirmButtonClass="bg-red-600 hover:bg-red-700 focus:ring-red-500"
         loading={actionLoading}
       />
@@ -176,4 +251,4 @@ const Services = () => {
   )
 }
 
-export default Services;
+export default Services

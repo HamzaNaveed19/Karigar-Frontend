@@ -1,11 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useTranslation } from "react-i18next"
-import { X } from "react-feather"
+import { X } from "lucide-react"
 
 const ServiceModal = ({ isOpen, onClose, onSubmit, service, mode, serviceOptions, loading }) => {
-  const { t } = useTranslation()
   const [formData, setFormData] = useState({
     name: "",
     price: "",
@@ -69,6 +67,7 @@ const ServiceModal = ({ isOpen, onClose, onSubmit, service, mode, serviceOptions
       duration: Number(formData.duration),
     }
 
+    // TODO: Replace with API call to add/update service
     onSubmit(serviceData)
   }
 
@@ -88,9 +87,7 @@ const ServiceModal = ({ isOpen, onClose, onSubmit, service, mode, serviceOptions
         <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
           <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-gray-900">
-                {mode === "add" ? t("services.addService") : t("services.editService")}
-              </h3>
+              <h3 className="text-lg font-medium text-gray-900">{mode === "add" ? "Add Service" : "Edit Service"}</h3>
               <button onClick={onClose} className="text-gray-400 hover:text-gray-500 focus:outline-none">
                 <X className="h-6 w-6" />
               </button>
@@ -101,7 +98,7 @@ const ServiceModal = ({ isOpen, onClose, onSubmit, service, mode, serviceOptions
                 {mode === "add" && (
                   <div>
                     <label htmlFor="serviceSelect" className="block text-sm font-medium text-gray-700 mb-1">
-                      {t("services.serviceName")}
+                      Service Name
                     </label>
                     <select
                       id="serviceSelect"
@@ -124,7 +121,7 @@ const ServiceModal = ({ isOpen, onClose, onSubmit, service, mode, serviceOptions
                 {(customService || mode === "edit") && (
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                      {mode === "edit" ? t("services.serviceName") : "Custom Service Name"}
+                      {mode === "edit" ? "Service Name" : "Custom Service Name"}
                     </label>
                     <input
                       type="text"
@@ -140,7 +137,7 @@ const ServiceModal = ({ isOpen, onClose, onSubmit, service, mode, serviceOptions
 
                 <div>
                   <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
-                    {t("services.price")} (PKR)
+                    Price (PKR)
                   </label>
                   <input
                     type="number"
@@ -157,7 +154,7 @@ const ServiceModal = ({ isOpen, onClose, onSubmit, service, mode, serviceOptions
 
                 <div>
                   <label htmlFor="duration" className="block text-sm font-medium text-gray-700 mb-1">
-                    {t("services.duration")} (minutes)
+                    Duration (minutes)
                   </label>
                   <input
                     type="number"
@@ -179,7 +176,7 @@ const ServiceModal = ({ isOpen, onClose, onSubmit, service, mode, serviceOptions
                   onClick={onClose}
                   className="mr-3 px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
                 >
-                  {t("common.cancel")}
+                  Cancel
                 </button>
                 <button
                   type="submit"
@@ -208,10 +205,10 @@ const ServiceModal = ({ isOpen, onClose, onSubmit, service, mode, serviceOptions
                           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                         ></path>
                       </svg>
-                      {t("common.loading")}
+                      Loading...
                     </span>
                   ) : (
-                    t("common.save")
+                    "Save"
                   )}
                 </button>
               </div>

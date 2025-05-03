@@ -1,5 +1,6 @@
 "use client"
-import { X } from "react-feather"
+
+import { X } from "lucide-react"
 
 const ConfirmModal = ({
   isOpen,
