@@ -2,16 +2,18 @@ import { useState, useEffect } from "react";
 import { X, Check, AlertCircle, ArrowLeft, ArrowRight } from "lucide-react";
 import Button from "../../UI/Button";
 import { LoginForm } from "./LoginForm";
+import { SignupForm } from "./SignupForm";
+import { OTPVerification } from "./OTPVerification";
+import { validateStep1, validateStep2, validateLoginForm } from "./validation";
 
-import { validateLoginForm } from "./validation";
-
-export const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
-  const [mode, setMode] = useState(initialMode);
+export const AuthModal = ({ isOpen, onClose, mode, onModeChange }) => {
+  const [signupStep, setSignupStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState("");
   const [formSuccess, setFormSuccess] = useState("");
+  const [showOTP, setShowOTP] = useState(false);
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -67,6 +69,77 @@ export const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
     }
   };
 
+  const handleNextStep = () => {
+    const { errors, isValid } = validateStep1(formData);
+    setErrors(errors);
+    if (isValid) {
+      setSignupStep(2);
+    }
+  };
+
+  const handlePrevStep = () => {
+    setSignupStep(1);
+  };
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+
+    const { errors, isValid } = validateStep2(formData);
+    setErrors(errors);
+    if (!isValid) return;
+
+    setIsSubmitting(true);
+    setFormError("");
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      
+      setShowOTP(true);
+    } catch (error) {
+      setFormError("An error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleVerifyOTP = async (otp) => {
+    setIsSubmitting(true);
+    setFormError("");
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      localStorage.setItem(
+        "karigar_user",
+        JSON.stringify({
+          fullName: formData.fullName,
+          email: formData.email,
+          phone: formData.phone,
+          address: formData.address,
+        })
+      );
+
+      setFormSuccess("Account created successfully!");
+      setTimeout(() => onClose(), 1500);
+    } catch (error) {
+      setFormError("Invalid OTP. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleResendOTP = async () => {
+    setIsSubmitting(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setFormSuccess("OTP resent successfully!");
+    } catch (error) {
+      setFormError("Failed to resend OTP. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -103,7 +176,7 @@ export const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
   };
 
   const toggleMode = () => {
-    setMode(mode === "login" ? "signup" : "login");
+    onModeChange(mode === "login" ? "signup" : "login");
     setFormError("");
     setFormSuccess("");
     setSignupStep(1);
@@ -113,14 +186,11 @@ export const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
-        <div className="mb-6 flex items-center justify-between">
-          <h3 className="text-2xl font-bold text-gray-900">
-          Welcome Back
-          </h3>
+      <div className="w-full m-4 md:w-1/2 rounded-2xl bg-white p-6 shadow-xl">
+        <div className="mb-2 flex w-full justify-end">
           <button
             onClick={onClose}
-            className="rounded-full p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+            className="rounded-full p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-700 self-center"
           >
             <X className="h-5 w-5" />
           </button>
@@ -140,33 +210,97 @@ export const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
           </div>
         )}
 
-        <form onSubmit={handleLogin} className="space-y-6">
-          <LoginForm
-            formData={formData}
-            errors={errors}
-            handleInputChange={handleInputChange}
+        {showOTP ? (
+          <OTPVerification
+            email={formData.email}
+            onVerify={handleVerifyOTP}
+            onResend={handleResendOTP}
             isSubmitting={isSubmitting}
-            showPassword={showPassword}
-            setShowPassword={setShowPassword}
-            rememberMe={rememberMe}
-            setRememberMe={setRememberMe}
           />
+        ) : mode === "login" ? (
+          <form onSubmit={handleLogin} className="space-y-6">
+            <LoginForm
+              formData={formData}
+              errors={errors}
+              handleInputChange={handleInputChange}
+              isSubmitting={isSubmitting}
+              showPassword={showPassword}
+              setShowPassword={setShowPassword}
+              rememberMe={rememberMe}
+              setRememberMe={setRememberMe}
+            />
 
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "Logging in..." : "Login"}
-          </Button>
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? "Logging in..." : "Login"}
+            </Button>
 
-          <div className="text-center text-sm text-gray-600">
-            Don't have an account?{" "}
-            <button
-              type="button"
-              className="font-medium text-emerald-600 hover:underline"
-              onClick={toggleMode}
-            >
-              Sign up
-            </button>
-          </div>
-        </form>
+            <div className="text-center text-sm text-gray-600">
+              Don't have an account?{" "}
+              <button
+                type="button"
+                className="font-medium text-emerald-600 hover:underline"
+                onClick={toggleMode}
+              >
+                Sign up
+              </button>
+            </div>
+          </form>
+        ) : (
+          <form onSubmit={handleSignup} className="space-y-6">
+            <SignupForm
+              formData={formData}
+              errors={errors}
+              handleInputChange={handleInputChange}
+              isSubmitting={isSubmitting}
+              showPassword={showPassword}
+              setShowPassword={setShowPassword}
+              signupStep={signupStep}
+            />
+
+            {signupStep === 1 ? (
+              <>
+                <Button
+                  type="button"
+                  className="w-full"
+                  onClick={handleNextStep}
+                  disabled={isSubmitting}
+                >
+                  Continue <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+
+                <div className="text-center text-sm text-gray-600">
+                  Already have an account?{" "}
+                  <button
+                    type="button"
+                    className="font-medium text-emerald-600 hover:underline"
+                    onClick={toggleMode}
+                  >
+                    Login
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="flex gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handlePrevStep}
+                  disabled={isSubmitting}
+                  className="flex-1"
+                >
+                  <ArrowLeft className="mr-2 h-4 w-4" /> Back
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="flex-1"
+                >
+                  {isSubmitting ? "Sending OTP..." : "Sign Up"}
+                </Button>
+              </div>
+            )}
+          </form>
+        )}
       </div>
     </div>
   );

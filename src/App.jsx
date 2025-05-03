@@ -7,7 +7,7 @@ import HomePage from "./Pages/HomePage";
 import Header from "./Components/Header";
 import ServicesProviderPage from "./Components/Services/ServicesProviderPage";
 import { Routes, Route, useLocation } from "react-router-dom";
-import { AuthModal } from "./Components/Authentication/AuthModal";
+import { PrivateRoute } from "./Components/Authentication/PrivateRoute";
 
 const App = () => {
   function ScrollToTop() {
@@ -33,14 +33,41 @@ const App = () => {
   return (
     <>
       <Header></Header>
-      <AuthModal isOpen={true}></AuthModal>
       <ScrollToTop></ScrollToTop>
       <Routes>
-        <Route path="/" element={<HomePage></HomePage>}></Route>
-        <Route path="services/:category?" element={<ServicesProviderPage />} />
-        <Route path="bookings/" element={<BookingsPage />} />
-        <Route path="user/" element={<UserProfilePage />} />
-        <Route path="profile/" element={<ProviderProfilePage />} />
+        <Route path="/" element={<HomePage />}></Route>
+        <Route
+          path="services/:category?"
+          element={
+            <PrivateRoute>
+              <ServicesProviderPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="bookings/"
+          element={
+            <PrivateRoute>
+              <BookingsPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="user/"
+          element={
+            <PrivateRoute>
+              <UserProfilePage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="profile/"
+          element={
+            <PrivateRoute>
+              <ProviderProfilePage />
+            </PrivateRoute>
+          }
+        />
       </Routes>
       <Footer></Footer>
     </>

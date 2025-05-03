@@ -6,8 +6,8 @@ function HeroSection() {
       <div className="w-full lg:w-1/2 md:w-1/2 flex flex-col justify-center pl-20 z-10">
         <h1 className="text-6xl font-bold text-emerald-600 mb-4">Karigar</h1>
         <p className="text-xl text-gray-600 max-w-md">
-          Connecting you with trusted professionals for all your home service
-          needs
+          Connecting you with trusted professionals for all your home
+          <br /> service needs
         </p>
         <div className="flex gap-4 mt-6">
           <button className="bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700 transition">
