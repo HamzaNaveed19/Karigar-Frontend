@@ -4,9 +4,9 @@ const ProviderInfo = ({ provider }) => {
   return (
     <div className="mb-4 flex items-center gap-3">
       <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-gray-100">
-        {provider.image ? (
+        {provider.personalImage ? (
           <img
-            src={provider.image}
+            src={"/placeholder2.png"}
             alt={provider.name}
             className="h-full w-full object-cover"
           />

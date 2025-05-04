@@ -1,15 +1,14 @@
-"use client";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Filter, Search } from "lucide-react";
 import Button from "../UI/Button";
 import { Input } from "../UI/Input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../UI/Tabs";
 import NoBooking from "../Components/Booking/NoBooking";
 import Booking from "../Components/Booking/Bookings";
+import axios from "axios";
 
 export default function BookingsPage() {
-  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [Bookings, setBookings] = useState([]);
 
   // Mock bookings data
   const upcomingBookings = [
@@ -129,6 +128,19 @@ export default function BookingsPage() {
     },
   ];
 
+  useEffect(() => {
+    console.log("here");
+    axios
+      .get("http://localhost:5050/booking/68136e1e342756dad21e9948/customer")
+      .then((res) => {
+        console.log(res.data);
+        setBookings(res.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, []);
+
   return (
     <div className="container mx-auto px-4 py-4">
       <div className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between">
@@ -160,7 +172,7 @@ export default function BookingsPage() {
           {upcomingBookings.length === 0 ? (
             <NoBooking type={"upcoming"}></NoBooking>
           ) : (
-            <Booking Bookings={upcomingBookings}></Booking>
+            <Booking Bookings={Bookings}></Booking>
           )}
         </TabsContent>
 

@@ -150,6 +150,7 @@ export const AuthModal = ({ isOpen, onClose, mode, onModeChange }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
+    console.log(formData);
     const { errors, isValid } = validateLoginForm(formData);
     setErrors(errors);
     if (!isValid) return;

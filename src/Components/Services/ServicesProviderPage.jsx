@@ -1,70 +1,13 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Search, Filter, MapPin } from "lucide-react";
+import { Search, Filter, MapPin, TriangleAlert } from "lucide-react";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchServiceProviders } from "../../Redux/Slices/serviceProvidersSlice";
 import Button from "../../UI/Button";
 import { Input } from "../../UI/Input";
 import ServiceProviderCard from "../Provider/ServiceProviderCard";
 import CategoryFilter from "./CategoryFilter";
 import NoServiceProviderFound from "./NoServiceProviderFound";
-
-const allProviders = [
-  {
-    id: "1",
-    name: "Fakhar Rashid",
-    profession: "Electrician",
-    rating: 4.9,
-    reviews: 124,
-    image: "/placeholder2.png",
-    location: "Lahore",
-    verified: true,
-    experience: 8,
-    completedJobs: 215,
-    services: [{ duration: 90, price: 3500 }],
-    skills: ["Wiring", "Installation", "Repairs", "Maintenance"],
-  },
-  {
-    id: "2",
-    name: "Abdullah Malik",
-    profession: "Interior Designer",
-    rating: 4.8,
-    reviews: 98,
-    image: "/placeholder2.png",
-    location: "Karachi",
-    verified: true,
-    experience: 6,
-    completedJobs: 178,
-    services: [{ duration: 120, price: 2500 }],
-    skills: ["Space Planning", "Color Scheme", "Furniture", "Lighting"],
-  },
-  {
-    id: "3",
-    name: "Ali Ahmad",
-    profession: "Plumber",
-    rating: 4.7,
-    reviews: 156,
-    image: "/placeholder2.png",
-    location: "Islamabad",
-    verified: true,
-    experience: 10,
-    completedJobs: 342,
-    services: [{ duration: 60, price: 2000 }],
-    skills: ["Leak Repair", "Installation", "Drain Cleaning"],
-  },
-  {
-    id: "4",
-    name: "Abdul Ahad",
-    profession: "Interior Designer",
-    rating: 4.8,
-    reviews: 98,
-    image: "/placeholder2.png",
-    location: "Karachi",
-    verified: true,
-    experience: 6,
-    completedJobs: 178,
-    services: [{ duration: 120, price: 2500 }],
-    skills: ["Space Planning", "Color Scheme", "Furniture", "Lighting"],
-  },
-];
 
 const LoadingSpinner = () => (
   <div className="flex justify-center items-center py-12">
@@ -72,46 +15,91 @@ const LoadingSpinner = () => (
   </div>
 );
 
+const ErrorMessage = () => (
+  <div className="min-h-[80vh] flex flex-col items-center justify-center gap-4 p-4 text-center">
+    <div className="bg-red-100 p-4 rounded-full">
+      <TriangleAlert className="h-10 w-10 text-red-500" />
+    </div>
+    <h3 className="text-xl font-bold text-gray-800">
+      Failed to load providers
+    </h3>
+    <p className="text-gray-600 max-w-md">
+      We encountered an issue while loading provider data. Please try again
+      later.
+    </p>
+    <button
+      onClick={() => window.location.reload()}
+      className="mt-4 px-6 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition-colors"
+    >
+      Retry
+    </button>
+  </div>
+);
+
 export default function ServicesProviderPage() {
+  const dispatch = useDispatch();
+  const { data: allProviders, status } = useSelector(
+    (state) => state.providers
+  );
+
   const { category = "all" } = useParams();
-  const [filteredProviders, setFilteredProviders] = useState(allProviders);
+  const [filteredProviders, setFilteredProviders] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setIsLoading(true);
-    const formattedCategory = category
-      .split("-")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-
-    let filtered = allProviders;
-
-    if (formattedCategory !== "All") {
-      filtered = filtered.filter(
-        (provider) =>
-          provider.profession.toLowerCase() === formattedCategory.toLowerCase()
-      );
+    console.log("Services page rendered!");
+    if (status === "idle") {
+      dispatch(fetchServiceProviders());
     }
+  }, [status, dispatch]);
 
-    {
-      /*For now searching is only done on the basis of name or location we can further add searching for experience, price etc*/
-    }
-    if (searchQuery) {
-      filtered = filtered.filter(
-        (provider) =>
-          provider.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          provider.location.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
+  useEffect(() => {
+    console.log("Services page 1 rendered!");
+    if (status === "succeeded") {
+      const formattedCategory = category
+        .split("-")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
 
-    setFilteredProviders(filtered);
-    setIsLoading(false);
-  }, [category, searchQuery]);
+      let filtered = allProviders;
+
+      if (formattedCategory !== "All") {
+        filtered = filtered.filter(
+          (provider) =>
+            provider.profession.toLowerCase() ===
+            formattedCategory.toLowerCase()
+        );
+      }
+
+      if (searchQuery) {
+        filtered = filtered.filter(
+          (provider) =>
+            provider.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            provider.location.address
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase())
+        );
+      }
+
+      setFilteredProviders(filtered);
+    }
+  }, [category, searchQuery, allProviders, status]);
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
+
+  if (status === "loading") {
+    return (
+      <div className="h-[80vh] flex justify-center">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  if (status === "failed") {
+    return <ErrorMessage />;
+  }
 
   return (
     <div className="container mx-auto px-4 py-2 mb-4">
@@ -154,9 +142,7 @@ export default function ServicesProviderPage() {
         </Button>
       </div>
 
-      {isLoading ? (
-        <LoadingSpinner></LoadingSpinner>
-      ) : filteredProviders.length > 0 ? (
+      {filteredProviders.length > 0 ? (
         <>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 grid-cols-2">
             {filteredProviders.map((provider, index) => (
@@ -164,9 +150,9 @@ export default function ServicesProviderPage() {
             ))}
           </div>
 
-          <div className="mt-8 flex justify-center">
+          {/* <div className="mt-8 flex justify-center">
             <Button variant="outline">Load More</Button>
-          </div>
+          </div> */}
         </>
       ) : (
         <NoServiceProviderFound category={category}></NoServiceProviderFound>

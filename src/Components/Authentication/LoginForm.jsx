@@ -14,10 +14,13 @@ export const LoginForm = ({
   setRememberMe,
 }) => (
   <div className="flex h-[400px] w-full overflow-hidden rounded-lg ">
-    <div className="hidden w-1/2 md:block bg-gradient-to-b from-white to-emerald-50">
-      <div className="flex h-full items-center justify-end">
+    <div className="hidden w-1/2  md:block  ">
+      <h3 className="text-3xl font-bold text-emerald-600 ml-8 ">
+        Welcome <br /> back to Karigar!
+      </h3>
+      <div className="flex h-full items-center justify-end ">
         <img
-          src="/landing1.png"
+          src="/login.jpeg"
           alt="Login"
           className="h-full w-full object-contain rounded-lg"
         />

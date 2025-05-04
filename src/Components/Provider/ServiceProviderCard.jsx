@@ -10,7 +10,8 @@ export default function ServiceProviderCard({
   profession,
   rating,
   reviews,
-  image,
+  totalReviews,
+  personalImage,
   location,
   verified,
   experience = 5,
@@ -27,7 +28,7 @@ export default function ServiceProviderCard({
         <CardContent className=" flex flex-col h-full">
           <div className="relative flex-shrink-0">
             <img
-              src={image}
+              src={personalImage !== " " ? personalImage : "/placeholder2.png"}
               alt={name}
               className={`w-full object-cover rounded-lg ${
                 onPage ? "h-48" : "h-48 md:h-full"
@@ -84,7 +85,7 @@ export default function ServiceProviderCard({
                       onPage ? "text-[10px]" : "text-xs"
                     } text-gray-500`}
                   >
-                    ({reviews})
+                    ({totalReviews})
                   </span>
                 </div>
                 <p
@@ -107,7 +108,7 @@ export default function ServiceProviderCard({
                   onPage ? "h-3 w-3" : "h-4 w-4"
                 } text-gray-400`}
               />
-              <span>{location}</span>
+              <span>{location.address}</span>
             </div>
 
             <div

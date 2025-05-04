@@ -30,19 +30,21 @@ const BookingCard = ({ booking }) => {
         {/* Header */}
         <div className="border-b p-1">
           <div className="mb-2 flex items-center justify-between">
-            <h3 className="font-semibold text-gray-900">{booking.service}</h3>
+            <h3 className="font-semibold text-gray-900">
+              {booking.bookingTitle}
+            </h3>
             <BookingStatusBadge status={booking.status} />
           </div>
         </div>
 
         {/* Body */}
         <div className="p-4">
-          <ProviderInfo provider={booking.provider} />
+          <ProviderInfo provider={booking.serviceProvider} />
 
           <div className="space-y-1">
             <BookingDetailItem
               icon={<Calendar className="h-4 w-4" />}
-              value={new Date(booking.date).toLocaleDateString("en-US", {
+              value={new Date(booking.bookingDate).toLocaleDateString("en-US", {
                 weekday: "short",
                 month: "short",
                 day: "numeric",
@@ -51,7 +53,7 @@ const BookingCard = ({ booking }) => {
 
             <BookingDetailItem
               icon={<Clock className="h-4 w-4" />}
-              value={booking.time}
+              value={booking.bookingTime}
             />
 
             {booking.address && (
