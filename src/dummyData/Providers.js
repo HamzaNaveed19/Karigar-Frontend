@@ -1,4 +1,4 @@
-const allProviders = [
+export const allProviders = [
   {
     id: "1",
     name: "Fakhar Rashid",

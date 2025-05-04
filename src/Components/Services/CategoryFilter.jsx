@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as LucideIcons from "lucide-react";
 
@@ -21,13 +21,17 @@ const CategoryFilter = ({ initialCategory = "All" }) => {
     { name: "Mover", icon: "Truck" },
   ];
 
+  useEffect(() => {
+    console.log("RENDERED: Category Filter!");
+  }, []);
+
   const handleClick = (category) => {
     setActiveCategory(category);
     navigate(`/services/${category.toLowerCase().replace(" ", "-")}`);
   };
 
   return (
-    <div className="sticky top-16 z-10 bg-white py-2">
+    <div className="sticky top-16 z-10 pt-4 bg-white px-12">
       <div className="flex space-x-2 overflow-x-auto pb-2 hide-scrollbar ">
         {categories.map(({ name, icon }) => {
           const IconComponent = LucideIcons[icon];

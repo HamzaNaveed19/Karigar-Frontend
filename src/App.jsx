@@ -8,6 +8,7 @@ import Header from "./Components/Header";
 import ServicesProviderPage from "./Components/Services/ServicesProviderPage";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { PrivateRoute } from "./Components/Authentication/PrivateRoute";
+import CategoryFilter from "./Components/Services/CategoryFilter";
 
 const App = () => {
   function ScrollToTop() {
@@ -40,6 +41,7 @@ const App = () => {
           path="services/:category?"
           element={
             <PrivateRoute>
+              <CategoryFilter></CategoryFilter>
               <ServicesProviderPage />
             </PrivateRoute>
           }
@@ -61,7 +63,7 @@ const App = () => {
           }
         />
         <Route
-          path="profile/"
+          path="profile/:id"
           element={
             <PrivateRoute>
               <ProviderProfilePage />

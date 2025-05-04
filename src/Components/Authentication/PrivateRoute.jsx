@@ -8,7 +8,7 @@ export const PrivateRoute = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("Authenticating...");
+    //console.log("Authenticating...");
     if (!isAuthenticated) {
       setShowAuthModal(true);
     }

@@ -47,15 +47,16 @@ export default function ServicesProviderPage() {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    console.log("Services page rendered!");
+    console.log("RENDERED: Service Provider Page!");
     if (status === "idle") {
+      console.log("API HIT: Service Providers!");
       dispatch(fetchServiceProviders());
     }
   }, [status, dispatch]);
 
   useEffect(() => {
-    console.log("Services page 1 rendered!");
     if (status === "succeeded") {
+      console.log("FILTERED: Service Providers!");
       const formattedCategory = category
         .split("-")
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -102,21 +103,8 @@ export default function ServicesProviderPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-2 mb-4">
-      <CategoryFilter
-        initialCategory={
-          category === "all"
-            ? "All"
-            : category
-                .split("-")
-                .map(
-                  (word) => word.charAt(0).toUpperCase() + word.slice(1) + " "
-                )
-                .join(" ")
-        }
-      />
-
-      <h1 className="mb-4 text-xl font-medium text-gray-500">
+    <div className="container mx-auto mt-1 px-4 mb-4">
+      <h1 className="mb-3 text-xl font-medium text-gray-500">
         {category === "all"
           ? "All Services"
           : category
@@ -149,10 +137,6 @@ export default function ServicesProviderPage() {
               <ServiceProviderCard key={index} {...provider} onPage={true} />
             ))}
           </div>
-
-          {/* <div className="mt-8 flex justify-center">
-            <Button variant="outline">Load More</Button>
-          </div> */}
         </>
       ) : (
         <NoServiceProviderFound category={category}></NoServiceProviderFound>

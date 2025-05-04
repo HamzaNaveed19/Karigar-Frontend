@@ -2,7 +2,6 @@ import React from "react";
 import { Star, ChevronRight, MessageSquare, Calendar } from "lucide-react";
 import Card from "../../UI/Card";
 import CardContent from "../../UI/CardContent";
-import Button from "../../UI/Button";
 
 function Reviews({ provider }) {
   const calculateRatingDistribution = () => {

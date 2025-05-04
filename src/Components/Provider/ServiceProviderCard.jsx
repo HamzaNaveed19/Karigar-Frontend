@@ -5,7 +5,7 @@ import CardContent from "../../UI/CardContent";
 import { Link } from "react-router-dom";
 
 export default function ServiceProviderCard({
-  id,
+  _id,
   name,
   profession,
   rating,
@@ -21,7 +21,7 @@ export default function ServiceProviderCard({
   onPage = false,
 }) {
   return (
-    <Link to={"/profile/"}>
+    <Link to={`/profile/${_id}`}>
       <Card
         className={`overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1 cursor-pointer group h-full`}
       >
