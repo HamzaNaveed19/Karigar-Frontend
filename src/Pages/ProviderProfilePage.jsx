@@ -1,31 +1,63 @@
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  fetchProviderById,
+  clearCurrentProvider,
+} from "../Redux/Slices/serviceProvidersSlice";
 import { Star, MapPin, CheckCircle } from "lucide-react";
 import Button from "../UI/Button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../UI/Tabs";
 import Card from "../UI/Card";
 import CardContent from "../UI/CardContent";
-import About from "../Components/Provider/About";
-import Services from "../Components/Provider/Services";
-import Reviews from "../Components/Provider/Reviews";
-import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { provider } from "../dummyData/Provider";
+import About from "../components/Provider/About";
+import Services from "../components/Provider/Services";
+import Reviews from "../components/Provider/Reviews";
+import ProviderProfileSkeleton from "../Components/Skeletons/ProviderProfileSkeleton";
 
-export default function ProviderProfile({ params }) {
+export default function ProviderProfile() {
   const { id } = useParams();
-  // const provider = useSelector((state) =>
-  //   state.providers.data.find((provider) => provider._id === id)
-  // );
+  const dispatch = useDispatch();
+  const { currentProvider, data, status, error } = useSelector(
+    (state) => state.providers
+  );
 
-  // if (!provider) {
-  //   console.log(provider);
-  //   console.log("provider not found");
-  //   return null;
-  // }
+  useEffect(() => {
+    const existingProvider = data.find((provider) => provider._id === id);
+
+    if (existingProvider) {
+      dispatch({
+        type: "providers/fetchProviderById/fulfilled",
+        payload: existingProvider,
+      });
+    } else {
+      dispatch(fetchProviderById(id));
+    }
+
+    return () => {
+      dispatch(clearCurrentProvider());
+    };
+  }, [id, dispatch, data]);
+
+  if (status !== "loading") {
+    return <ProviderProfileSkeleton></ProviderProfileSkeleton>;
+  }
+
+  if (status === "failed") {
+    return (
+      <div className="p-4 text-red-500">
+        Error: {error || "Failed to load provider"}
+      </div>
+    );
+  }
+
+  if (!currentProvider) {
+    return <div className="p-4">Provider not found</div>;
+  }
 
   return (
-    <div className=" mx-auto px-4 py-6">
+    <div className="mx-auto px-4 py-6">
       <div className="grid gap-8 md:grid-cols-3">
-        {/* Provider Info */}
         <div className="md:col-span-1">
           <Card className="sticky top-20 overflow-hidden border border-gray-100 shadow-sm">
             <CardContent className="p-0">
@@ -35,22 +67,22 @@ export default function ProviderProfile({ params }) {
                 <div className="relative -mt-12 mb-4 flex justify-center">
                   <div className="h-52 w-52 rounded-full border-4 border-white bg-white shadow-lg">
                     <img
-                      src={provider.personalImage}
-                      alt={provider.name}
-                      className=" h-full w-full rounded-full object-cover"
+                      src={currentProvider.personalImage}
+                      alt={currentProvider.name}
+                      className="h-full w-full rounded-full object-cover"
                     />
                   </div>
                 </div>
 
                 <div className="text-center">
                   <h1 className="text-xl font-bold text-gray-800">
-                    {provider.name}
+                    {currentProvider.name}
                   </h1>
                   <div className="flex items-center justify-center gap-1">
                     <p className="text-sm text-emerald-600">
-                      {provider.profession}
+                      {currentProvider.profession}
                     </p>
-                    {provider.verified && (
+                    {currentProvider.verified && (
                       <CheckCircle className="h-4 w-4 text-emerald-500" />
                     )}
                   </div>
@@ -60,15 +92,17 @@ export default function ProviderProfile({ params }) {
                   <div className="flex items-center">
                     <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
                     <span className="ml-1 text-sm font-medium text-gray-800">
-                      {provider.rating}
+                      {currentProvider.rating}
                     </span>
                     <span className="ml-1 text-xs text-gray-500">
-                      ({provider.totalReviews})
+                      ({currentProvider.totalReviews})
                     </span>
                   </div>
                   <div className="flex items-center text-sm text-gray-600">
                     <MapPin className="h-4 w-4 text-gray-400" />
-                    <span className="ml-1">{provider.location.address}</span>
+                    <span className="ml-1">
+                      {currentProvider.location.address}
+                    </span>
                   </div>
                 </div>
 
@@ -78,7 +112,7 @@ export default function ProviderProfile({ params }) {
                       Experience
                     </p>
                     <p className="text-sm font-semibold text-gray-800">
-                      {provider.experience}+ years
+                      {currentProvider.experience}+ years
                     </p>
                   </div>
                   <div className="rounded-lg bg-gray-50 p-3 text-center">
@@ -86,7 +120,7 @@ export default function ProviderProfile({ params }) {
                       Jobs Completed
                     </p>
                     <p className="text-sm font-semibold text-gray-800">
-                      {provider.completedJobs}
+                      {currentProvider.completedJobs}
                     </p>
                   </div>
                 </div>
@@ -99,7 +133,7 @@ export default function ProviderProfile({ params }) {
 
                 <div className="mt-4 text-center">
                   <p className="text-xs text-gray-500">
-                    Member since {provider.memberSince}
+                    Member since {currentProvider.memberSince}
                   </p>
                 </div>
               </div>
@@ -107,7 +141,6 @@ export default function ProviderProfile({ params }) {
           </Card>
         </div>
 
-        {/* Provider Details */}
         <div className="md:col-span-2">
           <Tabs defaultValue="about">
             <TabsList className="grid w-full grid-cols-3">
@@ -117,15 +150,15 @@ export default function ProviderProfile({ params }) {
             </TabsList>
 
             <TabsContent value="about" className="mt-4">
-              <About provider={provider}></About>
+              <About provider={currentProvider} />
             </TabsContent>
 
             <TabsContent value="services" className="mt-4">
-              <Services provider={provider}></Services>
+              <Services provider={currentProvider} />
             </TabsContent>
 
             <TabsContent value="reviews" className="mt-4">
-              <Reviews provider={provider}></Reviews>
+              <Reviews provider={currentProvider} />
             </TabsContent>
           </Tabs>
         </div>
