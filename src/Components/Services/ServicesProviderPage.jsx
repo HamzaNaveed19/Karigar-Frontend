@@ -6,8 +6,8 @@ import { fetchServiceProviders } from "../../Redux/Slices/serviceProvidersSlice"
 import Button from "../../UI/Button";
 import { Input } from "../../UI/Input";
 import ServiceProviderCard from "../Provider/ServiceProviderCard";
-import CategoryFilter from "./CategoryFilter";
-import NoServiceProviderFound from "./NoServiceProviderFound";
+import ErrorMessage from "../../UI/ErrorMessage";
+import NotFoundMessage from "../../UI/NotFoundMessage";
 
 const LoadingSpinner = () => (
   <div className="flex justify-center items-center py-12">
@@ -15,44 +15,22 @@ const LoadingSpinner = () => (
   </div>
 );
 
-const ErrorMessage = () => (
-  <div className="min-h-[80vh] flex flex-col items-center justify-center gap-4 p-4 text-center">
-    <div className="bg-red-100 p-4 rounded-full">
-      <TriangleAlert className="h-10 w-10 text-red-500" />
-    </div>
-    <h3 className="text-xl font-bold text-gray-800">
-      Failed to load providers
-    </h3>
-    <p className="text-gray-600 max-w-md">
-      We encountered an issue while loading provider data. Please try again
-      later.
-    </p>
-    <button
-      onClick={() => window.location.reload()}
-      className="mt-4 px-6 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition-colors"
-    >
-      Retry
-    </button>
-  </div>
-);
-
 export default function ServicesProviderPage() {
   const dispatch = useDispatch();
-  const { data: allProviders, status } = useSelector(
-    (state) => state.providers
-  );
-
+  const { data, status } = useSelector((state) => state.providers);
+  const providers = Object.values(data);
   const { category = "all" } = useParams();
+
   const [filteredProviders, setFilteredProviders] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    console.log("RENDERED: Service Provider Page!");
-    if (status === "idle") {
+    console.log("\nRENDERED: Service Provider Page!");
+    if (status === "idle" || providers.length <= 1) {
       console.log("API HIT: Service Providers!");
       dispatch(fetchServiceProviders());
     }
-  }, [status, dispatch]);
+  }, [status, dispatch, data]);
 
   useEffect(() => {
     if (status === "succeeded") {
@@ -62,7 +40,8 @@ export default function ServicesProviderPage() {
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(" ");
 
-      let filtered = allProviders;
+      let filtered = providers;
+      console.log(formattedCategory);
 
       if (formattedCategory !== "All") {
         filtered = filtered.filter(
@@ -84,7 +63,7 @@ export default function ServicesProviderPage() {
 
       setFilteredProviders(filtered);
     }
-  }, [category, searchQuery, allProviders, status]);
+  }, [category, searchQuery, data, status]);
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
@@ -99,7 +78,12 @@ export default function ServicesProviderPage() {
   }
 
   if (status === "failed") {
-    return <ErrorMessage />;
+    return (
+      <ErrorMessage
+        title="Connection Failed"
+        message="Unable to connect to the server. Check your internet connection."
+      />
+    );
   }
 
   return (
@@ -139,7 +123,12 @@ export default function ServicesProviderPage() {
           </div>
         </>
       ) : (
-        <NoServiceProviderFound category={category}></NoServiceProviderFound>
+        <NotFoundMessage
+          title="No service providers found"
+          description={`We couldn't find any ${
+            category === "all" ? "" : category
+          } service providers matching your search. Try adjusting your filters or search query.`}
+        />
       )}
     </div>
   );

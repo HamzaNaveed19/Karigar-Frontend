@@ -4,7 +4,7 @@ import axios from "axios";
 export const fetchServiceProviders = createAsyncThunk(
   "providers/fetchProviders",
   async () => {
-    const response = await axios.get("http://localhost:5050/provider");
+    const response = await axios.get("http://localhost:5050/provider"); // Minimal data endpoint
     return response.data;
   }
 );
@@ -13,7 +13,7 @@ export const fetchProviderById = createAsyncThunk(
   "providers/fetchProviderById",
   async (providerId) => {
     const response = await axios.get(
-      `http://localhost:5050/provider/${providerId}`
+      `http://localhost:5050/provider/${providerId}` // Full data endpoint
     );
     return response.data;
   }
@@ -22,38 +22,42 @@ export const fetchProviderById = createAsyncThunk(
 const serviceProviderSlice = createSlice({
   name: "providers",
   initialState: {
-    data: [],
-    currentProvider: null,
+    data: {},
     status: "idle",
     error: "",
   },
-  reducers: {
-    clearCurrentProvider: (state) => {
-      state.currentProvider = null;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
-      //cases for fetchServiceProviders
+      // Cases for fetchServiceProviders (minimal data)
       .addCase(fetchServiceProviders.pending, (state) => {
         state.status = "loading";
       })
       .addCase(fetchServiceProviders.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.data = action.payload;
+        action.payload.forEach((provider) => {
+          if (!state.data[provider._id]) {
+            state.data[provider._id] = provider;
+          }
+        });
       })
       .addCase(fetchServiceProviders.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       })
 
-      //cases for single provider
+      // Cases for single provider (full data)
       .addCase(fetchProviderById.pending, (state) => {
         state.status = "loading";
       })
       .addCase(fetchProviderById.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.currentProvider = action.payload;
+        const providerId = action.payload._id;
+        // Merge with existing data if it exists
+        state.data[providerId] = {
+          ...(state.data[providerId] || {}),
+          ...action.payload,
+        };
       })
       .addCase(fetchProviderById.rejected, (state, action) => {
         state.status = "failed";
@@ -62,5 +66,4 @@ const serviceProviderSlice = createSlice({
   },
 });
 
-export const { clearCurrentProvider } = serviceProviderSlice.actions;
 export default serviceProviderSlice.reducer;

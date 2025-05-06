@@ -28,7 +28,7 @@ export default function ServiceProviderCard({
         <CardContent className=" flex flex-col h-full">
           <div className="relative flex-shrink-0">
             <img
-              src={personalImage !== " " ? personalImage : "/placeholder2.png"}
+              src={"/placeholder2.png"}
               alt={name}
               className={`w-full object-cover rounded-lg ${
                 onPage ? "h-48" : "h-48 md:h-full"

@@ -38,7 +38,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<HomePage />}></Route>
         <Route
-          path="services/:category?"
+          path="services/:category"
           element={
             <PrivateRoute>
               <CategoryFilter></CategoryFilter>

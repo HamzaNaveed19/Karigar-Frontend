@@ -1,10 +1,7 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  fetchProviderById,
-  clearCurrentProvider,
-} from "../Redux/Slices/serviceProvidersSlice";
+import { fetchProviderById } from "../Redux/Slices/serviceProvidersSlice";
 import { Star, MapPin, CheckCircle } from "lucide-react";
 import Button from "../UI/Button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../UI/Tabs";
@@ -14,46 +11,58 @@ import About from "../components/Provider/About";
 import Services from "../components/Provider/Services";
 import Reviews from "../components/Provider/Reviews";
 import ProviderProfileSkeleton from "../Components/Skeletons/ProviderProfileSkeleton";
+import NotFoundMessage from "../UI/NotFoundMessage";
+import ErrorMessage from "../UI/ErrorMessage";
 
 export default function ProviderProfile() {
   const { id } = useParams();
   const dispatch = useDispatch();
-  const { currentProvider, data, status, error } = useSelector(
-    (state) => state.providers
-  );
+
+  const { currentProvider, status, error } = useSelector((state) => {
+    return {
+      currentProvider: state.providers.data[id],
+      status: state.providers.status,
+      error: state.providers.error,
+    };
+  });
+
+  console.log("DATA:");
+  console.log(currentProvider);
 
   useEffect(() => {
-    const existingProvider = data.find((provider) => provider._id === id);
-
-    if (existingProvider) {
-      dispatch({
-        type: "providers/fetchProviderById/fulfilled",
-        payload: existingProvider,
-      });
-    } else {
+    console.log("RENDERED: Provider profile!");
+    // If we don't have full data for this provider, fetch it
+    if (!currentProvider) {
+      console.log("API HIT: Provider profile!");
       dispatch(fetchProviderById(id));
     }
+  }, [id, dispatch, currentProvider]);
 
-    return () => {
-      dispatch(clearCurrentProvider());
-    };
-  }, [id, dispatch, data]);
-
-  if (status !== "loading") {
+  if (!currentProvider || status === "loading") {
     return <ProviderProfileSkeleton></ProviderProfileSkeleton>;
   }
 
-  if (status === "failed") {
+  if (!currentProvider && status === "failed") {
     return (
-      <div className="p-4 text-red-500">
-        Error: {error || "Failed to load provider"}
-      </div>
+      <ErrorMessage
+        title="Connection Failed"
+        message="Unable to connect to the server. Check your internet connection."
+      />
     );
   }
 
-  if (!currentProvider) {
-    return <div className="p-4">Provider not found</div>;
+  if (!currentProvider && status === "succeeded") {
+    return (
+      <NotFoundMessage
+        title="No service provider found with this ID"
+        description={`We couldn't find any service provider matching your search. Try adjusting your search query.`}
+      />
+    );
   }
+
+  // if (!currentProvider) {
+  //   return null;
+  // }
 
   return (
     <div className="mx-auto px-4 py-6">
@@ -67,7 +76,7 @@ export default function ProviderProfile() {
                 <div className="relative -mt-12 mb-4 flex justify-center">
                   <div className="h-52 w-52 rounded-full border-4 border-white bg-white shadow-lg">
                     <img
-                      src={currentProvider.personalImage}
+                      src={"/placeholder2.png"}
                       alt={currentProvider.name}
                       className="h-full w-full rounded-full object-cover"
                     />
