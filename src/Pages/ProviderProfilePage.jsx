@@ -67,8 +67,8 @@ export default function ProviderProfile() {
   return (
     <div className="mx-auto px-4 py-6">
       <div className="grid gap-8 md:grid-cols-3">
-        <div className="md:col-span-1">
-          <Card className="sticky top-20 overflow-hidden border border-gray-100 shadow-sm">
+        <div className="md:col-span-1 ">
+          <Card className="sticky top-20 overflow-hidden border border-gray-100 shadow-sm ">
             <CardContent className="p-0">
               <div className="relative h-20 w-full md:h-20"></div>
 
@@ -115,9 +115,9 @@ export default function ProviderProfile() {
                   </div>
                 </div>
 
-                <div className="mt-6 grid grid-cols-2 gap-3">
+                <div className="mt-6 grid grid-cols-3 gap-3">
                   <div className="rounded-lg bg-gray-50 p-3 text-center">
-                    <p className="text-xs font-medium text-gray-500">
+                    <p className="text-xs font-medium text-gray-500 mb-1">
                       Experience
                     </p>
                     <p className="text-sm font-semibold text-gray-800">
@@ -125,11 +125,19 @@ export default function ProviderProfile() {
                     </p>
                   </div>
                   <div className="rounded-lg bg-gray-50 p-3 text-center">
-                    <p className="text-xs font-medium text-gray-500">
-                      Jobs Completed
+                    <p className="text-xs font-medium text-gray-500 mb-1">
+                      Jobs Done
                     </p>
                     <p className="text-sm font-semibold text-gray-800">
                       {currentProvider.completedJobs}
+                    </p>
+                  </div>
+                  <div className="rounded-lg bg-gray-50 p-3 text-center">
+                    <p className="text-xs font-medium text-gray-500 mb-1">
+                      Skills
+                    </p>
+                    <p className="text-sm font-semibold text-gray-800">
+                      {currentProvider.skills.length}
                     </p>
                   </div>
                 </div>

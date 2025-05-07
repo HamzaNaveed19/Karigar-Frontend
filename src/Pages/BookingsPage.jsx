@@ -1,145 +1,41 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Filter, Search } from "lucide-react";
 import Button from "../UI/Button";
 import { Input } from "../UI/Input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../UI/Tabs";
 import NoBooking from "../Components/Booking/NoBooking";
-import Booking from "../Components/Booking/Bookings";
-import axios from "axios";
+import Bookings from "../Components/Booking/Bookings";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchUpcomingBookings,
+  fetchPastBookings,
+  setActiveTab,
+} from "../Redux/Slices/bookingsSlice";
+import LoadingSpinner from "../UI/LoadingSpinner";
+import ErrorMessage from "../UI/ErrorMessage";
 
 export default function BookingsPage() {
-  const [Bookings, setBookings] = useState([]);
-
-  // Mock bookings data
-  const upcomingBookings = [
-    {
-      id: "B001",
-      service: "Electrical Wiring",
-      provider: {
-        id: "1",
-        name: "Ahmed Khan",
-        profession: "Electrician",
-        image: "/placeholder.png?height=100&width=100",
-        rating: 4.9,
-        verified: true,
-      },
-      status: "confirmed",
-      date: "2024-04-15",
-      time: "10:00 AM",
-      address: "123 Main Street, Gulberg, Lahore",
-      price: "Rs. 2,000",
-    },
-    {
-      id: "B002",
-      service: "Plumbing Repair",
-      provider: {
-        id: "3",
-        name: "Usman Ali",
-        profession: "Plumber",
-        image: "/placeholder.png?height=100&width=100",
-        rating: 4.7,
-        verified: true,
-      },
-      status: "pending",
-      date: "2024-04-20",
-      time: "2:00 PM",
-      address: "123 Main Street, Gulberg, Lahore",
-      price: "Rs. 1,500",
-    },
-  ];
-
-  const pastBookings = [
-    {
-      id: "B003",
-      service: "Interior Painting",
-      provider: {
-        id: "5",
-        name: "Imran Ahmed",
-        profession: "Painter",
-        image: "/placeholder.png?height=100&width=100",
-        rating: 4.5,
-        verified: true,
-      },
-      status: "completed",
-      date: "2024-03-10",
-      time: "9:00 AM",
-      address: "123 Main Street, Gulberg, Lahore",
-      price: "Rs. 5,000",
-      review: {
-        rating: 5,
-        comment: "Excellent work! Very professional and clean.",
-      },
-    },
-    {
-      id: "B003",
-      service: "Interior Painting",
-      provider: {
-        id: "5",
-        name: "Imran Ahmed",
-        profession: "Painter",
-        image: "/placeholder.png?height=100&width=100",
-        rating: 4.5,
-        verified: true,
-      },
-      status: "cancelled",
-      date: "2024-03-10",
-      time: "9:00 AM",
-      address: "123 Main Street, Gulberg, Lahore",
-      price: "Rs. 5,000",
-    },
-    {
-      id: "B004",
-      service: "Furniture Assembly",
-      provider: {
-        id: "4",
-        name: "Ayesha Malik",
-        profession: "Carpenter",
-        image: "/placeholder.png?height=100&width=100",
-        rating: 4.6,
-        verified: false,
-      },
-      status: "completed",
-      date: "2024-02-25",
-      time: "11:00 AM",
-      address: "123 Main Street, Gulberg, Lahore",
-      price: "Rs. 3,000",
-      cancellationReason: "Provider unavailable",
-    },
-    {
-      id: "B005",
-      service: "AC Repair",
-      provider: {
-        id: "2",
-        name: "Fatima Zaidi",
-        profession: "HVAC Technician",
-        image: "/placeholder.png?height=100&width=100",
-        rating: 4.8,
-        verified: true,
-      },
-      status: "completed",
-      date: "2024-01-15",
-      time: "3:00 PM",
-      address: "123 Main Street, Gulberg, Lahore",
-      price: "Rs. 2,500",
-      review: {
-        rating: 4,
-        comment: "Good service, fixed the issue quickly.",
-      },
-    },
-  ];
+  const dispatch = useDispatch();
+  const { upcoming, past, status, error, activeTab } = useSelector(
+    (state) => state.bookings
+  );
 
   useEffect(() => {
-    console.log("here");
-    axios
-      .get("http://localhost:5050/booking/68136e1e342756dad21e9948/customer")
-      .then((res) => {
-        console.log(res.data);
-        setBookings(res.data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  }, []);
+    if (activeTab === "upcoming" && status.upcoming === "idle") {
+      dispatch(fetchUpcomingBookings());
+      console.log(upcoming);
+    } else if (activeTab === "past" && status.past === "idle") {
+      dispatch(fetchPastBookings());
+    }
+  }, [activeTab, status, dispatch]);
+
+  const handleTabChange = (value) => {
+    dispatch(setActiveTab(value));
+  };
+
+  if (error) {
+    return <ErrorMessage />;
+  }
 
   return (
     <div className="container mx-auto px-4 py-4">
@@ -162,25 +58,35 @@ export default function BookingsPage() {
         </Button>
       </div>
 
-      <Tabs defaultValue="upcoming" className="w-full">
+      <Tabs
+        value={activeTab}
+        onValueChange={handleTabChange}
+        className="w-full"
+      >
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="upcoming">Upcoming Bookings</TabsTrigger>
           <TabsTrigger value="past">Past Bookings</TabsTrigger>
         </TabsList>
 
+        {((activeTab === "upcoming" && status.upcoming === "loading") ||
+          (activeTab === "past" && status.past === "loading")) && (
+          <div className="flex justify-center h-[46.5vh]">
+            <LoadingSpinner />
+          </div>
+        )}
         <TabsContent value="upcoming">
-          {upcomingBookings.length === 0 ? (
-            <NoBooking type={"upcoming"}></NoBooking>
+          {status.upcoming === "succeeded" && upcoming.length === 0 ? (
+            <NoBooking type={"upcoming"} />
           ) : (
-            <Booking Bookings={Bookings}></Booking>
+            <Bookings Bookings={upcoming} />
           )}
         </TabsContent>
 
         <TabsContent value="past">
-          {pastBookings.length === 0 ? (
-            <NoBooking type={"past"}></NoBooking>
+          {status.past === "succeeded" && past.length === 0 ? (
+            <NoBooking type={"past"} />
           ) : (
-            <Booking Bookings={pastBookings}></Booking>
+            <Bookings Bookings={past} />
           )}
         </TabsContent>
       </Tabs>

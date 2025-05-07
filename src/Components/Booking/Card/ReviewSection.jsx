@@ -88,7 +88,7 @@ const ReviewSection = ({ booking, onReviewSubmit }) => {
   return (
     <Button
       variant="outline"
-      className="border-emerald-300 text-emerald-600 hover:bg-emerald-50"
+      className="border-emerald-300 text-emerald-600 hover:bg-emerald-50 w-full"
       onClick={() => setShowReviewForm(true)}
     >
       Give Review

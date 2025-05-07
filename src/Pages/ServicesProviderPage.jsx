@@ -2,18 +2,13 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Search, Filter, MapPin, TriangleAlert } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchServiceProviders } from "../../Redux/Slices/serviceProvidersSlice";
-import Button from "../../UI/Button";
-import { Input } from "../../UI/Input";
-import ServiceProviderCard from "../Provider/ServiceProviderCard";
-import ErrorMessage from "../../UI/ErrorMessage";
-import NotFoundMessage from "../../UI/NotFoundMessage";
-
-const LoadingSpinner = () => (
-  <div className="flex justify-center items-center py-12">
-    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
-  </div>
-);
+import { fetchServiceProviders } from "../Redux/Slices/serviceProvidersSlice";
+import Button from "../UI/Button";
+import { Input } from "../UI/Input";
+import ServiceProviderCard from "../Components/Provider/ServiceProviderCard";
+import ErrorMessage from "../UI/ErrorMessage";
+import NotFoundMessage from "../UI/NotFoundMessage";
+import LoadingSpinner from "../UI/LoadingSpinner";
 
 export default function ServicesProviderPage() {
   const dispatch = useDispatch();

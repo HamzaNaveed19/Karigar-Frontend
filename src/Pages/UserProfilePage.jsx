@@ -11,7 +11,6 @@ export default function ProfilePage() {
     "/placeholder.png?height=200&width=200"
   );
 
-  // Mock user data
   const user = {
     name: "Asad Ahmed",
     email: "asad.ahmed@example.com",
@@ -23,7 +22,6 @@ export default function ProfilePage() {
   return (
     <div className="mx-auto px-4 py-6">
       <div className="grid gap-8 md:grid-cols-4">
-        {/* Profile Sidebar */}
         <Card className="md:sticky top-20 h-[54vh] md:col-span-1 border border-gray-200 shadow-sm pt-12">
           <CardContent className=" p-6">
             <div className="flex flex-col items-center">

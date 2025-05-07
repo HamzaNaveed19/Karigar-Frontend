@@ -5,7 +5,7 @@ import Footer from "./Components/Footer";
 import BookingsPage from "./Pages/BookingsPage";
 import HomePage from "./Pages/HomePage";
 import Header from "./Components/Header";
-import ServicesProviderPage from "./Components/Services/ServicesProviderPage";
+import ServicesProviderPage from "./Pages/ServicesProviderPage";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { PrivateRoute } from "./Components/Authentication/PrivateRoute";
 import CategoryFilter from "./Components/Services/CategoryFilter";
