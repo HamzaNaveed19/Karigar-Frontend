@@ -1,6 +1,18 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+export const addBooking = createAsyncThunk(
+  "bookings/addBooking",
+  async (bookingData) => {
+    const response = await axios.post(
+      "http://localhost:5050/booking",
+      bookingData
+    );
+
+    return response.data;
+  }
+);
+
 export const fetchUpcomingBookings = createAsyncThunk(
   "bookings/fetchUpcoming",
   async () => {
@@ -33,6 +45,7 @@ const initialState = {
   status: {
     upcoming: "idle",
     past: "idle",
+    newBooking: "idle",
   },
   error: null,
   activeTab: "upcoming",
@@ -70,6 +83,23 @@ const bookingsSlice = createSlice({
       })
       .addCase(fetchPastBookings.rejected, (state, action) => {
         state.status.past = "failed";
+        state.error = action.payload;
+      })
+
+      //Add a Booking
+      .addCase(addBooking.pending, (state) => {
+        state.status.newBooking = "loading";
+      })
+      .addCase(addBooking.fulfilled, (state, action) => {
+        state.status.newBooking = "succeeded";
+        if (state.status.upcoming === "succeeded") {
+          // console.log("MY STATUS IN IF:");
+          // console.log(state.status.upcoming);
+          state.upcoming.unshift(action.payload.booking);
+        }
+      })
+      .addCase(addBooking.rejected, (state) => {
+        state.status.newBooking = "failed";
         state.error = action.payload;
       });
   },

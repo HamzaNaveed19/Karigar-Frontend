@@ -3,8 +3,14 @@ import { X, Calendar as CalendarIcon, Clock } from "lucide-react";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-export default function BookingModal({ isOpen, onClose, onBook }) {
-  const [selectedDate, setSelectedDate] = useState(null);
+export default function BookingModal({
+  isOpen,
+  onClose,
+  onBook,
+  bookingTitle,
+  bookingPrice,
+}) {
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedTime, setSelectedTime] = useState(null);
 
   const timeSlots = Array.from({ length: 9 }, (_, i) => {
@@ -34,7 +40,7 @@ export default function BookingModal({ isOpen, onClose, onBook }) {
           <div>
             <h3 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
               <CalendarIcon className="text-emerald-600" size={20} />
-              Book Appointment
+              Book {bookingTitle} for RS {bookingPrice}
             </h3>
             <p className="text-sm text-gray-500 mt-1">
               Select your preferred date and time slot

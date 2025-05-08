@@ -3,18 +3,48 @@ import Card from "../../UI/Card";
 import CardContent from "../../UI/CardContent";
 import { Clock, Hammer } from "lucide-react";
 import BookingModal from "../Booking/BookingModal";
+import { useDispatch } from "react-redux";
+import { addBooking } from "../../Redux/Slices/bookingsSlice";
 
 function Services({ provider }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState(null);
+  const dispatch = useDispatch();
 
   const handleBook = (bookingDetails) => {
-    console.log("Booking details:", bookingDetails);
+    if (!selectedService) return;
 
-    alert(
-      `Booked for ${bookingDetails.date.toDateString()} at ${
-        bookingDetails.time
-      }`
-    );
+    const formatDate = (date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    };
+
+    const bookingData = {
+      bookingTitle: selectedService.name,
+      serviceProviderId: provider._id,
+      customerId: "68136e1e342756dad21e9948", // Hardcoded for now
+      address: "123- faisal- lahore, Pk", // Hardcoded for now
+      price: selectedService.price,
+      bookingDate: formatDate(bookingDetails.date),
+      bookingTime: bookingDetails.time,
+      status: "pending",
+    };
+
+    dispatch(addBooking(bookingData))
+      .unwrap()
+      .then(() => {
+        alert(
+          `Successfully booked ${
+            selectedService.name
+          } for ${bookingDetails.date.toDateString()} at ${bookingDetails.time}`
+        );
+        setIsModalOpen(false);
+      })
+      .catch((error) => {
+        alert(`Booking failed: ${error.message}`);
+      });
   };
 
   return (
@@ -30,6 +60,7 @@ function Services({ provider }) {
             <button
               onClick={() => {
                 setIsModalOpen(true);
+                setSelectedService(service);
               }}
               key={index}
               className="w-full flex items-center justify-between rounded-lg border pt-4 pb-4 pl-4 pr-4 transition-all hover:border-emerald-200 hover:bg-emerald-50"
@@ -50,11 +81,18 @@ function Services({ provider }) {
           ))}
         </div>
 
-        <BookingModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onBook={handleBook}
-        />
+        {selectedService && (
+          <BookingModal
+            isOpen={isModalOpen}
+            onClose={() => {
+              setIsModalOpen(false);
+              setSelectedService(null);
+            }}
+            onBook={handleBook}
+            bookingTitle={selectedService.name}
+            bookingPrice={selectedService.price}
+          />
+        )}
       </CardContent>
     </Card>
   );

@@ -23,7 +23,6 @@ export default function BookingsPage() {
   useEffect(() => {
     if (activeTab === "upcoming" && status.upcoming === "idle") {
       dispatch(fetchUpcomingBookings());
-      console.log(upcoming);
     } else if (activeTab === "past" && status.past === "idle") {
       dispatch(fetchPastBookings());
     }
@@ -31,6 +30,7 @@ export default function BookingsPage() {
 
   const handleTabChange = (value) => {
     dispatch(setActiveTab(value));
+    console.log(upcoming);
   };
 
   if (error) {
