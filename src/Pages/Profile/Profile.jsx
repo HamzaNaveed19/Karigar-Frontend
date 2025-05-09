@@ -44,6 +44,8 @@ const skillOptions = {
     "Troubleshooting",
     "Panel Installation",
     "Appliance Repair",
+    "Wiring",
+    "Repair",
   ],
   Plumber: [
     "Pipe Fitting",
@@ -106,46 +108,16 @@ const skillOptions = {
     "Communication",
     "Organization",
     "Attention to Detail",
+    "Wiring",
+    "Repair",
   ],
 }
 
 const Profile = () => {
-  // Hardcoded dummy data
-  // TODO: Replace with API call to fetch profile data
-  const dummyProfile = {
-    name: "Ahmed Khan",
-    email: "ahmed@example.com",
-    phone: "+92 300 1234567",
-    personalImage: "/placeholder.svg?height=200&width=200",
-    verificationDocuments: {
-      frontPic: "/placeholder.svg?height=300&width=500",
-      backPic: "/placeholder.svg?height=300&width=500",
-    },
-    location: {
-      latitude: 31.5204,
-      longitude: 74.3587,
-      address: "123 Main Street, Lahore, Pakistan",
-    },
-    profession: "Electrician",
-    about:
-      "Experienced electrician with expertise in residential and commercial electrical systems. Providing reliable and efficient services for over 5 years.",
-    services: [
-      { id: "1", name: "Basic Electrical Repair", price: 1500, duration: 60 },
-      { id: "2", name: "Wiring Installation", price: 3000, duration: 120 },
-      { id: "3", name: "Circuit Breaker Replacement", price: 2000, duration: 90 },
-    ],
-    skills: ["Electrical Wiring", "Circuit Repair", "Lighting Installation", "Troubleshooting"],
-    experience: 5,
-    languages: ["English", "Urdu", "Punjabi"],
-    education: "Diploma in Electrical Engineering",
-    rating: 4.8,
-    totalReviews: 27,
-    completedJobs: 42,
-  }
-
-  const [profile, setProfile] = useState(dummyProfile)
-  const [loading, setLoading] = useState(false)
+  const [profile, setProfile] = useState(null)
+  const [loading, setLoading] = useState(true)
   const [uploadLoading, setUploadLoading] = useState(false)
+  const [error, setError] = useState(null)
 
   const [formData, setFormData] = useState({
     name: "",
@@ -163,26 +135,50 @@ const Profile = () => {
   })
 
   const [activeTab, setActiveTab] = useState("personal")
+  const providerId = "68136e4d342756dad21e994b" // Use the correct provider ID consistently
+
+  // Fetch provider data
+  const fetchProfile = async () => {
+    setLoading(true)
+    try {
+      console.log("Fetching profile data...")
+      const response = await fetch(`http://localhost:5050/provider/${providerId}`)
+
+      if (!response.ok) {
+        throw new Error(`Server returned ${response.status}: ${response.statusText}`)
+      }
+
+      const data = await response.json()
+      console.log("Profile data loaded:", data)
+      setProfile(data)
+
+      // Initialize form data with profile data
+      setFormData({
+        name: data.name || "",
+        email: data.email || "",
+        phone: data.phone || "",
+        location: {
+          address: data.location?.address || "",
+        },
+        profession: data.profession || "",
+        about: data.about || "",
+        experience: data.experience || 0,
+        education: data.education || "",
+        languages: data.languages || [],
+        skills: data.skills || [],
+      })
+      setError(null)
+    } catch (err) {
+      console.error("Failed to fetch profile:", err)
+      setError(`Failed to load profile data: ${err.message}. Please check your API connection.`)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    // Initialize form data with profile data
-    if (profile) {
-      setFormData({
-        name: profile.name || "",
-        email: profile.email || "",
-        phone: profile.phone || "",
-        location: {
-          address: profile.location?.address || "",
-        },
-        profession: profile.profession || "",
-        about: profile.about || "",
-        experience: profile.experience || 0,
-        education: profile.education || "",
-        languages: profile.languages || [],
-        skills: profile.skills || [],
-      })
-    }
-  }, [profile])
+    fetchProfile()
+  }, [])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -222,15 +218,21 @@ const Profile = () => {
       setUploadLoading(true)
 
       // TODO: Replace with API call to upload file
-      // Simulate API call with setTimeout
+      // For now, using dummy implementation
       setTimeout(() => {
         const updatedProfile = { ...profile }
 
         if (type === "personalImage") {
           updatedProfile.personalImage = URL.createObjectURL(file)
         } else if (type === "frontPic") {
+          if (!updatedProfile.verificationDocuments) {
+            updatedProfile.verificationDocuments = {}
+          }
           updatedProfile.verificationDocuments.frontPic = URL.createObjectURL(file)
         } else if (type === "backPic") {
+          if (!updatedProfile.verificationDocuments) {
+            updatedProfile.verificationDocuments = {}
+          }
           updatedProfile.verificationDocuments.backPic = URL.createObjectURL(file)
         }
 
@@ -240,19 +242,60 @@ const Profile = () => {
     }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
 
-    // TODO: Replace with API call to update profile
-    // Simulate API call with setTimeout
-    setTimeout(() => {
-      setProfile({ ...profile, ...formData })
+    // Prepare data in the format expected by the API
+    const updateData = {
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      location: {
+        ...(profile?.location || {}),
+        address: formData.location.address,
+      },
+      profession: formData.profession,
+      about: formData.about,
+      experience: formData.experience,
+      education: formData.education,
+      languages: formData.languages,
+      skills: formData.skills,
+    }
+
+    try {
+      console.log("Updating profile with data:", updateData)
+      const response = await fetch(`http://localhost:5050/provider/${providerId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateData),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Server returned ${response.status}: ${response.statusText}`)
+      }
+
+      const updatedProfile = await response.json()
+      setProfile({ ...profile, ...updatedProfile })
+      setError(null)
+      console.log("Profile updated successfully")
+    } catch (err) {
+      console.error("Failed to update profile:", err)
+      setError(`Failed to update profile: ${err.message}. Please check your API connection.`)
+    } finally {
       setLoading(false)
-    }, 1000)
+    }
   }
 
-  if (!profile) {
+  // Helper function to get a default image if the API image URL is not working
+  const getImageUrl = (url, defaultImage) => {
+    if (!url) return defaultImage
+    return url
+  }
+
+  if (loading && !profile) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
@@ -262,6 +305,32 @@ const Profile = () => {
 
   return (
     <div className="space-y-6">
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+          <div className="flex">
+            <div className="py-1">
+              <svg
+                className="fill-current h-6 w-6 text-red-500 mr-4"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z" />
+              </svg>
+            </div>
+            <div>
+              <p className="font-bold">API Connection Error</p>
+              <p className="text-sm">{error}</p>
+              <button
+                onClick={() => fetchProfile()}
+                className="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded text-xs"
+              >
+                Retry Connection
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-900">Profile</h1>
       </div>
@@ -272,15 +341,20 @@ const Profile = () => {
           <div className="absolute -bottom-16 left-6 flex items-end">
             <div className="relative">
               <div className="w-32 h-32 rounded-full border-4 border-white bg-white overflow-hidden">
-                {profile.personalImage ? (
+                {profile?.personalImage ? (
                   <img
                     src={profile.personalImage || "/placeholder.svg"}
-                    alt={profile.name}
+                    alt={profile?.name || "Profile"}
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      console.log("Profile image failed to load, using fallback")
+                      e.target.onerror = null
+                      e.target.src = "/placeholder.svg?height=200&width=200"
+                    }}
                   />
                 ) : (
                   <div className="w-full h-full bg-emerald-100 flex items-center justify-center text-emerald-600">
-                    <span className="text-3xl font-bold">{profile.name.charAt(0)}</span>
+                    <span className="text-3xl font-bold">{profile?.name?.charAt(0) || "A"}</span>
                   </div>
                 )}
               </div>
@@ -299,8 +373,8 @@ const Profile = () => {
               </label>
             </div>
             <div className="ml-4 mb-4">
-              <h2 className="text-xl font-bold text-white">{profile.name}</h2>
-              <p className="text-emerald-100">{profile.profession}</p>
+              <h2 className="text-xl font-bold text-white">{profile?.name}</h2>
+              <p className="text-emerald-100">{profile?.profession}</p>
             </div>
           </div>
         </div>
@@ -497,17 +571,33 @@ const Profile = () => {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                     required
                   >
+                    {/* Include all skills from the API response */}
+                    {profile?.skills?.map((skill) => (
+                      <option key={skill} value={skill}>
+                        {skill}
+                      </option>
+                    ))}
+
+                    {/* Also include predefined skills based on profession */}
                     {formData.profession && skillOptions[formData.profession]
-                      ? skillOptions[formData.profession].map((option) => (
-                          <option key={option} value={option}>
-                            {option}
-                          </option>
-                        ))
-                      : skillOptions["Other"].map((option) => (
-                          <option key={option} value={option}>
-                            {option}
-                          </option>
-                        ))}
+                      ? skillOptions[formData.profession].map(
+                          (option) =>
+                            // Only add if not already in the list
+                            !profile?.skills?.includes(option) && (
+                              <option key={option} value={option}>
+                                {option}
+                              </option>
+                            ),
+                        )
+                      : skillOptions["Other"].map(
+                          (option) =>
+                            // Only add if not already in the list
+                            !profile?.skills?.includes(option) && (
+                              <option key={option} value={option}>
+                                {option}
+                              </option>
+                            ),
+                        )}
                   </select>
                   <p className="mt-1 text-xs text-gray-500">Hold Ctrl (or Cmd) to select multiple options</p>
                 </div>
@@ -535,12 +625,17 @@ const Profile = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Upload ID Front</label>
                   <div className="border-2 border-dashed border-gray-300 rounded-md p-6 flex flex-col items-center">
-                    {profile.verificationDocuments?.frontPic ? (
+                    {profile?.verificationDocuments?.frontPic ? (
                       <div className="relative w-full">
                         <img
                           src={profile.verificationDocuments.frontPic || "/placeholder.svg"}
                           alt="ID Front"
                           className="w-full h-48 object-cover rounded-md"
+                          onError={(e) => {
+                            console.log("Front ID image failed to load, using fallback")
+                            e.target.onerror = null
+                            e.target.src = "/placeholder.svg?height=300&width=500"
+                          }}
                         />
                         <label
                           htmlFor="id-front"
@@ -581,12 +676,17 @@ const Profile = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Upload ID Back</label>
                   <div className="border-2 border-dashed border-gray-300 rounded-md p-6 flex flex-col items-center">
-                    {profile.verificationDocuments?.backPic ? (
+                    {profile?.verificationDocuments?.backPic ? (
                       <div className="relative w-full">
                         <img
                           src={profile.verificationDocuments.backPic || "/placeholder.svg"}
                           alt="ID Back"
                           className="w-full h-48 object-cover rounded-md"
+                          onError={(e) => {
+                            console.log("Back ID image failed to load, using fallback")
+                            e.target.onerror = null
+                            e.target.src = "/placeholder.svg?height=300&width=500"
+                          }}
                         />
                         <label
                           htmlFor="id-back"
