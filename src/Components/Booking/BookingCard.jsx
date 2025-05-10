@@ -9,11 +9,18 @@ import BookingDetailItem from "./Card/BookingDetailItem";
 import ReviewSection from "./Card/ReviewSection";
 import { Calendar, Clock, MapPin } from "lucide-react";
 import { useDispatch } from "react-redux";
-import { updateBookingReview } from "../../Redux/Slices/bookingsSlice";
+import {
+  cancelBooking,
+  updateBookingReview,
+} from "../../Redux/Slices/bookingsSlice";
 
 const BookingCard = ({ Index, booking }) => {
   const [expanded, setExpanded] = useState(false);
   const dispatch = useDispatch();
+
+  const handleCancel = () => {
+    dispatch(cancelBooking(booking._id));
+  };
 
   const handleReviewSubmit = (review) => {
     console.log("Index", Index);
@@ -100,6 +107,7 @@ const BookingCard = ({ Index, booking }) => {
                 <Button
                   variant="outline"
                   className="border-red-300 text-red-600 hover:bg-red-50"
+                  onClick={handleCancel}
                 >
                   Cancel Booking
                 </Button>

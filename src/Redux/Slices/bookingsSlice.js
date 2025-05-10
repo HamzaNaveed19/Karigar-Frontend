@@ -13,6 +13,17 @@ export const addBooking = createAsyncThunk(
   }
 );
 
+export const cancelBooking = createAsyncThunk(
+  "bookings/cancelBooking",
+  async (bookingId) => {
+    const response = await axios.put(
+      `http://localhost:5050/booking/updateStatus/${bookingId}`,
+      { status: "cancelled" }
+    );
+    return response.data;
+  }
+);
+
 export const fetchUpcomingBookings = createAsyncThunk(
   "bookings/fetchUpcoming",
   async (id) => {
@@ -109,6 +120,22 @@ const bookingsSlice = createSlice({
       })
       .addCase(addBooking.rejected, (state) => {
         state.status.newBooking = "failed";
+        state.error = action.payload;
+      })
+
+      .addCase(cancelBooking.pending, (state, action) => {})
+      .addCase(cancelBooking.fulfilled, (state, action) => {
+        const cancelledBooking = action.payload;
+
+        console.log(cancelledBooking);
+
+        state.upcoming = state.upcoming.filter(
+          (booking) => booking._id !== cancelledBooking._id
+        );
+
+        state.past.unshift(cancelledBooking);
+      })
+      .addCase(cancelBooking.rejected, (state, action) => {
         state.error = action.payload;
       });
   },

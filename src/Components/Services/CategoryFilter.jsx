@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState, useMemo } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import * as LucideIcons from "lucide-react";
+
+const normalizeCategory = (cat) =>
+  cat ? cat.charAt(0).toUpperCase() + cat.slice(1).toLowerCase() : "All";
 
 const CategoryFilter = ({ initialCategory = "All" }) => {
   const navigate = useNavigate();
-  const [activeCategory, setActiveCategory] = useState(initialCategory.trim());
+  const { category: paramCategory } = useParams();
 
   const categories = [
     { name: "All", icon: "MoreHorizontal" },
@@ -21,26 +24,25 @@ const CategoryFilter = ({ initialCategory = "All" }) => {
     { name: "Mover", icon: "Truck" },
   ];
 
-  useEffect(() => {
-    console.log("RENDERED: Category Filter!");
-  }, []);
+  const activeCategory = normalizeCategory(paramCategory || initialCategory);
 
   const handleClick = (category) => {
-    setActiveCategory(category);
-    navigate(`/services/${category.toLowerCase().replace(" ", "-")}`);
+    navigate(`/services/${category.toLowerCase().replace(/\s+/g, "-")}`);
   };
 
   return (
     <div className="sticky top-16 z-10 pt-4 bg-white px-12">
-      <div className="flex space-x-2 overflow-x-auto pb-2 hide-scrollbar ">
+      <div className="flex space-x-2 overflow-x-auto pb-2 hide-scrollbar">
         {categories.map(({ name, icon }) => {
           const IconComponent = LucideIcons[icon];
+          const isActive = activeCategory === name;
+
           return (
             <button
               key={name}
               onClick={() => handleClick(name)}
               className={`flex items-center space-x-2 px-4 py-2 rounded-full whitespace-nowrap transition-colors ${
-                activeCategory === name
+                isActive
                   ? "bg-emerald-600 text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
