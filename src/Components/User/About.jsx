@@ -11,8 +11,7 @@ function About({ user }) {
     name: user.name,
     email: user.email,
     phone: user.phone,
-    address: user.address,
-    bio: user.bio || "",
+    address: user.location.address,
   });
 
   const handleInputChange = (e) => {
@@ -134,7 +133,7 @@ function About({ user }) {
                   name: user.name,
                   email: user.email,
                   phone: user.phone,
-                  address: user.address,
+                  address: user.location.address,
                   bio: user.bio || "",
                 });
               }}

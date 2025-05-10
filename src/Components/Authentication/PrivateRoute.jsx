@@ -7,13 +7,18 @@ import { checkAuth } from "../../Redux/Slices/authSlice";
 export const PrivateRoute = ({ children }) => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [mode, setMode] = useState("login");
-  const { isAuthenticated, status } = useSelector((state) => state.auth);
+  const { isAuthenticated, status, isInitialized } = useSelector(
+    (state) => state.auth
+  );
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(checkAuth());
-  }, [dispatch]);
+    if (!isInitialized) {
+      //console.log("CALLED CHECEK AUTH");
+      dispatch(checkAuth());
+    }
+  }, [dispatch, isInitialized]);
 
   useEffect(() => {
     if (status === "failed" || status === "succeeded") {

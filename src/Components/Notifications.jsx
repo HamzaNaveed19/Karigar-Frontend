@@ -3,44 +3,16 @@ import {
   Bell,
   X,
   ChevronRight,
-  CircleCheck,
-  CircleX,
   Mail,
   CalendarCheck,
   CalendarX,
 } from "lucide-react";
+import { useSelector } from "react-redux";
 
 function Notifications() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
-
-  const notifications = [
-    {
-      id: 1,
-      description: "Your booking with Ahmed Khan has been confirmed",
-      time: "2 hours ago",
-    },
-    {
-      id: 2,
-      description: "Your booking with Ali Haroon has been rejected",
-      time: "5 hours ago",
-    },
-    {
-      id: 3,
-      description: "Your booking with Fakhar Rashid has been confirmed",
-      time: "1 day ago",
-    },
-    {
-      id: 4,
-      description: "Your booking with Abdul Ahad has been confirmed",
-      time: "2 days ago",
-    },
-    {
-      id: 5,
-      description: "Your request for plumbing service was rejected",
-      time: "3 days ago",
-    },
-  ];
+  const notifications = useSelector((state) => state.auth.user.notifications);
 
   const getNotificationIcon = (description) => {
     if (description.toLowerCase().includes("rejected")) {

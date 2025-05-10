@@ -1,29 +1,47 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Camera } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../UI/Tabs";
 import Card from "../UI/Card";
 import CardContent from "../UI/CardContent";
 import About from "../Components/User/About";
 import Settings from "../Components/User/Settings";
+import { useSelector } from "react-redux";
 
 export default function ProfilePage() {
   const [profileImage, setProfileImage] = useState(
     "/placeholder.png?height=200&width=200"
   );
 
-  const user = {
-    name: "Asad Ahmed",
-    email: "asad.ahmed@example.com",
-    phone: "+92 300 1234567",
-    address: "123 Main Street, Gulberg, Lahore",
-    joinDate: "January 2023",
+  const [error] = useState(null);
+  const { user } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    console.log("RENDERED: USER PROFILE!");
+  }, [user]);
+
+  const handleImageUpload = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setProfileImage(event.target.result);
+      };
+      reader.readAsDataURL(e.target.files[0]);
+    }
   };
+
+  if (error) {
+    return (
+      <div className="mx-auto px-4 py-6">
+        <div className="text-red-500">{error}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto px-4 py-6">
       <div className="grid gap-8 md:grid-cols-4">
         <Card className="md:sticky top-20 h-[54vh] md:col-span-1 border border-gray-200 shadow-sm pt-12">
-          <CardContent className=" p-6">
+          <CardContent className="p-6">
             <div className="flex flex-col items-center">
               <div className="relative mb-4 group">
                 <div className="h-32 w-32 overflow-hidden rounded-full border-4 border-white shadow-lg">
@@ -45,15 +63,7 @@ export default function ProfilePage() {
                       type="file"
                       className="hidden"
                       accept="image/*"
-                      onChange={(e) => {
-                        if (e.target.files && e.target.files[0]) {
-                          const reader = new FileReader();
-                          reader.onload = (event) => {
-                            setProfileImage(event.target.result);
-                          };
-                          reader.readAsDataURL(e.target.files[0]);
-                        }
-                      }}
+                      onChange={handleImageUpload}
                     />
                   </label>
                 </div>
@@ -74,11 +84,11 @@ export default function ProfilePage() {
             </TabsList>
 
             <TabsContent value="personal" className="mt-6">
-              <About user={user}></About>
+              <About user={user} />
             </TabsContent>
 
             <TabsContent value="settings" className="mt-6">
-              <Settings></Settings>
+              <Settings />
             </TabsContent>
           </Tabs>
         </div>
