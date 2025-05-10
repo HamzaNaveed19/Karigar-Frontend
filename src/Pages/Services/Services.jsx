@@ -1,9 +1,10 @@
 "use client"
 
-import { useState, useEffect } from "react";
-import { Plus, Edit, Trash, AlertCircle } from "lucide-react";
+import { useState, useEffect } from "react"
+import { Plus, Edit, Trash, AlertCircle } from "lucide-react"
 import ServiceModal from "../../Components/Services/ServiceModal";
 import ConfirmModal from "../../Components/Common/ConfirmModal";
+
 
 // Predefined service options
 const predefinedServices = {
@@ -47,88 +48,89 @@ const predefinedServices = {
     "Test Preparation",
     "Homework Help",
   ],
-};
+}
 
 const Services = () => {
-  const [services, setServices] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [actionLoading, setActionLoading] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  const [currentService, setCurrentService] = useState(null);
-  const [modalMode, setModalMode] = useState("add");
-  const [error, setError] = useState(null);
-  const [providerProfession, setProviderProfession] = useState("Electrician");
-  const providerId = "68136e4d342756dad21e994b"; // Use the correct provider ID consistently
+  const [services, setServices] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [actionLoading, setActionLoading] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false)
+  const [currentService, setCurrentService] = useState(null)
+  const [modalMode, setModalMode] = useState("add")
+  const [error, setError] = useState(null)
+  const [successMessage, setSuccessMessage] = useState(null)
+  const [providerProfession, setProviderProfession] = useState("Electrician")
+  const providerId = "68136e4d342756dad21e994b" // Use the correct provider ID consistently
 
   // Fetch services data
   const fetchServices = async () => {
-    setLoading(true);
+    setLoading(true)
     try {
-      console.log("Fetching provider data...");
-      const response = await fetch(`http://localhost:5050/provider/${providerId}`);
+      console.log("Fetching provider data...")
+      const response = await fetch(`http://localhost:5050/provider/${providerId}`)
 
       if (!response.ok) {
-        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+        throw new Error(`Server returned ${response.status}: ${response.statusText}`)
       }
 
-      const data = await response.json();
-      console.log("Provider data loaded:", data);
+      const data = await response.json()
+      console.log("Provider data loaded:", data)
 
       // Extract services from the provider data
       if (data.services && Array.isArray(data.services)) {
-        setServices(data.services);
-        localStorage.setItem("services", JSON.stringify(data.services)); // Store in localStorage
+        setServices(data.services)
+        localStorage.setItem("services", JSON.stringify(data.services)) // Store in localStorage
       } else {
-        console.log("No services found in provider data, using empty array");
-        setServices([]);
-        localStorage.setItem("services", JSON.stringify([])); // Store in localStorage
+        console.log("No services found in provider data, using empty array")
+        setServices([])
+        localStorage.setItem("services", JSON.stringify([])) // Store in localStorage
       }
 
       // Set profession for service options
       if (data.profession) {
-        setProviderProfession(data.profession);
+        setProviderProfession(data.profession)
       }
-      setError(null);
+      setError(null)
     } catch (err) {
-      console.error("Failed to fetch services:", err);
-      setError(`Failed to load services: ${err.message}. Please check your API connection.`);
+      console.error("Failed to fetch services:", err)
+      setError(`Failed to load services: ${err.message}. Please check your API connection.`)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   useEffect(() => {
-    const savedServices = localStorage.getItem("services");
+    const savedServices = localStorage.getItem("services")
     if (savedServices) {
-      setServices(JSON.parse(savedServices)); // Load from localStorage
-      setLoading(false); // Stop loading since we have data
+      setServices(JSON.parse(savedServices)) // Load from localStorage
+      setLoading(false) // Stop loading since we have data
     } else {
-      fetchServices(); // Fetch from API if nothing is in localStorage
+      fetchServices() // Fetch from API if nothing is in localStorage
     }
-  }, []);
+  }, [])
 
   const handleAddClick = () => {
-    setCurrentService(null);
-    setModalMode("add");
-    setIsModalOpen(true);
-  };
+    setCurrentService(null)
+    setModalMode("add")
+    setIsModalOpen(true)
+  }
 
   const handleEditClick = (service) => {
-    setCurrentService(service);
-    setModalMode("edit");
-    setIsModalOpen(true);
-  };
+    setCurrentService(service)
+    setModalMode("edit")
+    setIsModalOpen(true)
+  }
 
   const handleDeleteClick = (service) => {
-    setCurrentService(service);
-    setIsConfirmModalOpen(true);
-  };
+    setCurrentService(service)
+    setIsConfirmModalOpen(true)
+  }
 
   // Handle service submission (add/edit)
   const handleServiceSubmit = async (serviceData) => {
-    setActionLoading(true);
-    setError(null);
+    setActionLoading(true)
+    setError(null)
 
     try {
       // Prepare the new service object to add
@@ -136,73 +138,69 @@ const Services = () => {
         name: serviceData.name,
         price: Number(serviceData.price),
         duration: Number(serviceData.duration),
-      };
-
-      // Check if the service already exists in the current list of services
-      const isDuplicate = services.some(
-        (service) => service.name === newService.name
-      );
-
-      if (isDuplicate) {
-        setError("This service already exists.");
-        return; // Prevent adding the duplicate service
       }
 
-      console.log("Adding service with data:", newService);
+      // Check if the service already exists in the current list of services
+      const isDuplicate = services.some((service) => service.name === newService.name)
 
-      // Append the new service to the current services list
-      const updatedServices = [...services, newService];
+      if (isDuplicate) {
+        setError("This service already exists.")
+        setActionLoading(false)
+        return // Prevent adding the duplicate service
+      }
 
-      // Prepare the request data with the updated services list
-      const requestData = {
-        services: updatedServices, // Sending the updated services array
-      };
+      console.log("Adding service with data:", newService)
 
+      // Send only the new service to add, not the entire services array
       const response = await fetch(`http://localhost:5050/provider/addServices/${providerId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(requestData),
-      });
+        body: JSON.stringify({
+          services: [newService], // Send only the new service in an array
+        }),
+      })
 
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Server error response:", errorText);
-        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+        const errorText = await response.text()
+        console.error("Server error response:", errorText)
+        throw new Error(`Server returned ${response.status}: ${response.statusText}`)
       }
 
-      console.log("Service added successfully");
+      const result = await response.json()
+      console.log("Service added successfully:", result)
 
-      // Directly update the state with the new list of services
-      setServices(updatedServices); 
-      localStorage.setItem("services", JSON.stringify(updatedServices)); // Persist to localStorage
-      setError(null);
+      // Update the services state with the new service added to the existing services
+      const updatedServices = [...services, newService]
+      setServices(updatedServices)
+      localStorage.setItem("services", JSON.stringify(updatedServices)) // Persist to localStorage
+      setError(null)
     } catch (err) {
-      console.error("Failed to add service:", err);
-      setError(`Failed to add service: ${err.message}. Please check your API connection.`);
+      console.error("Failed to add service:", err)
+      setError(`Failed to add service: ${err.message}. Please check your API connection.`)
     } finally {
-      setActionLoading(false);
-      setIsModalOpen(false);
+      setActionLoading(false)
+      setIsModalOpen(false)
     }
-  };
+  }
 
   // Handle service deletion by service name
   const handleDeleteConfirm = async () => {
-    setActionLoading(true);
-    setError(null);
+    setActionLoading(true)
+    setError(null)
 
     try {
       if (!currentService || !currentService.name) {
-        throw new Error("No service selected or service name is missing");
+        throw new Error("No service selected or service name is missing")
       }
 
       // Prepare the request data using service name
       const requestData = {
         serviceName: currentService.name, // Send service name for deletion
-      };
+      }
 
-      console.log("Deleting service with name:", currentService.name);
+      console.log("Deleting service with name:", currentService.name)
 
       const response = await fetch(`http://localhost:5050/provider/deleteService/${providerId}`, {
         method: "DELETE",
@@ -210,34 +208,32 @@ const Services = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(requestData),
-      });
+      })
 
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Server error response:", errorText);
-        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+        const errorText = await response.text()
+        console.error("Server error response:", errorText)
+        throw new Error(`Server returned ${response.status}: ${response.statusText}`)
       }
 
-      console.log("Service deleted successfully");
+      console.log("Service deleted successfully")
 
       // Directly update the state by removing the deleted service
-      setServices((prevServices) =>
-        prevServices.filter((service) => service.name !== currentService.name)
-      );
-
-      localStorage.setItem("services", JSON.stringify(services)); // Persist updated list to localStorage
-      setError(null);
+      const updatedServices = services.filter((service) => service.name !== currentService.name)
+      setServices(updatedServices)
+      localStorage.setItem("services", JSON.stringify(updatedServices)) // Persist updated list to localStorage
+      setError(null)
     } catch (err) {
-      console.error("Failed to delete service:", err);
-      setError(`Failed to delete service: ${err.message}. Please check your API connection.`);
+      console.error("Failed to delete service:", err)
+      setError(`Failed to delete service: ${err.message}. Please check your API connection.`)
     } finally {
-      setActionLoading(false);
-      setIsConfirmModalOpen(false);
+      setActionLoading(false)
+      setIsConfirmModalOpen(false)
     }
-  };
+  }
 
   // Get predefined service options based on profession
-  const serviceOptions = providerProfession ? predefinedServices[providerProfession] || [] : [];
+  const serviceOptions = providerProfession ? predefinedServices[providerProfession] || [] : []
 
   return (
     <div className="space-y-6">
@@ -385,7 +381,7 @@ const Services = () => {
         loading={actionLoading}
       />
     </div>
-  );
-};
+  )
+}
 
-export default Services;
+export default Services
