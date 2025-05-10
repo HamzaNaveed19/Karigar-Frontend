@@ -1,10 +1,10 @@
 import React from "react";
-import { Star, ChevronRight, MessageSquare, Calendar } from "lucide-react";
+import { Star, MessageSquare, Calendar } from "lucide-react";
+import { format } from "date-fns";
 import Card from "../../UI/Card";
 import CardContent from "../../UI/CardContent";
 
 function Reviews({ provider }) {
-  // Check if provider.reviews exists and is an array
   const reviews = provider?.reviews || [];
   const hasReviews = reviews.length > 0;
 
@@ -54,7 +54,6 @@ function Reviews({ provider }) {
 
         {hasReviews ? (
           <>
-            {/* Rating Summary */}
             <div className="mb-6 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50 p-6 shadow-inner">
               <div className="grid gap-6 md:grid-cols-5">
                 <div className="col-span-1 flex flex-col items-center justify-center">
@@ -105,23 +104,28 @@ function Reviews({ provider }) {
             {/* Reviews List */}
             {reviews.map((review) => (
               <div
-                key={review.id}
+                key={review._id}
                 className="rounded-lg border border-gray-100 p-5 shadow-xs hover:shadow-sm transition-shadow"
               >
                 <div className="mb-4 flex items-start justify-between">
                   <div className="flex items-center gap-3">
                     <img
-                      src={review.userImage || "/placeholder.svg"}
-                      alt={review.user}
+                      src={"/placeholder2.png"}
+                      alt={review.customer.name}
                       className="h-12 w-12 rounded-full object-cover border-2 border-white shadow-xs"
                     />
                     <div>
                       <h3 className="font-medium text-gray-800">
-                        {review.user}
+                        {review.customer.name}
                       </h3>
                       <div className="flex items-center gap-2 text-sm text-gray-500">
                         <Calendar className="h-3 w-3" />
-                        <span>{review.date}</span>
+                        <span className="text-xs">
+                          {format(
+                            new Date(review.createdAt),
+                            "MMMM dd, yyyy h:mm a"
+                          )}
+                        </span>
                       </div>
                     </div>
                   </div>

@@ -1,15 +1,15 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { fetchProviderById } from "../Redux/Slices/serviceProvidersSlice";
 import { Star, MapPin, CheckCircle } from "lucide-react";
 import Button from "../UI/Button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../UI/Tabs";
 import Card from "../UI/Card";
 import CardContent from "../UI/CardContent";
-import About from "../components/Provider/About";
-import Services from "../components/Provider/Services";
-import Reviews from "../components/Provider/Reviews";
+import About from "../Components/Provider/About";
+import Services from "../Components/Provider/Services";
+import Reviews from "../Components/Provider/Reviews";
 import ProviderProfileSkeleton from "../Components/Skeletons/ProviderProfileSkeleton";
 import NotFoundMessage from "../UI/NotFoundMessage";
 import ErrorMessage from "../UI/ErrorMessage";
@@ -18,22 +18,18 @@ export default function ProviderProfile() {
   const { id } = useParams();
   const dispatch = useDispatch();
 
-  const { currentProvider, status, error } = useSelector((state) => {
+  const { currentProvider, status } = useSelector((state) => {
     return {
-      currentProvider: state.providers.data[id],
+      currentProvider: state.providers.fullData[id],
       status: state.providers.status,
       error: state.providers.error,
     };
-  });
-
-  console.log("DATA:");
-  console.log(currentProvider);
+  }, shallowEqual);
 
   useEffect(() => {
-    console.log("RENDERED: Provider profile!");
-    // If we don't have full data for this provider, fetch it
+    console.log("RENDERED: PROVIDER PROFILE PAGE!");
     if (!currentProvider) {
-      console.log("API HIT: Provider profile!");
+      console.log("DISPATCHED: Book Basic Electrical Repair for RS 100!");
       dispatch(fetchProviderById(id));
     }
   }, [id, dispatch, currentProvider]);
@@ -59,10 +55,6 @@ export default function ProviderProfile() {
       />
     );
   }
-
-  // if (!currentProvider) {
-  //   return null;
-  // }
 
   return (
     <div className="mx-auto px-4 py-6">
@@ -116,24 +108,24 @@ export default function ProviderProfile() {
                 </div>
 
                 <div className="mt-6 grid grid-cols-3 gap-3">
-                  <div className="rounded-lg bg-gray-50 p-3 text-center">
-                    <p className="text-xs font-medium text-gray-500 mb-1">
+                  <div className="rounded-lg bg-emerald-50 p-3 text-center">
+                    <p className="text-xs font-medium text-emerald-500 mb-1">
                       Experience
                     </p>
                     <p className="text-sm font-semibold text-gray-800">
                       {currentProvider.experience}+ years
                     </p>
                   </div>
-                  <div className="rounded-lg bg-gray-50 p-3 text-center">
-                    <p className="text-xs font-medium text-gray-500 mb-1">
+                  <div className="rounded-lg bg-emerald-50 p-3 text-center">
+                    <p className="text-xs font-medium text-emerald-500 mb-1">
                       Jobs Done
                     </p>
                     <p className="text-sm font-semibold text-gray-800">
                       {currentProvider.completedJobs}
                     </p>
                   </div>
-                  <div className="rounded-lg bg-gray-50 p-3 text-center">
-                    <p className="text-xs font-medium text-gray-500 mb-1">
+                  <div className="rounded-lg bg-emerald-50 p-3 text-center">
+                    <p className="text-xs font-medium text-emerald-500 mb-1">
                       Skills
                     </p>
                     <p className="text-sm font-semibold text-gray-800">

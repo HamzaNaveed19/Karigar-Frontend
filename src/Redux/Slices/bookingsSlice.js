@@ -15,9 +15,9 @@ export const addBooking = createAsyncThunk(
 
 export const fetchUpcomingBookings = createAsyncThunk(
   "bookings/fetchUpcoming",
-  async () => {
+  async (id) => {
     const response = await axios.get(
-      "http://localhost:5050/booking/68136e1e342756dad21e9948/customer",
+      `http://localhost:5050/booking/${id}/customer`,
       {
         params: { status: ["confirmed", "pending"] },
       }
@@ -28,9 +28,9 @@ export const fetchUpcomingBookings = createAsyncThunk(
 
 export const fetchPastBookings = createAsyncThunk(
   "bookings/fetchPast",
-  async () => {
+  async (id) => {
     const response = await axios.get(
-      "http://localhost:5050/booking/68136e1e342756dad21e9948/customer",
+      `http://localhost:5050/booking/${id}/customer`,
       {
         params: { status: ["completed", "cancelled"] },
       }
@@ -57,6 +57,15 @@ const bookingsSlice = createSlice({
   reducers: {
     setActiveTab: (state, action) => {
       state.activeTab = action.payload;
+    },
+    updateBookingReview: (state, action) => {
+      //There is an issue here. remember to change in future
+      const { Index, review } = action.payload;
+
+      if (Index !== -1) {
+        state.past[Index].reviews[0] = review;
+        return;
+      }
     },
   },
   extraReducers: (builder) => {
@@ -105,5 +114,5 @@ const bookingsSlice = createSlice({
   },
 });
 
-export const { setActiveTab } = bookingsSlice.actions;
+export const { setActiveTab, updateBookingReview } = bookingsSlice.actions;
 export default bookingsSlice.reducer;

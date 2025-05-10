@@ -3,10 +3,11 @@ import Card from "../../UI/Card";
 import CardContent from "../../UI/CardContent";
 import { Clock, Hammer } from "lucide-react";
 import BookingModal from "../Booking/BookingModal";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addBooking } from "../../Redux/Slices/bookingsSlice";
 
 function Services({ provider }) {
+  const { userId } = useSelector((state) => state.auth);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
   const dispatch = useDispatch();
@@ -24,7 +25,7 @@ function Services({ provider }) {
     const bookingData = {
       bookingTitle: selectedService.name,
       serviceProviderId: provider._id,
-      customerId: "68136e1e342756dad21e9948", // Hardcoded for now
+      customerId: userId,
       address: "123- faisal- lahore, Pk", // Hardcoded for now
       price: selectedService.price,
       bookingDate: formatDate(bookingDetails.date),
@@ -74,7 +75,7 @@ function Services({ provider }) {
               </div>
               <div className="text-right">
                 <div className="font-medium text-emerald-600">
-                  {service.price}
+                  Rs {service.price}
                 </div>
               </div>
             </button>

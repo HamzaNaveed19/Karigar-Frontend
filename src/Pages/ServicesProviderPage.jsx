@@ -20,23 +20,21 @@ export default function ServicesProviderPage() {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    console.log("\nRENDERED: Service Provider Page!");
+    console.log("\nRENDERED: SERVICES PAGE!");
     if (status === "idle" || providers.length <= 1) {
-      console.log("API HIT: Service Providers!");
+      console.log("DISPATCHED: CALLED IN SERVICES PAGE!");
       dispatch(fetchServiceProviders());
     }
   }, [status, dispatch, data]);
 
   useEffect(() => {
     if (status === "succeeded") {
-      console.log("FILTERED: Service Providers!");
       const formattedCategory = category
         .split("-")
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(" ");
 
       let filtered = providers;
-      console.log(formattedCategory);
 
       if (formattedCategory !== "All") {
         filtered = filtered.filter(

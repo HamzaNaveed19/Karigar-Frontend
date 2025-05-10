@@ -1,15 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Search, User, HardHat, X, CalendarFold } from "lucide-react";
 import { Link } from "react-router-dom";
 import Button from "../UI/Button";
 import Notifications from "./Notifications";
 import { AuthModal } from "./Authentication/AuthModal";
+import { useDispatch, useSelector } from "react-redux";
+import { checkAuth } from "../Redux/Slices/authSlice";
 
 function Header() {
   const [showMobileSearch, setShowMobileSearch] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const { isAuthenticated } = useSelector((state) => state.auth);
   const [showModal, setShowModal] = useState(false);
   const [mode, setMode] = useState("");
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(checkAuth());
+  }, [dispatch]);
 
   const renderLogo = () => (
     <Link to="/">
@@ -97,7 +104,6 @@ function Header() {
           className="flex items-center"
           onClick={() => {
             setMode("signup");
-            console.log(mode);
             setShowModal(true);
           }}
         >
@@ -107,7 +113,7 @@ function Header() {
     );
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white shadow-sm">
+    <header className="sticky px-3 top-0 z-50 w-full border-b bg-white shadow-sm">
       <div className="flex h-16 items-center justify-between px-4 md:px-6">
         {showMobileSearch ? (
           renderSearchInput(true)

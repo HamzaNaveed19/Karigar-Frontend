@@ -15,7 +15,12 @@ import {
   MapPin,
   Check,
   ChevronDown,
+  Shield,
+  LogOut,
 } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { logout } from "../../Redux/Slices/authSlice";
+import { useNavigate } from "react-router-dom";
 
 function Settings() {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -30,6 +35,8 @@ function Settings() {
   });
   const [location, setLocation] = useState("Lahore, Pakistan");
   const [changesMade, setChangesMade] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handlePasswordChange = (e) => {
     e.preventDefault();
@@ -71,26 +78,25 @@ function Settings() {
     <>
       <Card className="border border-gray-200 shadow-sm">
         <CardContent className="p-6">
-          <div className="mb-6">
-            <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-              </svg>
-              Account Settings
-            </h2>
-            <p className="text-gray-500 text-xs mt-1">
-              Manage your account settings and preferences.
-            </p>
+          <div className="mb-6 flex justify-between items-center mr-4">
+            <div>
+              <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                <Shield className="h-5 w-5" /> Account Settings
+              </h2>
+              <p className="text-gray-500 text-xs mt-1">
+                Manage your account settings and preferences.
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                dispatch(logout());
+                navigate("/");
+              }}
+              className="text-sm text-red-600 hover:text-red-800 hover:underline flex items-center gap-1"
+            >
+              <LogOut className="h-4 w-4" />
+              Logout
+            </button>
           </div>
 
           <div className="space-y-4">

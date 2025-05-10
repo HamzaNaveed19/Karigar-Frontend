@@ -23,6 +23,7 @@ const serviceProviderSlice = createSlice({
   name: "providers",
   initialState: {
     data: {},
+    fullData: {},
     status: "idle",
     error: "",
   },
@@ -37,7 +38,9 @@ const serviceProviderSlice = createSlice({
         state.status = "succeeded";
         action.payload.forEach((provider) => {
           if (!state.data[provider._id]) {
-            state.data[provider._id] = provider;
+            state.data[provider._id] = {
+              ...provider,
+            };
           }
         });
       })
@@ -54,8 +57,8 @@ const serviceProviderSlice = createSlice({
         state.status = "succeeded";
         const providerId = action.payload._id;
         // Merge with existing data if it exists
-        state.data[providerId] = {
-          ...(state.data[providerId] || {}),
+        state.fullData[providerId] = {
+          ...(state.fullData[providerId] || {}),
           ...action.payload,
         };
       })

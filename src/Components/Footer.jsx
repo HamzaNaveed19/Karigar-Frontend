@@ -11,9 +11,9 @@ import {
 
 function Footer() {
   return (
-    <footer className="bg-white border-t">
-      <div className="container pl-24 py-12 mx-auto">
-        <div className="flex flex-wrap justify-between gap-8">
+    <footer className=" bg-white border-t">
+      <div className="pl-24 flex justify-center items-center py-12 ">
+        <div className="flex flex-wrap justify-center gap-8">
           {/* First Column - Brand Info */}
           <div className="flex-1 min-w-[200px]">
             <h3 className="text-xl font-bold text-gray-800 mb-4">Karigar</h3>
@@ -99,7 +99,7 @@ function Footer() {
           </div>
         </div>
       </div>
-      <div className="container border-t  pt-8 px-24 mb-8">
+      <div className="border-t  pt-8 px-24 mb-8">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-500 mb-4 md:mb-0">
             © {new Date().getFullYear()} Karigar. All rights reserved.

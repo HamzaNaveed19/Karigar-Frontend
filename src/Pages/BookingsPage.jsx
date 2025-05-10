@@ -15,18 +15,21 @@ import LoadingSpinner from "../UI/LoadingSpinner";
 import ErrorMessage from "../UI/ErrorMessage";
 
 export default function BookingsPage() {
+  const { isAuthenticated, userId } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const { upcoming, past, status, error, activeTab } = useSelector(
     (state) => state.bookings
   );
 
   useEffect(() => {
-    if (activeTab === "upcoming" && status.upcoming === "idle") {
-      dispatch(fetchUpcomingBookings());
-    } else if (activeTab === "past" && status.past === "idle") {
-      dispatch(fetchPastBookings());
+    if (isAuthenticated) {
+      if (activeTab === "upcoming" && status.upcoming === "idle") {
+        dispatch(fetchUpcomingBookings(userId));
+      } else if (activeTab === "past" && status.past === "idle") {
+        dispatch(fetchPastBookings(userId));
+      }
     }
-  }, [activeTab, status, dispatch]);
+  }, [activeTab, status, dispatch, isAuthenticated]);
 
   const handleTabChange = (value) => {
     dispatch(setActiveTab(value));

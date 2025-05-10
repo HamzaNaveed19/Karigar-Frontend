@@ -5,8 +5,17 @@ import { LoginForm } from "./LoginForm";
 import { SignupForm } from "./SignupForm";
 import { OTPVerification } from "./OTPVerification";
 import { validateStep1, validateStep2, validateLoginForm } from "./validation";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "../../Redux/Slices/authSlice";
 
 export const AuthModal = ({ isOpen, onClose, mode, onModeChange }) => {
+  const dispatch = useDispatch();
+  const {
+    status,
+    error: authError,
+    isAuthenticated,
+  } = useSelector((state) => state.auth);
+
   const [signupStep, setSignupStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
@@ -35,14 +44,6 @@ export const AuthModal = ({ isOpen, onClose, mode, onModeChange }) => {
     password: "",
     address: "",
   });
-
-  useEffect(() => {
-    if (!isOpen) {
-      setTimeout(() => {
-        resetForm();
-      }, 300);
-    }
-  }, [isOpen]);
 
   const resetForm = () => {
     setFormData({
@@ -111,13 +112,11 @@ export const AuthModal = ({ isOpen, onClose, mode, onModeChange }) => {
     setIsSubmitting(true);
     setFormError("");
 
-    console.log(formData);
-
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       localStorage.setItem(
-        "karigar_user",
+        "karigar_userId",
         JSON.stringify({
           fullName: formData.fullName,
           email: formData.email,
@@ -150,37 +149,17 @@ export const AuthModal = ({ isOpen, onClose, mode, onModeChange }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    console.log(formData);
     const { errors, isValid } = validateLoginForm(formData);
     setErrors(errors);
     if (!isValid) return;
 
-    setIsSubmitting(true);
-    setFormError("");
-
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      const storedUser = localStorage.getItem("karigar_user");
-      if (storedUser) {
-        const user = JSON.parse(storedUser);
-        if (user.email === formData.email) {
-          setFormSuccess("Login successful!");
-          if (rememberMe) {
-            localStorage.setItem("karigar_auth", "true");
-          } else {
-            sessionStorage.setItem("karigar_auth", "true");
-          }
-          setTimeout(() => onClose(), 1500);
-          return;
-        }
-      }
-      setFormError("Invalid email or password");
-    } catch (error) {
-      setFormError("An error occurred. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
+    dispatch(
+      loginUser({
+        email: formData.email,
+        password: formData.password,
+        rememberMe,
+      })
+    );
   };
 
   const toggleMode = () => {
@@ -190,11 +169,35 @@ export const AuthModal = ({ isOpen, onClose, mode, onModeChange }) => {
     setSignupStep(1);
   };
 
+  useEffect(() => {
+    if (!isOpen) {
+      setTimeout(() => {
+        resetForm();
+      }, 300);
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      setFormSuccess("Login successful!");
+      resetForm();
+      setTimeout(() => onClose(), 1500);
+    }
+  }, [isAuthenticated, onClose]);
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="w-full m-2 md:w-[120vh] rounded-2xl bg-white pb-8 pl-4 pr-4 pt-4 shadow-xl">
+        {/* Error message from Redux */}
+        {/* {authError && (
+          <div className="mb-4 flex items-start rounded-lg bg-red-50 p-3 text-sm text-red-600">
+            <AlertCircle className="mr-2 h-5 w-5 flex-shrink-0" />
+            <span>{authError}</span>
+          </div>
+        )} */}
+
         <div className=" flex w-full justify-end">
           <button
             onClick={onClose}
@@ -212,7 +215,7 @@ export const AuthModal = ({ isOpen, onClose, mode, onModeChange }) => {
         )}
 
         {formSuccess && (
-          <div className="mb-4 flex items-start rounded-lg bg-emerald-50 p-3 text-sm text-emerald-600">
+          <div className="mb-4 flex items-end rounded-lg bg-emerald-50 p-3 text-sm text-emerald-600">
             <Check className="mr-2 h-5 w-5 flex-shrink-0" />
             <span>{formSuccess}</span>
           </div>

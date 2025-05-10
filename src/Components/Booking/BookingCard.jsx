@@ -8,16 +8,23 @@ import ProviderInfo from "./Card/ProviderInfo";
 import BookingDetailItem from "./Card/BookingDetailItem";
 import ReviewSection from "./Card/ReviewSection";
 import { Calendar, Clock, MapPin } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { updateBookingReview } from "../../Redux/Slices/bookingsSlice";
 
-const BookingCard = ({ booking }) => {
+const BookingCard = ({ Index, booking }) => {
   const [expanded, setExpanded] = useState(false);
+  const dispatch = useDispatch();
 
   const handleReviewSubmit = (review) => {
-    console.log("Submitting review:", review);
-    booking.review = {
-      ...review,
-      date: new Date().toISOString(),
-    };
+    console.log("Index", Index);
+    console.log("review", review);
+
+    dispatch(
+      updateBookingReview({
+        Index,
+        review,
+      })
+    );
   };
 
   return (

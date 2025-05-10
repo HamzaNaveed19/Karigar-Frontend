@@ -9,15 +9,14 @@ export default function ServiceProviderCard({
   name,
   profession,
   rating,
-  reviews,
   totalReviews,
   personalImage,
   location,
   verified,
   experience = 5,
   completedJobs = 120,
-  services,
-  skills,
+  serviceStartingFrom,
+  skillCount = 1,
   onPage = false,
 }) {
   return (
@@ -93,7 +92,7 @@ export default function ServiceProviderCard({
                     onPage ? "text-[10px]" : "text-xs"
                   } text-gray-500`}
                 >
-                  Starts from Rs {services[0]?.price || "500"}
+                  Starts from Rs {serviceStartingFrom || "500"}
                 </p>
               </div>
             </div>
@@ -143,7 +142,7 @@ export default function ServiceProviderCard({
                   } text-gray-500`}
                 />
                 <p className={`${onPage ? "mt-0.5" : "mt-1"} font-medium`}>
-                  {skills?.length || "1"} skills
+                  {skillCount} skills
                 </p>
               </div>
             </div>

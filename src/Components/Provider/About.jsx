@@ -8,16 +8,18 @@ function About({ provider }) {
   return (
     <Card className="shadow-sm">
       <CardContent className="p-6">
-        <div className="mb-8">
-          <h2 className="mb-4 flex items-center text-2xl font-bold text-gray-800">
+        <div className="mb-6">
+          <h2 className="mb-4 flex items-center text-xl font-bold text-gray-800">
             <span className="mr-2 h-1.5 w-6 rounded-full bg-emerald-500"></span>
             About {provider.name}
           </h2>
-          <p className="text-gray-700 leading-relaxed">{provider.about}</p>
+          <p className="text-gray-700 leading-relaxed text-sm">
+            {provider.about}
+          </p>
         </div>
 
-        <div className="mb-8">
-          <div className="mb-4 flex items-center">
+        <div className="mb-6">
+          <div className="mb-3 flex items-center">
             <Award className="mr-2 h-5 w-5 text-emerald-600" />
             <h3 className="text-lg font-semibold text-gray-800">
               Skills & Expertise
@@ -36,17 +38,17 @@ function About({ provider }) {
           </div>
         </div>
 
-        <div className="mb-8">
+        <div className="mb-6">
           <div className="mb-3 flex items-center">
             <BookOpen className="mr-2 h-5 w-5 text-emerald-600" />
             <h3 className="text-lg font-semibold text-gray-800">Education</h3>
           </div>
-          <p className="rounded-lg bg-gray-50 p-4 text-gray-700 shadow-inner">
+          <p className="rounded-lg bg-gray-50 p-4 text-gray-700 shadow-inner text-sm">
             {provider.education}
           </p>
         </div>
 
-        <div className="mb-8">
+        <div className="mb-6">
           <div className="mb-3 flex items-center">
             <Languages className="mr-2 h-5 w-5 text-emerald-600" />
             <h3 className="text-lg font-semibold text-gray-800">Languages</h3>
@@ -74,16 +76,20 @@ function About({ provider }) {
           <div className="overflow-hidden rounded-lg border border-gray-100 shadow-xs">
             <div className="grid grid-cols-1 divide-y divide-gray-100">
               <div className="grid grid-cols-2 p-1">
-                <div className="font-medium text-gray-700">Monday - Friday</div>
-                <div className="text-gray-600">9:00 AM - 6:00 PM</div>
+                <div className="font-medium text-gray-700 text-sm">
+                  Monday - Friday
+                </div>
+                <div className="text-gray-600">{provider.workingHours.MF}</div>
               </div>
               <div className="grid grid-cols-2 p-1">
-                <div className="font-medium text-gray-700">Saturday</div>
-                <div className="text-gray-600">10:00 AM - 4:00 PM</div>
+                <div className="font-medium text-gray-700 text-sm">
+                  Saturday
+                </div>
+                <div className="text-gray-600">{provider.workingHours.Sat}</div>
               </div>
               <div className="grid grid-cols-2 p-1">
-                <div className="font-medium text-gray-700">Sunday</div>
-                <div className="text-gray-600">Closed</div>
+                <div className="font-medium text-gray-700 text-sm">Sunday</div>
+                <div className="text-gray-600">{provider.workingHours.Sun}</div>
               </div>
             </div>
           </div>

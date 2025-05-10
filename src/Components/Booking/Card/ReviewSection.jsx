@@ -1,20 +1,62 @@
 import { useState } from "react";
 import { Star, MessageSquare } from "lucide-react";
 import Button from "../../../UI/Button";
+import axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
+import { updateBookingReview } from "../../../Redux/Slices/bookingsSlice";
 
 const ReviewSection = ({ booking, onReviewSubmit }) => {
+  const { token } = useSelector((state) => state.auth);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [reviewText, setReviewText] = useState("");
   const [rating, setRating] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleSubmit = () => {
-    onReviewSubmit({ rating, comment: reviewText });
-    setShowReviewForm(false);
-    setReviewText("");
-    setRating(0);
+  console.log(booking);
+
+  const handleSubmit = async () => {
+    if (!rating) {
+      setError("Please select a rating");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const reviewData = {
+        bookingId: booking._id,
+        customerId: booking.customer,
+        serviceProviderId: booking.serviceProvider._id,
+        rating: rating,
+        comment: reviewText,
+      };
+
+      const response = await axios.post(
+        "http://localhost:5050/customer/addReview",
+        reviewData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      onReviewSubmit(response.data.review);
+
+      setShowReviewForm(false);
+      setReviewText("");
+      setRating(0);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to submit review");
+      console.error("Error submitting review:", err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  if (booking.review) {
+  if (booking.reviews.length > 0) {
     return (
       <div className="rounded-lg bg-gray-50 p-3">
         <div className="flex items-center gap-2">
@@ -23,7 +65,7 @@ const ReviewSection = ({ booking, onReviewSubmit }) => {
               <Star
                 key={i}
                 className={`h-4 w-4 ${
-                  i < booking.review.rating
+                  i < booking.reviews[0].rating
                     ? "fill-yellow-400 text-yellow-400"
                     : "text-gray-300"
                 }`}
@@ -31,13 +73,13 @@ const ReviewSection = ({ booking, onReviewSubmit }) => {
             ))}
           </div>
           <span className="text-sm text-gray-500">
-            {new Date(booking.review.date).toLocaleDateString()}
+            {new Date(booking.reviews[0].createdAt).toLocaleDateString()}
           </span>
         </div>
-        {booking.review.comment && (
+        {booking.reviews[0].comment && (
           <p className="mt-2 text-sm text-gray-700">
             <MessageSquare className="mr-1 inline h-3 w-3" />
-            {booking.review.comment}
+            {booking.reviews[0].comment}
           </p>
         )}
       </div>
@@ -71,15 +113,22 @@ const ReviewSection = ({ booking, onReviewSubmit }) => {
           value={reviewText}
           onChange={(e) => setReviewText(e.target.value)}
         />
+        {error && <p className="text-sm text-red-500">{error}</p>}
         <div className="flex justify-center flex-row gap-2">
           <Button
             variant="outline"
             className="border-gray-300"
-            onClick={() => setShowReviewForm(false)}
+            onClick={() => {
+              setShowReviewForm(false);
+              setError(null);
+            }}
+            disabled={isSubmitting}
           >
             Cancel
           </Button>
-          <Button onClick={handleSubmit}>Submit Review</Button>
+          <Button onClick={handleSubmit} disabled={isSubmitting}>
+            {isSubmitting ? "Submitting..." : "Submit Review"}
+          </Button>
         </div>
       </div>
     );
