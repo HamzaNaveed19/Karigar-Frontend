@@ -1,60 +1,112 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { Calendar as CalendarIcon, List, AlertCircle } from "react-feather"
 import BookingList from "../Components/Bookings/BookingList"
 import BookingCalendar from "../Components/Bookings/BookingCalendar"
+import axios from "axios"
+
 
 const Bookings = () => {
   const [viewMode, setViewMode] = useState("list")
   const [activeTab, setActiveTab] = useState("upcoming")
 
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
   const [bookings, setBookings] = useState([])
 
   useEffect(() => {
-    const dummyData = [
-      {
-        id: 1,
-        date: "2025-05-05",
-        time: "10:00 AM",
-        customerName: "John Doe",
-        customerPhone: "1234567890",
-        serviceName: "Haircut",
-        price: 500,
-        status: "upcoming",
-      },
-      {
-        id: 2,
-        date: "2025-05-01",
-        time: "02:00 PM",
-        customerName: "Jane Smith",
-        customerPhone: "9876543210",
-        serviceName: "Facial",
-        price: 800,
-        status: "completed",
-      },
-    ]
-    setBookings(dummyData)
-    setLoading(false)
+    const fetchBookings = async () => {
+      setLoading(true)
+      setError("")
+
+      const userId = sessionStorage.getItem("userId")
+      if (!userId) {
+        setError("No user session found.")
+        setLoading(false)
+        return
+      }
+
+      try {
+        const res = await fetch(
+          // `http://localhost:5050/booking/${userId}/provider`
+          `http://localhost:5050/booking/68136e4d342756dad21e994b/provider`
+        )
+        const data = await res.json()
+
+        if (!res.ok) {
+          throw new Error(data.message || "Failed to load bookings")
+        }
+
+        // Transform API response into shape your components expect:
+        const mapped = data.map((b) => ({
+          id: b._id,
+          date: b.bookingDate.split("T")[0],         // e.g. "2025-05-08"
+          time: b.bookingTime,                        // e.g. "09:00 AM"
+          customerName: b.customer.name,
+          customerPhone: b.customer.phone,
+          serviceName: b.bookingTitle,
+          price: b.price,
+          status: b.status,                           // "pending" | "accepted" | etc.
+        }))
+
+        setBookings(mapped)
+      } catch (err) {
+        console.error(err)
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchBookings()
   }, [])
 
-  const handleStatusChange = (bookingId, action) => {
-    setBookings((prev) =>
-      prev.map((b) => {
-        if (b.id !== bookingId) return b
-        if (b.status === "upcoming") {
-          return { ...b, status: action === "accept" ? "accepted" : "cancelled" }
-        }
-        if (b.status === "accepted") {
-          return { ...b, status: action === "accept" ? "completed" : "cancelled" }
-        }
-        return b
-      }),
-    )
-  }
+  const handleStatusChange = async (bookingId, action) => {
+  let newStatus = ""
 
-  const filteredBookings = bookings.filter((booking) => booking.status === activeTab)
+  // Map frontend status to backend values
+  setBookings((prev) =>
+    prev.map((b) => {
+      if (b.id !== bookingId) return b
+      if (b.status === "pending") {
+        newStatus = action === "accept" ? "confirmed" : "cancelled"
+      } else if (b.status === "confirmed") {
+        newStatus = action === "accept" ? "completed" : "cancelled"
+      }
+      return b
+    })
+  )
+
+  try {
+    const response = await axios.put(
+      `http://localhost:5050/booking/updateStatus/${bookingId}`,
+      { status: newStatus }
+    )
+
+    console.log("Status updated successfully:", response.data)
+
+    // Reflect change in UI
+    setBookings((prev) =>
+      prev.map((b) =>
+        b.id === bookingId ? { ...b, status: newStatus } : b
+      )
+    )
+  } catch (err) {
+    console.error("Failed to update booking status:", err)
+    alert("Error updating booking status: " + err.message)
+  }
+}
+
+
+
+const filteredBookings = bookings.filter((b) => {
+  if (activeTab === "upcoming") return b.status === "pending"
+  if (activeTab === "accepted") return b.status === "confirmed"
+
+  return b.status === activeTab
+})
+
 
   return (
     <div className="space-y-6">
@@ -64,7 +116,9 @@ const Bookings = () => {
           <button
             onClick={() => setViewMode("list")}
             className={`p-2 rounded-md ${
-              viewMode === "list" ? "bg-emerald-100 text-emerald-600" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              viewMode === "list"
+                ? "bg-emerald-100 text-emerald-600"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
             }`}
           >
             <List className="h-5 w-5" />
@@ -109,6 +163,8 @@ const Bookings = () => {
               <div className="flex items-center justify-center h-64">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
               </div>
+            ) : error ? (
+              <div className="p-6 text-red-500 text-center">{error}</div>
             ) : filteredBookings.length > 0 ? (
               <BookingList
                 bookings={filteredBookings}
@@ -118,7 +174,7 @@ const Bookings = () => {
             ) : (
               <div className="flex flex-col items-center justify-center h-64 text-gray-500">
                 <AlertCircle className="h-12 w-12 text-gray-400 mb-3" />
-                <p>No bookings found</p>
+                <p>No {activeTab} bookings found</p>
               </div>
             )}
           </>
