@@ -18,10 +18,11 @@ import {
   Shield,
   LogOut,
 } from "lucide-react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../Redux/Slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { resetBookings } from "../../Redux/Slices/bookingsSlice";
+import { ChangePasswordModal } from "./ChangePasswordModal";
 
 function Settings() {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -38,6 +39,7 @@ function Settings() {
   const [changesMade, setChangesMade] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { userId } = useSelector((state) => state.auth);
 
   const handlePasswordChange = (e) => {
     e.preventDefault();
@@ -103,7 +105,7 @@ function Settings() {
 
           <div className="space-y-4">
             {/* Password & Security Section */}
-            <div className="rounded-lg border border-gray-200 p-4 bg-white">
+            <div className="rounded-lg border border-gray-200 p-4 bg-white mb-4">
               <div className="flex items-start justify-between">
                 <div>
                   <h1 className="text-sm mb-1 font-medium text-gray-800 flex items-center gap-2">
@@ -115,8 +117,8 @@ function Settings() {
                   </p>
                 </div>
                 <Button
+                  className="text-sm"
                   variant="outline"
-                  className="text-xs flex items-center gap-2 border-emerald-500 text-emerald-600 hover:bg-emerald-50"
                   onClick={() => setIsPasswordModalOpen(true)}
                 >
                   Change Password
@@ -172,28 +174,6 @@ function Settings() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <Mail className="h-4 w-4 text-gray-400" />
-                    <div>
-                      <p className="font-medium text-gray-700">
-                        Email Notifications
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        Receive booking updates via email
-                      </p>
-                    </div>
-                  </div>
-                  <label className="relative inline-flex cursor-pointer items-center">
-                    <input
-                      type="checkbox"
-                      className="peer sr-only"
-                      checked={notifications.email}
-                      onChange={() => handleNotificationChange("email")}
-                    />
-                    <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-emerald-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none"></div>
-                  </label>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
                     <Smartphone className="h-4 w-4 text-gray-400" />
                     <div>
                       <p className="font-medium text-gray-700">
@@ -210,28 +190,6 @@ function Settings() {
                       className="peer sr-only"
                       checked={notifications.sms}
                       onChange={() => handleNotificationChange("sms")}
-                    />
-                    <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-emerald-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none"></div>
-                  </label>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <MessageCircleIcon className="h-4 w-4 text-gray-400" />
-                    <div>
-                      <p className="font-medium text-gray-700">
-                        Marketing Communications
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        Receive offers and updates
-                      </p>
-                    </div>
-                  </div>
-                  <label className="relative inline-flex cursor-pointer items-center">
-                    <input
-                      type="checkbox"
-                      className="peer sr-only"
-                      checked={notifications.marketing}
-                      onChange={() => handleNotificationChange("marketing")}
                     />
                     <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-emerald-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none"></div>
                   </label>
@@ -301,86 +259,11 @@ function Settings() {
       </Card>
 
       {/* Password Change Modal */}
-      {isPasswordModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl animate-in fade-in zoom-in-95">
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-                <Lock className="h-5 w-5 text-emerald-600" />
-                Change Password
-              </h3>
-              <button
-                onClick={() => setIsPasswordModalOpen(false)}
-                className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-
-            <form onSubmit={handlePasswordChange}>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <label
-                    htmlFor="new-password"
-                    className="text-sm font-medium text-gray-700 flex items-center gap-2"
-                  >
-                    <Lock className="h-4 w-4 text-gray-500" />
-                    New Password
-                  </label>
-                  <Input
-                    id="new-password"
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    required
-                    className="focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 pl-10"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label
-                    htmlFor="confirm-password"
-                    className="text-sm font-medium text-gray-700 flex items-center gap-2"
-                  >
-                    <Lock className="h-4 w-4 text-gray-500" />
-                    Confirm New Password
-                  </label>
-                  <Input
-                    id="confirm-password"
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                    className="focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 pl-10"
-                  />
-                </div>
-
-                {passwordError && (
-                  <div className="rounded-md bg-red-50 p-3 text-sm text-red-600 border border-red-100 flex items-start gap-2">
-                    {passwordError}
-                  </div>
-                )}
-
-                <div className="flex justify-end gap-2 pt-4">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setIsPasswordModalOpen(false)}
-                    className="text-xs border-gray-300 hover:bg-gray-50"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="submit"
-                    className="text-xs flex items-center gap-1"
-                  >
-                    Update Password
-                  </Button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <ChangePasswordModal
+        isOpen={isPasswordModalOpen}
+        onClose={() => setIsPasswordModalOpen(false)}
+        userId={userId}
+      />
     </>
   );
 }
