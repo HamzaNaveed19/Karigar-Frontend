@@ -105,7 +105,6 @@ export const AuthModal = ({ isOpen, onClose, mode, onModeChange }) => {
           showMessage: true,
           showOTP: false,
         });
-        // Switch to login mode with the email prefilled
         onModeChange("login");
         updateState({
           formData: { ...initialFormData, email: state.formData.email },
@@ -153,7 +152,7 @@ export const AuthModal = ({ isOpen, onClose, mode, onModeChange }) => {
   };
 
   useEffect(() => {
-    if (!isOpen) setTimeout(resetForm, 300);
+    if (!isOpen) setTimeout(resetForm, 100);
   }, [isOpen]);
 
   useEffect(() => {

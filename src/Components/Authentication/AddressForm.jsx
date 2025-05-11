@@ -5,30 +5,39 @@ import Field from "./Field";
 import MapSelector from "./MapSelector";
 
 export const AddressForm = ({
-  formData,
-  errors,
-  handleInputChange,
-  isSubmitting,
-  setFormData,
+  formData = {
+    city: "",
+    state: "",
+    country: "",
+    addressDetails: "",
+    latitude: null,
+    longitude: null,
+  },
+  errors = {},
+  handleInputChange = () => {},
+  isSubmitting = false,
+  setFormData = () => {},
 }) => {
   const [showMap, setShowMap] = useState(false);
 
-  const handleMapSelect = (address, coords) => {
+  const handleMapSelect = (selectedData) => {
+    const { address, coords } = selectedData;
     setFormData((prev) => ({
       ...prev,
-      city: address.address?.city || address.address?.town || "",
-      state: address.address?.state || "",
-      country: address.address?.country || "",
-      latitude: coords.lat,
-      longitude: coords.lon,
+      city: address?.address?.city || address?.address?.town || "",
+      state: address?.address?.state || "",
+      country: address?.address?.country || "",
+      latitude: coords?.lat || null,
+      longitude: coords?.lng || null,
+      addressDetails: selectedData.display_name?.split(",")[0] || "",
     }));
     setShowMap(false);
   };
 
   return (
-    <div className="space-y-3 w-full">
+    <div className="space-y-3 w-full ">
       {showMap ? (
-        <div className="space-y-4">
+        <div className="space-y-4 ">
           <div className="rounded-lg overflow-hidden border border-gray-300">
             <MapSelector onSelect={handleMapSelect} />
           </div>
@@ -42,7 +51,7 @@ export const AddressForm = ({
         </div>
       ) : (
         <>
-          <div className="flex justify-end">
+          <div className="flex justify-end mb-6">
             <button
               type="button"
               onClick={() => setShowMap(true)}
@@ -58,7 +67,7 @@ export const AddressForm = ({
               <Input
                 name="city"
                 placeholder="Lahore"
-                value={formData.city}
+                value={formData.city || ""}
                 onChange={handleInputChange}
                 disabled={isSubmitting}
               />
@@ -68,7 +77,7 @@ export const AddressForm = ({
               <Input
                 name="state"
                 placeholder="Punjab"
-                value={formData.state}
+                value={formData.state || ""}
                 onChange={handleInputChange}
                 disabled={isSubmitting}
               />
@@ -79,7 +88,7 @@ export const AddressForm = ({
             <Input
               name="country"
               placeholder="Pakistan"
-              value={formData.country}
+              value={formData.country || ""}
               onChange={handleInputChange}
               disabled={isSubmitting}
             />
@@ -93,11 +102,11 @@ export const AddressForm = ({
             <textarea
               name="addressDetails"
               className="w-full rounded-lg border border-gray-300 p-3 text-sm 
-            focus:outline-none focus:ring-emerald-500 focus:ring-1 
-            resize-none"
+              focus:outline-none focus:ring-emerald-500 focus:ring-1 
+              resize-none"
               rows={2}
               placeholder="Street no, House no, Landmark, apartment number, etc."
-              value={formData.addressDetails}
+              value={formData.addressDetails || ""}
               onChange={handleInputChange}
               disabled={isSubmitting}
             />

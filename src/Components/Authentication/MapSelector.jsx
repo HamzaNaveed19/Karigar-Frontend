@@ -2,7 +2,6 @@ import { useEffect, useState, useRef } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-// Cache for address lookups
 const addressCache = new Map();
 
 const MapSelector = ({ onSelect }) => {
@@ -10,9 +9,11 @@ const MapSelector = ({ onSelect }) => {
   const [error, setError] = useState(null);
   const mapRef = useRef(null);
   const selectedMarkerRef = useRef(null);
+  const mapInitializedRef = useRef(false);
 
   useEffect(() => {
     let watchId;
+
     const cleanup = () => {
       if (watchId) navigator.geolocation.clearWatch(watchId);
       if (mapRef.current) {
@@ -22,6 +23,9 @@ const MapSelector = ({ onSelect }) => {
     };
 
     const initMap = (coords) => {
+      if (mapInitializedRef.current) return;
+      mapInitializedRef.current = true;
+
       const map = L.map("address-map", {
         zoomControl: false,
         preferCanvas: true,
@@ -62,12 +66,10 @@ const MapSelector = ({ onSelect }) => {
           if (addressCache.has(cacheKey)) {
             const cachedData = addressCache.get(cacheKey);
             onSelect({
-              city: cachedData.address?.city || cachedData.address?.town || "",
-              state: cachedData.address?.state || "",
-              country: cachedData.address?.country || "",
-              latitude: lat,
-              longitude: lng,
-            }, { lat, lng });
+              address: cachedData,
+              display_name: cachedData.display_name || "",
+              coords: { lat, lng },
+            });
             setStatus("Location selected");
             return;
           }
@@ -79,12 +81,10 @@ const MapSelector = ({ onSelect }) => {
           addressCache.set(cacheKey, data);
 
           onSelect({
-            city: data.address?.city || data.address?.town || "",
-            state: data.address?.state || "",
-            country: data.address?.country || "",
-            latitude: lat,
-            longitude: lng,
-          }, { lat, lng });
+            address: data,
+            display_name: data.display_name || "",
+            coords: { lat, lng },
+          });
 
           setStatus("Location selected");
         } catch (error) {
@@ -98,26 +98,27 @@ const MapSelector = ({ onSelect }) => {
       setStatus("Click to select location");
     };
 
-    if (navigator.geolocation) {
-      watchId = navigator.geolocation.watchPosition(
-        (position) => {
-          initMap({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-          navigator.geolocation.clearWatch(watchId);
-        },
-        (err) => {
-          console.warn("Geolocation error:", err);
-          // Fallback to default location
-          setError("Couldn't get precise location. Using default.");
-          initMap({ lat: 31.5204, lng: 74.3587 });
-        },
-        { enableHighAccuracy: false, maximumAge: 30000, timeout: 5000 }
-      );
-    } else {
-      setError("Geolocation not supported. Using default location.");
-      initMap({ lat: 31.5204, lng: 74.3587 });
+    if (!mapInitializedRef.current) {
+      if (navigator.geolocation) {
+        watchId = navigator.geolocation.watchPosition(
+          (position) => {
+            initMap({
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            });
+            navigator.geolocation.clearWatch(watchId);
+          },
+          (err) => {
+            console.warn("Geolocation error:", err);
+            setError("Couldn't get precise location. Using default.");
+            initMap({ lat: 31.5204, lng: 74.3587 }); // Default to Lahore
+          },
+          { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
+        );
+      } else {
+        setError("Geolocation not supported. Using default location.");
+        initMap({ lat: 31.5204, lng: 74.3587 }); // Default to Lahore
+      }
     }
 
     return cleanup;

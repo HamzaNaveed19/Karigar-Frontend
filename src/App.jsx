@@ -9,6 +9,7 @@ import ServicesProviderPage from "./Pages/ServicesProviderPage";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { PrivateRoute } from "./Components/Authentication/PrivateRoute";
 import CategoryFilter from "./Components/Services/CategoryFilter";
+import { RequireAddress } from "./Components/Authentication/RequireAddress";
 
 const App = () => {
   function ScrollToTop() {
@@ -20,16 +21,6 @@ const App = () => {
 
     return null;
   }
-
-  // return (
-  //   <>
-  //     <Header></Header>
-  //     {/* <BookingsPage></BookingsPage> */}
-  //     <HomePage></HomePage>
-  //     <Footer></Footer>
-  //   </>
-  // );
-  // return <ProviderProfilePage></ProviderProfilePage>;
 
   return (
     <>
@@ -66,7 +57,9 @@ const App = () => {
           path="profile/:id"
           element={
             <PrivateRoute>
-              <ProviderProfilePage />
+              <RequireAddress>
+                <ProviderProfilePage />
+              </RequireAddress>
             </PrivateRoute>
           }
         />

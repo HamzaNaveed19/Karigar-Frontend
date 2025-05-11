@@ -69,9 +69,7 @@ export default function ProfilePage() {
                 </div>
               </div>
               <h2 className="text-xl font-bold text-gray-800">{user.name}</h2>
-              <p className="text-sm text-gray-500">
-                Member since {user.joinDate}
-              </p>
+              <p className="text-sm text-gray-500">Member since 2025</p>
             </div>
           </CardContent>
         </Card>
