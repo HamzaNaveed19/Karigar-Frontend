@@ -23,12 +23,39 @@ const Sidebar = () => {
     window.location.href = "/login"
   }
 
-  const navItems = [
-    { path: "/service-provider-dashboard", name: "Dashboard", icon: <Home size={20} /> },
-    { path: "/bookings", name: "Bookings", icon: <Calendar size={20} /> },
-    { path: "/analytics", name: "Analytics", icon: <BarChart2 size={20} /> },
-    { path: "/reviews", name: "Reviews", icon: <Star size={20} /> },
-  ]
+const navItems = [
+  {
+    path: "/service-provider-dashboard",
+    name: "Dashboard",
+    icon: <Home size={20} />,
+  },
+  {
+    path: "/bookings",
+    name: "Bookings",
+    icon: <Calendar size={20} />,
+  },
+  {
+    path: "/analytics",
+    name: "Analytics",
+    icon: <BarChart2 size={20} />,
+  },
+  {
+    path: "/reviews",
+    name: "Reviews",
+    icon: <Star size={20} />,
+  },
+  {
+    path: "/profile",
+    name: "Profile",
+    icon: <User size={20} />,
+  },
+  {
+    path: "/services",
+    name: "Services",
+    icon: <Settings size={20} />,
+  },
+];
+
 
   return (
     <>

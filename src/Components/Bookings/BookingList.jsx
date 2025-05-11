@@ -1,12 +1,58 @@
 "use client"
 import React from "react"
-import { Check, X } from "react-feather"
+import { Check, X, Clock } from "react-feather"
 
 const BookingList = ({ bookings, status, onStatusChange }) => {
   // Helper to format date strings
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "short", day: "numeric" }
     return new Date(dateString).toLocaleDateString("en-US", options)
+  }
+
+  // Determine which actions to show based on the current status tab
+  const renderActions = (booking) => {
+    if (status === "upcoming") {
+      return (
+        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+          <button
+            onClick={() => onStatusChange(booking.id, "accept")}
+            className="text-green-600 hover:text-green-900 mr-4"
+          >
+            <Check className="h-5 w-5" />
+            <span className="sr-only">Accept</span>
+          </button>
+          <button
+            onClick={() => onStatusChange(booking.id, "cancel")}
+            className="text-red-600 hover:text-red-900"
+          >
+            <X className="h-5 w-5" />
+            <span className="sr-only">Cancel</span>
+          </button>
+        </td>
+      )
+    } else if (status === "accepted") {
+      return (
+        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+          <button
+            onClick={() => onStatusChange(booking.id, "complete")}
+            className="text-green-600 hover:text-green-900 mr-4"
+          >
+            <Check className="h-5 w-5" />
+            <span className="sr-only">Complete</span>
+          </button>
+          <button
+            onClick={() => onStatusChange(booking.id, "cancel")}
+            className="text-red-600 hover:text-red-900"
+          >
+            <X className="h-5 w-5" />
+            <span className="sr-only">Cancel</span>
+          </button>
+        </td>
+      )
+    }
+    
+    // No actions for completed or cancelled bookings
+    return null
   }
 
   return (
@@ -26,7 +72,7 @@ const BookingList = ({ bookings, status, onStatusChange }) => {
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Status
             </th>
-            {status === "upcoming" && (
+            {(status === "upcoming" || status === "accepted") && (
               <th
                 scope="col"
                 className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -65,24 +111,7 @@ const BookingList = ({ bookings, status, onStatusChange }) => {
                   {booking.status}
                 </span>
               </td>
-              {status === "upcoming" && (
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button
-                    onClick={() => onStatusChange(booking.id, "confirmed")}
-                    className="text-green-600 hover:text-green-900 mr-4"
-                  >
-                    <Check className="h-5 w-5" />
-                    <span className="sr-only">Confirm</span>
-                  </button>
-                  <button
-                    onClick={() => onStatusChange(booking.id, "cancelled")}
-                    className="text-red-600 hover:text-red-900"
-                  >
-                    <X className="h-5 w-5" />
-                    <span className="sr-only">Cancel</span>
-                  </button>
-                </td>
-              )}
+              {renderActions(booking)}
             </tr>
           ))}
         </tbody>

@@ -47,7 +47,7 @@ const Bookings = () => {
           customerPhone: b.customer.phone,
           serviceName: b.bookingTitle,
           price: b.price,
-          status: b.status,                           // "pending" | "accepted" | etc.
+          status: b.status,                           // "pending" | "confirmed" | etc.
         }))
 
         setBookings(mapped)
@@ -63,50 +63,51 @@ const Bookings = () => {
   }, [])
 
   const handleStatusChange = async (bookingId, action) => {
-  let newStatus = ""
-
-  // Map frontend status to backend values
-  setBookings((prev) =>
-    prev.map((b) => {
-      if (b.id !== bookingId) return b
-      if (b.status === "pending") {
-        newStatus = action === "accept" ? "confirmed" : "cancelled"
-      } else if (b.status === "confirmed") {
-        newStatus = action === "accept" ? "completed" : "cancelled"
-      }
-      return b
-    })
-  )
-
-  try {
-    const response = await axios.put(
-      `http://localhost:5050/booking/updateStatus/${bookingId}`,
-      { status: newStatus }
-    )
-
-    console.log("Status updated successfully:", response.data)
-
-    // Reflect change in UI
-    setBookings((prev) =>
-      prev.map((b) =>
-        b.id === bookingId ? { ...b, status: newStatus } : b
+    // Get current booking
+    const booking = bookings.find(b => b.id === bookingId)
+    if (!booking) return
+    
+    let newStatus = ""
+    
+    // Determine new status based on current status and action
+    if (booking.status === "pending") {
+      newStatus = action === "accept" ? "confirmed" : "cancelled"
+    } else if (booking.status === "confirmed") {
+      newStatus = action === "complete" ? "completed" : "cancelled"
+    }
+    
+    try {
+      // Call API with the proper backend status value
+      const response = await axios.put(
+        `http://localhost:5050/booking/updateStatus/${bookingId}`,
+        { status: newStatus }
       )
-    )
-  } catch (err) {
-    console.error("Failed to update booking status:", err)
-    alert("Error updating booking status: " + err.message)
+      
+      console.log("Status updated successfully:", response.data)
+      
+      // Update local state
+      setBookings(prev =>
+        prev.map(b => (b.id === bookingId ? { ...b, status: newStatus } : b))
+      )
+    } catch (err) {
+      console.error("Failed to update booking status:", err)
+      alert("Error updating booking status: " + err.message)
+    }
   }
-}
 
+  // Map backend status values to frontend tab names
+  const statusToTabMap = {
+    pending: "upcoming",
+    confirmed: "accepted",
+    completed: "completed",
+    cancelled: "cancelled"
+  }
 
-
-const filteredBookings = bookings.filter((b) => {
-  if (activeTab === "upcoming") return b.status === "pending"
-  if (activeTab === "accepted") return b.status === "confirmed"
-
-  return b.status === activeTab
-})
-
+  // Filter bookings based on active tab
+  const filteredBookings = bookings.filter(booking => {
+    const tabForStatus = statusToTabMap[booking.status]
+    return tabForStatus === activeTab
+  })
 
   return (
     <div className="space-y-6">
