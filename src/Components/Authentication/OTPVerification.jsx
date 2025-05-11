@@ -21,20 +21,21 @@ export const OTPVerification = ({
   };
 
   return (
-    <div className=" max-w-xs space-y-4">
+    <div className="w-full max-w-md mx-auto space-y-4 px-4">
+      {" "}
+      {/* Changed max-w-xs to max-w-md and added px-4 */}
       <div className="text-center">
         <p className="text-sm text-gray-600">
           We've sent a 4-digit code to{" "}
           <span className="font-medium text-gray-800">{email}</span>
         </p>
       </div>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
+      <form onSubmit={handleSubmit} className="space-y-4 w-full">
+        <div className="space-y-2 w-full">
           <label className="block text-sm font-medium text-gray-700 text-center">
             Verification code
           </label>
-          <div className="flex justify-center space-x-2">
+          <div className="flex justify-center space-x-2 w-full">
             {[0, 1, 2, 3].map((i) => (
               <input
                 key={i}
@@ -42,7 +43,7 @@ export const OTPVerification = ({
                 inputMode="numeric"
                 pattern="\d"
                 maxLength={1}
-                className="w-12 h-12 rounded-lg border border-gray-300 text-center text-xl font-semibold focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                className="w-12 h-12 rounded-lg border border-gray-300 text-center text-xl font-semibold focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 flex-1 max-w-[60px]" /* Added flex-1 and max-w */
                 value={otp[i] || ""}
                 onChange={(e) => {
                   const newOtp = otp.split("");
@@ -72,7 +73,7 @@ export const OTPVerification = ({
           )}
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex gap-2 w-full">
           <Button
             type="button"
             variant="outline"

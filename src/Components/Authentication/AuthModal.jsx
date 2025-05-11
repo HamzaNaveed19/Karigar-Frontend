@@ -8,6 +8,7 @@ import { validateSignupForm, validateLoginForm } from "./validation";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../../Redux/Slices/authSlice";
 import { registerUser, verifyOTP } from "../../Redux/Slices/signUpSlice";
+import axios from "axios";
 
 const initialFormData = {
   fullName: "",
@@ -84,11 +85,30 @@ export const AuthModal = ({ isOpen, onClose, mode, onModeChange }) => {
         if (result.error) {
           throw new Error(result.payload || "OTP verification failed");
         }
-        handleSuccess("Account created successfully!");
+
+        try {
+          await axios.post(
+            `http://localhost:5050/customer/${state.formData.userId}`,
+            {
+              latitude: 0,
+              longitude: 0,
+              address: " ",
+              profileImage: " ",
+            }
+          );
+        } catch (apiError) {
+          console.error("Additional API call failed:", apiError);
+        }
+
+        updateState({
+          formSuccess: "Account created successfully!",
+          showMessage: true,
+          showOTP: false,
+        });
+        // Switch to login mode with the email prefilled
         onModeChange("login");
         updateState({
           formData: { ...initialFormData, email: state.formData.email },
-          showOTP: false,
         });
       } else if (action === "resendOTP") {
         handleSuccess("OTP resent successfully!");
@@ -107,10 +127,6 @@ export const AuthModal = ({ isOpen, onClose, mode, onModeChange }) => {
     updateState({
       formSuccess: message,
       showMessage: true,
-      formData:
-        mode === "signup"
-          ? { ...initialFormData, email: state.formData.email }
-          : initialFormData,
     });
     setTimeout(() => {
       updateState({ showMessage: false, formSuccess: "" });
@@ -208,7 +224,7 @@ export const AuthModal = ({ isOpen, onClose, mode, onModeChange }) => {
 
           {state.showOTP ? (
             <OTPVerification
-              email={state.formData.email}
+              email={state.formData.phone}
               onVerify={(otp) => handleAuthAction("verifyOTP", { otp })}
               onResend={() => handleAuthAction("resendOTP")}
               isSubmitting={state.isSubmitting}
