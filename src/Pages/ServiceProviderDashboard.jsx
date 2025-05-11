@@ -1,207 +1,241 @@
-import React from "react"
-// import { Link } from "react-router-dom"
-import { Calendar, DollarSign, Star, CheckCircle, Clock } from "react-feather"
+import React, { useState, useEffect } from "react"
+import {
+  Calendar,
+  DollarSign,
+  Star,
+  CheckCircle,
+  Clock,
+  MapPin,
+  User,
+  Tool,
+  Briefcase,
+  MessageCircle,
+} from "react-feather"
 import StatsCard from "../Components/Dashboard/StatsCard"
-import BookingCard from "../Components/Dashboard/BookingCard"
-import ReviewCard from "../Components/Dashboard/ReviewCard"
+import axios from "axios"
 
 const ServiceProviderDashboard = () => {
-  // Hardcoded dummy data
-  // TODO: Replace with API call using axios
-  const profile = {
-    completedJobs: 86,
-    rating: 4.8
+  const [provider, setProvider] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    const fetchProviderData = async () => {
+      try {
+        const userId = sessionStorage.getItem("userId")
+        if (!userId) throw new Error("User ID not found in session storage")
+        const response = await axios.get(`http://localhost:5050/provider/${userId}`)
+        setProvider(response.data)
+        setLoading(false)
+      } catch (err) {
+        console.error("Error fetching provider data:", err)
+        setError(err.message)
+        setLoading(false)
+      }
+    }
+
+    fetchProviderData()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <Clock className="h-8 w-8 mx-auto mb-4 text-emerald-500 animate-spin" />
+          <p className="text-lg font-medium text-gray-700">Loading...</p>
+        </div>
+      </div>
+    )
   }
-  
-  const bookings = [
-    {
-      id: 1,
-      customerName: "John Smith",
-      service: "House Cleaning",
-      date: new Date().toISOString().split("T")[0], // Today
-      time: "10:00 AM",
-      status: "upcoming",
-      location: "123 Main Street",
-      amount: 2500
-    },
-    {
-      id: 2,
-      customerName: "Jane Doe",
-      service: "Garden Maintenance",
-      date: new Date().toISOString().split("T")[0], // Today
-      time: "2:30 PM",
-      status: "upcoming",
-      location: "456 Park Avenue",
-      amount: 1800
-    },
-    {
-      id: 3,
-      customerName: "Alex Johnson",
-      service: "Plumbing Repair",
-      date: "2025-05-03", // Future date
-      time: "11:00 AM",
-      status: "upcoming",
-      location: "789 Oak Drive",
-      amount: 3200
-    }
-  ]
-  
-  const reviews = [
-    {
-      id: 1,
-      customerName: "Michael Brown",
-      rating: 5,
-      comment: "Excellent service! Very professional and thorough.",
-      date: "2025-04-30"
-    },
-    {
-      id: 2,
-      customerName: "Sarah Wilson",
-      rating: 4,
-      comment: "Great work, arrived on time and completed the job quickly.",
-      date: "2025-04-28"
-    },
-    {
-      id: 3,
-      customerName: "David Lee",
-      rating: 5,
-      comment: "Outstanding quality and attention to detail. Highly recommend!",
-      date: "2025-04-25"
-    }
-  ]
 
-  // Filter today's bookings
-  const today = new Date().toISOString().split("T")[0]
-  const todayBookings = bookings.filter((booking) => booking.date === today) || []
-
-  // Get upcoming bookings
-  const upcomingBookings = bookings.filter((booking) => booking.status === "upcoming") || []
-
-  // Get recent reviews
-  const recentReviews = [...reviews].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 3)
-
-  // Simple translation function as placeholder
-  const t = (key) => {
-    const translations = {
-      "common.dashboard": "Dashboard",
-      "dashboard.totalEarnings": "Total Earnings",
-      "dashboard.completedJobs": "Completed Jobs",
-      "dashboard.upcomingBookings": "Upcoming Bookings",
-      "dashboard.averageRating": "Average Rating",
-      "dashboard.todayBookings": "Today's Bookings",
-      "dashboard.noBookings": "No bookings scheduled for today",
-      "dashboard.viewAll": "View All",
-      "dashboard.recentReviews": "Recent Reviews"
-    }
-    return translations[key] || key
+  if (error) {
+    return (
+      <div className="bg-red-50 p-4 rounded-lg text-center">
+        <p className="text-red-600 font-medium">Error loading dashboard</p>
+        <p className="text-sm text-red-500 mt-1">{error}</p>
+      </div>
+    )
   }
+
+  const recentReviews = provider?.reviews
+    ? [...provider.reviews].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 3)
+    : []
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">{t("common.dashboard")}</h1>
-        <div className="text-sm text-gray-500">
-          {new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+          <p className="text-gray-600 mt-1">{`${provider.profession} in ${provider.location.address}`}</p>
+        </div>
+        <div className="text-sm text-gray-500 mt-2 sm:mt-0">
+          {new Date().toLocaleDateString("en-US", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatsCard
-          title={t("dashboard.totalEarnings")}
-          value="Rs 45000"
-          icon={<DollarSign className="h-6 w-6 text-emerald-600" />}
-          change="+12%"
-          changeType="positive"
-        />
-        <StatsCard
-          title={t("dashboard.completedJobs")}
-          value={profile.completedJobs || 0}
+          title="Completed Jobs"
+          value={provider.completedJobs || 0}
           icon={<CheckCircle className="h-6 w-6 text-blue-600" />}
-          change="+5"
-          changeType="positive"
+          changeType="neutral"
         />
         <StatsCard
-          title={t("dashboard.upcomingBookings")}
-          value={upcomingBookings.length}
-          icon={<Calendar className="h-6 w-6 text-purple-600" />}
-          change="+2"
-          changeType="positive"
+          title="Available Services"
+          value={provider.services?.length || 0}
+          icon={<Tool className="h-6 w-6 text-purple-600" />}
+          changeType="neutral"
         />
         <StatsCard
-          title={t("dashboard.averageRating")}
-          value={profile.rating || 0}
+          title="Average Rating"
+          value={provider.rating?.toFixed(1) || 0}
           icon={<Star className="h-6 w-6 text-yellow-500" />}
-          change="+0.2"
-          changeType="positive"
+          suffix="/ 5"
+          changeType="neutral"
+        />
+        <StatsCard
+          title="Total Reviews"
+          value={provider.totalReviews}
+          icon={<MessageCircle className="h-6 w-6 text-emerald-600" />}
+          changeType="neutral"
         />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Today's Bookings */}
         <div className="lg:col-span-2">
           <div className="bg-white rounded-lg shadow">
             <div className="px-6 py-4 border-b flex items-center justify-between">
-              <h2 className="text-lg font-medium text-gray-900">{t("dashboard.todayBookings")}</h2>
-              <Clock className="h-5 w-5 text-gray-500" />
+              <h2 className="text-lg font-medium text-gray-900">Skills & Experience</h2>
+              <Briefcase className="h-5 w-5 text-gray-500" />
             </div>
             <div className="p-6">
-              {todayBookings.length > 0 ? (
-                <div className="space-y-4">
-                  {todayBookings.map((booking) => (
-                    <BookingCard key={booking.id} booking={booking} />
+              <div className="mb-4">
+                <h3 className="text-md font-medium text-gray-700 mb-2">Skills</h3>
+                <div className="flex flex-wrap gap-2">
+                  {provider.skills?.map((skill, index) => (
+                    <span
+                      key={index}
+                      className="px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-sm"
+                    >
+                      {skill}
+                    </span>
                   ))}
                 </div>
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <Calendar className="h-12 w-12 mx-auto text-gray-400 mb-3" />
-                  <p>{t("dashboard.noBookings")}</p>
+              </div>
+
+              <div className="mb-4">
+                <h3 className="text-md font-medium text-gray-700 mb-2">Services</h3>
+                <div className="space-y-3">
+                  {provider.services?.map((service) => (
+                    <div
+                      key={service._id}
+                      className="flex justify-between items-center border-b pb-2"
+                    >
+                      <span className="font-medium">{service.name}</span>
+                      <div className="flex items-center gap-4">
+                        <span className="text-sm text-gray-500">{service.duration} mins</span>
+                        <span className="font-medium text-emerald-600">Rs {service.price}</span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              )}
-            </div>
-            <div className="px-6 py-3 border-t text-right">
-              {/*
-              <Link to="/bookings" className="text-sm font-medium text-emerald-600 hover:text-emerald-500">
-                {t("dashboard.viewAll")} &rarr;
-              </Link>
-              */}
+              </div>
+
+              <div>
+                <h3 className="text-md font-medium text-gray-700 mb-2">About</h3>
+                <p className="text-gray-600 text-sm">{provider.about}</p>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Recent Reviews */}
         <div>
-          <div className="bg-white rounded-lg shadow">
+          <div className="bg-white rounded-lg shadow mb-6">
             <div className="px-6 py-4 border-b flex items-center justify-between">
-              <h2 className="text-lg font-medium text-gray-900">{t("dashboard.recentReviews")}</h2>
-              <Star className="h-5 w-5 text-yellow-500" />
+              <h2 className="text-lg font-medium text-gray-900">Location</h2>
+              <MapPin className="h-5 w-5 text-gray-500" />
             </div>
             <div className="p-6">
-              {recentReviews.length > 0 ? (
-                <div className="space-y-4">
-                  {recentReviews.map((review) => (
-                    <ReviewCard key={review.id} review={review} />
-                  ))}
+              <div className="space-y-4">
+                <div className="text-gray-700">
+                  <p className="mb-1">{provider.location.address}</p>
+                  <p className="text-sm text-gray-500">
+                    Lat: {provider.location.latitude}, Long: {provider.location.longitude}
+                  </p>
                 </div>
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <Star className="h-12 w-12 mx-auto text-gray-400 mb-3" />
-                  <p>No reviews yet</p>
-                </div>
-              )}
-            </div>
-            <div className="px-6 py-3 border-t text-right">
-              {/*
-              <Link to="/reviews" className="text-sm font-medium text-emerald-600 hover:text-emerald-500">
-                {t("dashboard.viewAll")} &rarr;
-              </Link>
-              */}
+              </div>
             </div>
           </div>
+
+          <div className="bg-white rounded-lg shadow mb-6">
+            <div className="px-6 py-4 border-b flex items-center justify-between">
+              <h2 className="text-lg font-medium text-gray-900">Working Hours</h2>
+              <Clock className="h-5 w-5 text-gray-500" />
+            </div>
+            <div className="p-6">
+              <ul className="space-y-2">
+                <li className="flex justify-between">
+                  <span className="text-gray-600">Monday-Friday:</span>
+                  <span className="font-medium">{provider.workingHours.MF}</span>
+                </li>
+                <li className="flex justify-between">
+                  <span className="text-gray-600">Saturday:</span>
+                  <span className="font-medium">{provider.workingHours.Sat}</span>
+                </li>
+                <li className="flex justify-between">
+                  <span className="text-gray-600">Sunday:</span>
+                  <span className="font-medium">{provider.workingHours.Sun}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow">
+            <div className="px-6 py-4 border-b flex items-center justify-between">
+              <h2 className="text-lg font-medium text-gray-900">Languages</h2>
+              <User className="h-5 w-5 text-gray-500" />
+            </div>
+            <div className="p-6">
+              <div className="flex flex-wrap gap-2">
+                {provider.languages?.map((language, index) => (
+                  <span
+                    key={index}
+                    className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm"
+                  >
+                    {language}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-lg shadow">
+        <div className="px-6 py-4 border-b flex items-center justify-between">
+          <h2 className="text-lg font-medium text-gray-900">Recent Reviews</h2>
+          <Star className="h-5 w-5 text-yellow-500" />
+        </div>
+        <div className="p-6 space-y-4">
+          {recentReviews.length > 0 ? (
+            recentReviews.map((review) => (
+              <div key={review._id} className="border-b pb-3">
+                <p className="text-sm text-gray-700">{review.comment}</p>
+                <p className="text-xs text-gray-500 mt-1">— {review.reviewer}</p>
+              </div>
+            ))
+          ) : (
+            <p className="text-sm text-gray-500">No reviews yet</p>
+          )}
         </div>
       </div>
     </div>
   )
 }
 
-export default ServiceProviderDashboard;
+export default ServiceProviderDashboard

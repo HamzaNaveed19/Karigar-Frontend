@@ -29,8 +29,8 @@ const Bookings = () => {
 
       try {
         const res = await fetch(
-          // `http://localhost:5050/booking/${userId}/provider`
-          `http://localhost:5050/booking/68136e4d342756dad21e994b/provider`
+          `http://localhost:5050/booking/${userId}/provider`
+          // `http://localhost:5050/booking/68136e4d342756dad21e994b/provider`
         )
         const data = await res.json()
 

@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-// import { Globe } from "react-feather" // Removed as language toggle is gone
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -24,43 +23,42 @@ const Login = () => {
   }
 
   const handleSubmit = async (e) => {
-  e.preventDefault()
-  setLoading(true)
+    e.preventDefault()
+    setLoading(true)
 
-  try {
-    const res = await fetch("http://localhost:5050/user/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    })
+    try {
+      const res = await fetch("http://localhost:5050/user/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      })
 
-    const data = await res.json()
+      const data = await res.json()
 
-    if (res.ok) {
-      console.log("Login successful:", data.userId)
-      sessionStorage.setItem("userId", data.userId)
-      navigate("/service-provider-dashboard") // Uncomment this when you're ready to redirect
-    } else {
-      console.log("Login failed:", data)
-      setError(data.message || "Login failed")
+      if (res.ok) {
+        console.log("Login successful:", data.userId)
+        sessionStorage.setItem("userId", data.userId)
+        navigate("/service-provider-dashboard")
+      } else {
+        console.log("Login failed:", data)
+        setError(data.message || "Login failed")
+      }
+    } catch (err) {
+      console.error("Network error:", err)
+      setError("Network error")
     }
-  } catch (err) {
-    console.error("Network error:", err)
-    setError("Network error")
+
+    setLoading(false)
   }
 
-  setLoading(false)
-}
-
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 py-6 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md space-y-6 bg-white p-6 sm:p-8 rounded-lg shadow-md">
         <div className="text-center">
-          <h1 className="text-3xl font-extrabold text-emerald-600">Karigar</h1>
-          <h2 className="mt-6 text-2xl font-bold text-gray-900">Sign in to your account</h2>
+          <h1 className="text-3xl font-extrabold text-emerald-600 mb-2">Karigar</h1>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Sign in to your account</h2>
           <p className="mt-2 text-sm text-gray-600">
             Don't have an account?{" "}
             {/* <Link to="/register" className="font-medium text-emerald-600 hover:text-emerald-500">
@@ -69,41 +67,45 @@ const Login = () => {
           </p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
+        <form className="mt-6 space-y-5" onSubmit={handleSubmit}>
+          <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="sr-only">Email address</label>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email address</label>
               <input
                 id="email"
                 name="email"
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
+                placeholder="Enter your email"
                 value={formData.email}
                 onChange={handleChange}
               />
             </div>
             <div>
-              <label htmlFor="password" className="sr-only">Password</label>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
               <input
                 id="password"
                 name="password"
                 type="password"
                 autoComplete="current-password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
+                placeholder="Enter your password"
                 value={formData.password}
                 onChange={handleChange}
               />
             </div>
           </div>
 
-          {error && <div className="text-red-500 text-sm text-center">{error}</div>}
+          {error && (
+            <div className="text-red-500 text-sm text-center bg-red-50 p-2 rounded-md">
+              {error}
+            </div>
+          )}
 
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
             <div className="flex items-center">
               <input
                 id="remember-me"
@@ -123,11 +125,11 @@ const Login = () => {
             </div>
           </div>
 
-          <div>
+          <div className="pt-2">
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-70"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-70 transition-colors duration-200"
             >
               {loading ? (
                 <span className="flex items-center">
@@ -159,6 +161,24 @@ const Login = () => {
             </button>
           </div>
         </form>
+
+        <div className="mt-4 text-center text-xs text-gray-500">
+          By signing in, you agree to our{" "}
+          <a href="#" className="text-emerald-600 hover:text-emerald-500">
+            Terms
+          </a>{" "}
+          and{" "}
+          <a href="#" className="text-emerald-600 hover:text-emerald-500">
+            Privacy Policy
+          </a>
+        </div>
+      </div>
+
+      <div className="w-full max-w-md mt-6 text-center text-sm text-gray-600">
+        Need assistance?{" "}
+        <a href="#" className="text-emerald-600 hover:text-emerald-500">
+          Contact support
+        </a>
       </div>
     </div>
   )

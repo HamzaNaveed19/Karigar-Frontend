@@ -1,42 +1,9 @@
 "use client"
-import { useState } from "react"
+import React from "react"
 import { Check, X } from "react-feather"
 
-const BookingList = ({ status }) => {
-  const [bookings, setBookings] = useState([
-    {
-      id: 1,
-      date: "2025-05-01",
-      time: "10:00 AM",
-      customerName: "John Doe",
-      customerPhone: "1234567890",
-      serviceName: "Haircut",
-      price: 500,
-      status: "upcoming"
-    },
-    {
-      id: 2,
-      date: "2025-05-02",
-      time: "2:00 PM",
-      customerName: "Jane Smith",
-      customerPhone: "9876543210",
-      serviceName: "Facial",
-      price: 800,
-      status: "completed"
-    }
-  ])
-
-  const handleStatusChange = (bookingId, newStatus) => {
-    setBookings(prev =>
-      prev.map(booking =>
-        booking.id === bookingId ? { ...booking, status: newStatus } : booking
-      )
-    )
-
-    // TODO: Replace with API call
-    // axios.post('/api/bookings/update-status', { bookingId, status: newStatus })
-  }
-
+const BookingList = ({ bookings, status, onStatusChange }) => {
+  // Helper to format date strings
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "short", day: "numeric" }
     return new Date(dateString).toLocaleDateString("en-US", options)
@@ -48,23 +15,23 @@ const BookingList = ({ status }) => {
         <thead className="bg-gray-50">
           <tr>
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Booking Date Time
+              Booking Date & Time
             </th>
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Customer Name Phone
+              Customer Name & Phone
             </th>
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Service Name Price
+              Service & Price
             </th>
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Booking Status
+              Status
             </th>
             {status === "upcoming" && (
               <th
                 scope="col"
                 className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Action Buttons
+                Actions
               </th>
             )}
           </tr>
@@ -87,31 +54,32 @@ const BookingList = ({ status }) => {
               <td className="px-6 py-4 whitespace-nowrap">
                 <span
                   className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    booking.status === "upcoming"
+                    booking.status === "pending"
                       ? "bg-blue-100 text-blue-800"
-                      : booking.status === "completed"
+                      : booking.status === "confirmed"
                         ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
-                  }`}
-                >
+                        : booking.status === "completed"
+                          ? "bg-indigo-100 text-indigo-800"
+                          : "bg-red-100 text-red-800"
+                  }`}>
                   {booking.status}
                 </span>
               </td>
               {status === "upcoming" && (
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <button
-                    onClick={() => handleStatusChange(booking.id, "completed")}
+                    onClick={() => onStatusChange(booking.id, "confirmed")}
                     className="text-green-600 hover:text-green-900 mr-4"
                   >
                     <Check className="h-5 w-5" />
-                    <span className="sr-only">Mark Complete</span>
+                    <span className="sr-only">Confirm</span>
                   </button>
                   <button
-                    onClick={() => handleStatusChange(booking.id, "cancelled")}
+                    onClick={() => onStatusChange(booking.id, "cancelled")}
                     className="text-red-600 hover:text-red-900"
                   >
                     <X className="h-5 w-5" />
-                    <span className="sr-only">Mark Cancelled</span>
+                    <span className="sr-only">Cancel</span>
                   </button>
                 </td>
               )}

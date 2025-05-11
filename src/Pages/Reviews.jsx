@@ -17,7 +17,7 @@ const Reviews = () => {
         if (!userId) throw new Error('No user session found.');
 
         const { data } = await axios.get(
-          `http://localhost:5050/provider/68136e4d342756dad21e994b`
+          `http://localhost:5050/provider/${userId}`
         );
 
         // Map API reviews to UI shape
