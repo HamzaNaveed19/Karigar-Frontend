@@ -54,58 +54,54 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 py-6 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-6 bg-white p-6 sm:p-8 rounded-lg shadow-md">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md">
         <div className="text-center">
-          <h1 className="text-3xl font-extrabold text-emerald-600 mb-2">Karigar</h1>
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Sign in to your account</h2>
+          <h1 className="text-3xl font-extrabold text-emerald-600">Karigar</h1>
+          <h2 className="mt-6 text-2xl font-bold text-gray-900">Sign in to your account</h2>
           <p className="mt-2 text-sm text-gray-600">
             Don't have an account?{" "}
-            {/* <Link to="/register" className="font-medium text-emerald-600 hover:text-emerald-500">
+            <Link to="/register" className="font-medium text-emerald-600 hover:text-emerald-500">
               Sign up
-            </Link> */}
+            </Link>
           </p>
         </div>
 
-        <form className="mt-6 space-y-5" onSubmit={handleSubmit}>
-          <div className="space-y-4">
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="rounded-md shadow-sm -space-y-px">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email address</label>
+              <label htmlFor="email" className="sr-only">Email address</label>
               <input
                 id="email"
                 name="email"
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
-                placeholder="Enter your email"
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 focus:z-10 sm:text-sm"
+                placeholder="Email address"
                 value={formData.email}
                 onChange={handleChange}
               />
             </div>
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+              <label htmlFor="password" className="sr-only">Password</label>
               <input
                 id="password"
                 name="password"
                 type="password"
                 autoComplete="current-password"
                 required
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
-                placeholder="Enter your password"
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 focus:z-10 sm:text-sm"
+                placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
               />
             </div>
           </div>
 
-          {error && (
-            <div className="text-red-500 text-sm text-center bg-red-50 p-2 rounded-md">
-              {error}
-            </div>
-          )}
+          {error && <div className="text-red-500 text-sm text-center">{error}</div>}
 
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
+          <div className="flex items-center justify-between">
             <div className="flex items-center">
               <input
                 id="remember-me"
@@ -125,11 +121,11 @@ const Login = () => {
             </div>
           </div>
 
-          <div className="pt-2">
+          <div>
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-70 transition-colors duration-200"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-70"
             >
               {loading ? (
                 <span className="flex items-center">
@@ -160,25 +156,16 @@ const Login = () => {
               )}
             </button>
           </div>
+          
+          <div className="text-center mt-4">
+            <Link 
+              to="/register" 
+              className="w-full inline-flex justify-center py-2 px-4 border border-emerald-600 text-sm font-medium rounded-md text-emerald-600 bg-white hover:bg-emerald-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+            >
+              Create New Account
+            </Link>
+          </div>
         </form>
-
-        <div className="mt-4 text-center text-xs text-gray-500">
-          By signing in, you agree to our{" "}
-          <a href="#" className="text-emerald-600 hover:text-emerald-500">
-            Terms
-          </a>{" "}
-          and{" "}
-          <a href="#" className="text-emerald-600 hover:text-emerald-500">
-            Privacy Policy
-          </a>
-        </div>
-      </div>
-
-      <div className="w-full max-w-md mt-6 text-center text-sm text-gray-600">
-        Need assistance?{" "}
-        <a href="#" className="text-emerald-600 hover:text-emerald-500">
-          Contact support
-        </a>
       </div>
     </div>
   )

@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
 
 import Footer from "./Components/Footer";
 import ServiceProviderDashboard from "./Pages/ServiceProviderDashboard";
@@ -8,20 +8,24 @@ import Bookings from "./Pages/Bookings";
 import Analytics from "./Pages/Analytics";
 import Reviews from "./Pages/Reviews";
 import Login from "./Pages/Login";
+import Register from "./Pages/Register";
+import ProviderSetup from "./Pages/ProviderSetup";
 import Sidebar from "./Components/Sidebar";
 
 const App = () => {
   return (
     <Router>
-      <div className="flex min-h-screen">
+      <div className="flex flex-col min-h-screen">
         {/* Main layout structure */}
         <DashboardLayout>
           <Routes>
             <Route path="/login" element={<LoginRedirect />} />
-            <Route path="/service-provider-dashboard" element={<ServiceProviderDashboard />} />
-            <Route path="/bookings" element={<Bookings />} />
-            <Route path="/analytics" element={<Analytics />} />
-            <Route path="/reviews" element={<Reviews />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/provider-setup" element={<ProviderSetup />} />
+            <Route path="/service-provider-dashboard" element={<ProtectedRoute><ServiceProviderDashboard /></ProtectedRoute>} />
+            <Route path="/bookings" element={<ProtectedRoute><Bookings /></ProtectedRoute>} />
+            <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
+            <Route path="/reviews" element={<ProtectedRoute><Reviews /></ProtectedRoute>} />
             {/* Default fallback */}
             <Route path="*" element={<Navigate to="/login" />} />
           </Routes>
@@ -32,20 +36,36 @@ const App = () => {
   );
 };
 
+// Route protection wrapper component
+const ProtectedRoute = ({ children }) => {
+  const navigate = useNavigate();
+  const userId = sessionStorage.getItem("userId");
+  
+  React.useEffect(() => {
+    if (!userId) {
+      navigate("/login");
+    }
+  }, [userId, navigate]);
+  
+  return userId ? children : null;
+};
+
 // Layout component to wrap dashboard pages
 const DashboardLayout = ({ children }) => {
-  const currentPath = window.location.pathname;
+  // Use useLocation hook to track current path
+  const location = useLocation();
   
-  // Don't show sidebar on login page
-  const isLoginPage = currentPath === "/login";
+  // Don't show sidebar on login or registration pages
+  const publicPages = ["/login", "/register", "/provider-setup"];
+  const isPublicPage = publicPages.includes(location.pathname);
   
-  if (isLoginPage) {
+  if (isPublicPage) {
     return children;
   }
 
   return (
     <>
-      {<Sidebar />}
+      <Sidebar />
       <main className="lg:ml-64 flex-grow p-4 transition-all duration-300">
         {children}
       </main>
@@ -56,7 +76,7 @@ const DashboardLayout = ({ children }) => {
 const LoginRedirect = () => {
   const navigate = useNavigate();
 
-  useEffect(() => {
+  React.useEffect(() => {
     // Clear any previous session
     sessionStorage.removeItem("userId");
   }, []);

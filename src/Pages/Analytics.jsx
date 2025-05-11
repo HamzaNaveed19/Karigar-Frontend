@@ -13,7 +13,6 @@ import {
   Pie,
   Cell,
 } from "recharts"
-
 const Analytics = () => {
   // State for booking status counts fetched from API
   const [statusCounts, setStatusCounts] = useState({
