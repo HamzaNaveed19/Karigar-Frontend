@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Bell,
   X,
@@ -6,33 +6,75 @@ import {
   Mail,
   CalendarCheck,
   CalendarX,
+  CheckCircle,
 } from "lucide-react";
 import { useSelector } from "react-redux";
+import axios from "axios";
 
 function Notifications() {
   const [isOpen, setIsOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const dropdownRef = useRef(null);
-  const notifications = useSelector((state) => state.auth.user.notifications);
+  const { userId, user } = useSelector((state) => state.auth);
+  const notifications = user.notifications || [];
 
-  const getNotificationIcon = (description) => {
-    if (description.toLowerCase().includes("rejected")) {
-      return <CalendarX className="h-5 w-5 text-red-500" />;
-    } else if (description.toLowerCase().includes("confirmed")) {
-      return <CalendarCheck className="h-5 w-5 text-emerald-500" />;
+  useEffect(() => {
+    console.log(user);
+    if (notifications.length > 0) {
+      const count = notifications.filter((n) => !n.read).length;
+      setUnreadCount(count);
+    } else {
+      setUnreadCount(0);
     }
-    return <Mail className="h-5 w-5 text-gray-500" />;
+  }, [notifications]);
+
+  const handleStatusUpdate = async () => {
+    try {
+      if (unreadCount > 0) {
+        console.log(userId);
+        await axios
+          .put(`http://localhost:5050/customer/updateNotification/${userId}`)
+          .then((res) => console.log(res));
+
+        setUnreadCount(0);
+      }
+    } catch (error) {
+      console.error("Error updating notification status:", error);
+    }
+  };
+
+  const handleBellClick = () => {
+    const newState = !isOpen;
+    setIsOpen(newState);
+
+    if (newState) {
+      handleStatusUpdate();
+    }
+  };
+
+  const getNotificationIcon = (type) => {
+    switch (type.toLowerCase()) {
+      case "cancelled":
+        return <CalendarX className="h-5 w-5 text-red-500" />;
+      case "confirmed":
+        return <CalendarCheck className="h-5 w-5 text-emerald-500" />;
+      case "completed":
+        return <CheckCircle className="h-5 w-5 text-emerald-500" />;
+      default:
+        return <Mail className="h-5 w-5 text-gray-500" />;
+    }
   };
 
   return (
     <div className="relative" ref={dropdownRef}>
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="p-2 focus:outline-none"
+        onClick={handleBellClick}
+        className="p-2 focus:outline-none relative"
       >
         <Bell className="h-5 w-5" />
-        {notifications.length > 0 && (
+        {unreadCount > 0 && (
           <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-xs text-white flex items-center justify-center">
-            {notifications.length}
+            {unreadCount}
           </span>
         )}
       </button>
@@ -56,13 +98,24 @@ function Notifications() {
             {notifications.length > 0 ? (
               <ul>
                 {notifications.map((notification) => (
-                  <li key={notification.id} className="hover:bg-emerald-50">
+                  <li
+                    key={notification.id}
+                    className={`hover:bg-emerald-50 ${
+                      !notification.read ? "bg-emerald-50" : ""
+                    }`}
+                  >
                     <div className="flex items-start px-4 py-3 gap-3">
                       <div className="mt-3">
-                        {getNotificationIcon(notification.description)}
+                        {getNotificationIcon(notification.type)}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-600">
+                        <p
+                          className={`text-sm font-medium ${
+                            !notification.read
+                              ? "text-gray-900 font-semibold"
+                              : "text-gray-600"
+                          }`}
+                        >
                           {notification.description}
                         </p>
                         <p className="text-xs text-gray-500 mt-1">
