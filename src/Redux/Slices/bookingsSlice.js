@@ -78,6 +78,17 @@ const bookingsSlice = createSlice({
         return;
       }
     },
+    resetBookings: (state) => {
+      state.upcoming = [];
+      state.past = [];
+      state.status = {
+        upcoming: "idle",
+        past: "idle",
+        newBooking: "idle",
+      };
+      state.error = null;
+      state.activeTab = "upcoming";
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -113,8 +124,6 @@ const bookingsSlice = createSlice({
       .addCase(addBooking.fulfilled, (state, action) => {
         state.status.newBooking = "succeeded";
         if (state.status.upcoming === "succeeded") {
-          // console.log("MY STATUS IN IF:");
-          // console.log(state.status.upcoming);
           state.upcoming.unshift(action.payload.booking);
         }
       })
@@ -141,5 +150,6 @@ const bookingsSlice = createSlice({
   },
 });
 
-export const { setActiveTab, updateBookingReview } = bookingsSlice.actions;
+export const { setActiveTab, updateBookingReview, resetBookings } =
+  bookingsSlice.actions;
 export default bookingsSlice.reducer;

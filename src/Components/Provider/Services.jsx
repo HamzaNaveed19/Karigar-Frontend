@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addBooking } from "../../Redux/Slices/bookingsSlice";
 
 function Services({ provider }) {
-  const { userId } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
   const dispatch = useDispatch();
@@ -25,13 +25,15 @@ function Services({ provider }) {
     const bookingData = {
       bookingTitle: selectedService.name,
       serviceProviderId: provider._id,
-      customerId: userId,
-      address: "123- faisal- lahore, Pk", // Hardcoded for now
+      customerId: user._id,
+      address: user.location.address,
       price: selectedService.price,
       bookingDate: formatDate(bookingDetails.date),
       bookingTime: bookingDetails.time,
       status: "pending",
     };
+
+    console.log(bookingData);
 
     dispatch(addBooking(bookingData))
       .unwrap()

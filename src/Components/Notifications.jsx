@@ -19,7 +19,6 @@ function Notifications() {
   const notifications = user.notifications || [];
 
   useEffect(() => {
-    console.log(user);
     if (notifications.length > 0) {
       const count = notifications.filter((n) => !n.read).length;
       setUnreadCount(count);
@@ -31,7 +30,6 @@ function Notifications() {
   const handleStatusUpdate = async () => {
     try {
       if (unreadCount > 0) {
-        console.log(userId);
         await axios
           .put(`http://localhost:5050/customer/updateNotification/${userId}`)
           .then((res) => console.log(res));

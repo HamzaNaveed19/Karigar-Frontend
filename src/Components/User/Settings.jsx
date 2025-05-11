@@ -21,6 +21,7 @@ import {
 import { useDispatch } from "react-redux";
 import { logout } from "../../Redux/Slices/authSlice";
 import { useNavigate } from "react-router-dom";
+import { resetBookings } from "../../Redux/Slices/bookingsSlice";
 
 function Settings() {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -90,6 +91,7 @@ function Settings() {
             <button
               onClick={() => {
                 dispatch(logout());
+                dispatch(resetBookings());
                 navigate("/");
               }}
               className="text-sm text-red-600 hover:text-red-800 hover:underline flex items-center gap-1"

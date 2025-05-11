@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-// Async thunk for user login
 export const loginUser = createAsyncThunk(
   "auth/login",
   async ({ email, password, rememberMe }, { rejectWithValue }) => {
@@ -9,9 +8,9 @@ export const loginUser = createAsyncThunk(
       const response = await axios.post("http://localhost:5050/user/login", {
         email,
         password,
+        role: "Customer",
       });
 
-      // Store only essential auth data in storage
       if (rememberMe) {
         localStorage.setItem("karigar_token", response.data.token);
         localStorage.setItem("karigar_userId", response.data.user._id);
@@ -30,12 +29,10 @@ export const loginUser = createAsyncThunk(
   }
 );
 
-// Async thunk for checking authentication status
 export const checkAuth = createAsyncThunk(
   "auth/checkAuth",
   async (_, { rejectWithValue }) => {
     try {
-      // Get auth data from storage
       const token =
         localStorage.getItem("karigar_token") ||
         sessionStorage.getItem("karigar_token");
@@ -47,7 +44,6 @@ export const checkAuth = createAsyncThunk(
         throw new Error("No authentication token found");
       }
 
-      // Fetch fresh user data from API
       const response = await axios.get(`http://localhost:5050/user/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -104,13 +100,11 @@ const authSlice = createSlice({
   },
   reducers: {
     logout(state) {
-      // Clear storage
       localStorage.removeItem("karigar_token");
       sessionStorage.removeItem("karigar_token");
       localStorage.removeItem("karigar_userId");
       sessionStorage.removeItem("karigar_userId");
 
-      // Reset state
       state.token = null;
       state.userId = null;
       state.user = null;
@@ -120,7 +114,6 @@ const authSlice = createSlice({
       state.error = null;
     },
     updateUser(state, action) {
-      // For updating specific user fields without full refresh
       state.user = { ...state.user, ...action.payload };
     },
   },

@@ -24,23 +24,20 @@ const MapSelector = ({ onSelect }) => {
     const initMap = (coords) => {
       const map = L.map("address-map", {
         zoomControl: false,
-        preferCanvas: true, // Better performance for markers
+        preferCanvas: true,
       }).setView([coords.lat, coords.lng], 16);
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: "© OpenStreetMap contributors",
       }).addTo(map);
 
-      // Simple circle for user location (better performance than custom marker)
+      // Simple circle for user location
       L.circle([coords.lat, coords.lng], {
         radius: 10,
         color: "#3388ff",
         fillColor: "#3388ff",
         fillOpacity: 0.5,
-      })
-        .addTo(map)
-        .bindPopup("Your current location")
-        .openPopup();
+      }).addTo(map);
 
       map.on("click", async (e) => {
         const { lat, lng } = e.latlng;
@@ -51,7 +48,7 @@ const MapSelector = ({ onSelect }) => {
           map.removeLayer(selectedMarkerRef.current);
         }
 
-        // Add simple marker (better performance)
+        // Add new marker
         selectedMarkerRef.current = L.circleMarker([lat, lng], {
           radius: 8,
           color: "#10b981",
@@ -63,35 +60,36 @@ const MapSelector = ({ onSelect }) => {
           // Check cache first
           const cacheKey = `${lat.toFixed(4)},${lng.toFixed(4)}`;
           if (addressCache.has(cacheKey)) {
-            onSelect(addressCache.get(cacheKey), { lat, lng });
+            const cachedData = addressCache.get(cacheKey);
+            onSelect({
+              city: cachedData.address?.city || cachedData.address?.town || "",
+              state: cachedData.address?.state || "",
+              country: cachedData.address?.country || "",
+              latitude: lat,
+              longitude: lng,
+            }, { lat, lng });
             setStatus("Location selected");
             return;
           }
 
-          const controller = new AbortController();
-          const timeout = setTimeout(() => controller.abort(), 5000);
-
-          const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`,
-            { signal: controller.signal }
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`
           );
+          const data = await response.json();
+          addressCache.set(cacheKey, data);
 
-          clearTimeout(timeout);
+          onSelect({
+            city: data.address?.city || data.address?.town || "",
+            state: data.address?.state || "",
+            country: data.address?.country || "",
+            latitude: lat,
+            longitude: lng,
+          }, { lat, lng });
 
-          const data = await res.json();
-          addressCache.set(cacheKey, data); // Cache result
-
-          console.log(data);
-
-          if (onSelect) {
-            onSelect(data, { lat, lng });
-          }
           setStatus("Location selected");
         } catch (error) {
-          if (error.name !== "AbortError") {
-            console.error("Error fetching address:", error);
-            setError("Failed to fetch address. Please try again.");
-          }
+          console.error("Error fetching address:", error);
+          setError("Failed to fetch address. Please try again.");
           setStatus("Click to select location");
         }
       });
@@ -101,7 +99,6 @@ const MapSelector = ({ onSelect }) => {
     };
 
     if (navigator.geolocation) {
-      // First try with lower accuracy (faster)
       watchId = navigator.geolocation.watchPosition(
         (position) => {
           initMap({
@@ -112,20 +109,9 @@ const MapSelector = ({ onSelect }) => {
         },
         (err) => {
           console.warn("Geolocation error:", err);
-          // Fallback to high accuracy
-          navigator.geolocation.getCurrentPosition(
-            (position) => {
-              initMap({
-                lat: position.coords.latitude,
-                lng: position.coords.longitude,
-              });
-            },
-            (err) => {
-              setError("Couldn't get precise location. Using default.");
-              initMap({ lat: 31.5204, lng: 74.3587 });
-            },
-            { enableHighAccuracy: true, timeout: 10000 }
-          );
+          // Fallback to default location
+          setError("Couldn't get precise location. Using default.");
+          initMap({ lat: 31.5204, lng: 74.3587 });
         },
         { enableHighAccuracy: false, maximumAge: 30000, timeout: 5000 }
       );

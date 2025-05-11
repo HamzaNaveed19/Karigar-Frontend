@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { MapPin, Home, Navigation, Globe, Landmark, Hash } from "lucide-react";
+import { useState } from "react";
+import { MapPin, Navigation, Landmark, Globe } from "lucide-react";
 import { Input } from "../../UI/Input";
 import Field from "./Field";
 import MapSelector from "./MapSelector";
@@ -12,19 +12,16 @@ export const AddressForm = ({
   setFormData,
 }) => {
   const [showMap, setShowMap] = useState(false);
-  const [coordinates, setCoordinates] = useState(null);
 
   const handleMapSelect = (address, coords) => {
     setFormData((prev) => ({
       ...prev,
-      address: address.display_name,
-      street: address.address?.road || "",
       city: address.address?.city || address.address?.town || "",
       state: address.address?.state || "",
-      postalCode: address.address?.postcode || "",
       country: address.address?.country || "",
+      latitude: coords.lat,
+      longitude: coords.lon,
     }));
-    setCoordinates(coords);
     setShowMap(false);
   };
 
@@ -56,16 +53,6 @@ export const AddressForm = ({
             </button>
           </div>
 
-          <Field icon={Home} label="Area or Street" error={errors.street}>
-            <Input
-              name="street"
-              placeholder="123 Main Street"
-              value={formData.street}
-              onChange={handleInputChange}
-              disabled={isSubmitting}
-            />
-          </Field>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Field icon={Landmark} label="City" error={errors.city}>
               <Input
@@ -88,31 +75,19 @@ export const AddressForm = ({
             </Field>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Field icon={Hash} label="Postal Code" error={errors.postalCode}>
-              <Input
-                name="postalCode"
-                placeholder="54000"
-                value={formData.postalCode}
-                onChange={handleInputChange}
-                disabled={isSubmitting}
-              />
-            </Field>
-
-            <Field icon={Globe} label="Country" error={errors.country}>
-              <Input
-                name="country"
-                placeholder="Pakistan"
-                value={formData.country}
-                onChange={handleInputChange}
-                disabled={isSubmitting}
-              />
-            </Field>
-          </div>
+          <Field icon={Globe} label="Country" error={errors.country}>
+            <Input
+              name="country"
+              placeholder="Pakistan"
+              value={formData.country}
+              onChange={handleInputChange}
+              disabled={isSubmitting}
+            />
+          </Field>
 
           <Field
             icon={MapPin}
-            label="Additional Details (Fill in carefully)"
+            label="Additional Details"
             error={errors.addressDetails}
           >
             <textarea
@@ -127,6 +102,25 @@ export const AddressForm = ({
               disabled={isSubmitting}
             />
           </Field>
+
+          {errors.coordinates && (
+            <div className="text-red-500 text-sm mt-2">
+              {errors.coordinates}
+            </div>
+          )}
+
+          <input
+            type="hidden"
+            name="latitude"
+            value={formData.latitude || ""}
+            onChange={handleInputChange}
+          />
+          <input
+            type="hidden"
+            name="longitude"
+            value={formData.longitude || ""}
+            onChange={handleInputChange}
+          />
         </>
       )}
     </div>

@@ -15,13 +15,13 @@ export const PrivateRoute = ({ children }) => {
 
   useEffect(() => {
     if (!isInitialized) {
-      //console.log("CALLED CHECEK AUTH");
+      console.log("CHECKING INITIALIZATION!");
       dispatch(checkAuth());
     }
   }, [dispatch, isInitialized]);
 
   useEffect(() => {
-    if (status === "failed" || status === "succeeded") {
+    if (status === "failed" || status === "succeeded" || !isAuthenticated) {
       setShowAuthModal(!isAuthenticated);
     }
   }, [isAuthenticated, status, navigate]);
@@ -31,8 +31,11 @@ export const PrivateRoute = ({ children }) => {
     navigate("/");
   };
 
-  // Show loading state while checking auth
-  if (status === "idle" || status === "loading") {
+  if (isAuthenticated) {
+    return <>{children}</>;
+  }
+
+  if (!isAuthenticated && !isInitialized) {
     return <div>Loading authentication status...</div>;
   }
 
@@ -50,6 +53,4 @@ export const PrivateRoute = ({ children }) => {
       </>
     );
   }
-
-  return <>{children}</>;
 };
