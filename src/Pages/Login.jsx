@@ -7,6 +7,8 @@ const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    "role": "ServiceProvider"
+
   })
 
   const [error, setError] = useState(null)
@@ -38,8 +40,8 @@ const Login = () => {
       const data = await res.json()
 
       if (res.ok) {
-        console.log("Login successful:", data.userId)
-        sessionStorage.setItem("userId", data.userId)
+        console.log("Login successful:", data.user._id)
+        sessionStorage.setItem("userId", data.user._id)
         navigate("/service-provider-dashboard")
       } else {
         console.log("Login failed:", data)
