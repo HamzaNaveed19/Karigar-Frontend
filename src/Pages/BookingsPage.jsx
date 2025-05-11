@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Filter, Search } from "lucide-react";
 import Button from "../UI/Button";
 import { Input } from "../UI/Input";
@@ -20,6 +20,7 @@ export default function BookingsPage() {
   const { upcoming, past, status, error, activeTab } = useSelector(
     (state) => state.bookings
   );
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -29,12 +30,33 @@ export default function BookingsPage() {
         dispatch(fetchPastBookings(userId));
       }
     }
-  }, [activeTab, status, dispatch, isAuthenticated]);
+  }, [activeTab, status, dispatch, isAuthenticated, userId]);
 
   const handleTabChange = (value) => {
     dispatch(setActiveTab(value));
-    console.log(upcoming);
   };
+
+  const filterBookings = (bookings) => {
+    if (!searchQuery) return bookings;
+
+    const query = searchQuery.toLowerCase();
+    return bookings.filter((booking) => {
+      if (booking.bookingTitle?.toLowerCase().includes(query)) return true;
+      if (booking.serviceProvider?.name?.toLowerCase().includes(query))
+        return true;
+      if (booking.price?.toString().includes(query)) return true;
+      if (booking.status?.toLowerCase().includes(query)) return true;
+      const bookingDate = new Date(booking.bookingDate).toLocaleDateString();
+      if (bookingDate.includes(query)) return true;
+      if (booking.bookingTime?.toLowerCase().includes(query)) return true;
+      if (booking.address?.toLowerCase().includes(query)) return true;
+
+      return false;
+    });
+  };
+
+  const filteredUpcoming = filterBookings(upcoming);
+  const filteredPast = filterBookings(past);
 
   if (error) {
     return <ErrorMessage />;
@@ -51,14 +73,12 @@ export default function BookingsPage() {
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
           <Input
             type="search"
-            placeholder="Search bookings"
+            placeholder="Search by service, provider, price, date, or status"
             className="w-full pl-8"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <Button variant="outline" className="flex items-center gap-2">
-          <Filter className="h-4 w-4" />
-          Filter
-        </Button>
       </div>
 
       <Tabs
@@ -77,19 +97,26 @@ export default function BookingsPage() {
             <LoadingSpinner />
           </div>
         )}
+
         <TabsContent value="upcoming">
-          {status.upcoming === "succeeded" && upcoming.length === 0 ? (
-            <NoBooking type={"upcoming"} />
+          {status.upcoming === "succeeded" && filteredUpcoming.length === 0 ? (
+            <NoBooking
+              type={searchQuery ? "no-search-results" : "upcoming"}
+              searchQuery={searchQuery}
+            />
           ) : (
-            <Bookings Bookings={upcoming} />
+            <Bookings Bookings={filteredUpcoming} />
           )}
         </TabsContent>
 
         <TabsContent value="past">
-          {status.past === "succeeded" && past.length === 0 ? (
-            <NoBooking type={"past"} />
+          {status.past === "succeeded" && filteredPast.length === 0 ? (
+            <NoBooking
+              type={searchQuery ? "no-search-results" : "past"}
+              searchQuery={searchQuery}
+            />
           ) : (
-            <Bookings Bookings={past} />
+            <Bookings Bookings={filteredPast} />
           )}
         </TabsContent>
       </Tabs>

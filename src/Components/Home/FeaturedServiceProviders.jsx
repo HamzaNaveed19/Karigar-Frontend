@@ -1,56 +1,14 @@
 import React from "react";
 import ServiceProviderCard from "../Provider/ServiceProviderCard";
 import Button from "../../UI/Button";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 export default function FeaturedServiceProviders() {
-  {
-    /*mock data*/
-  }
-  const providers = [
-    {
-      id: "1",
-      name: "Fakhar Rashid",
-      profession: "Electrician",
-      rating: 4.9,
-      reviews: 124,
-      personalImage: "/placeholder2.png",
-      location: "Lahore",
-      verified: true,
-      experience: 8,
-      completedJobs: 215,
-      services: [{ duration: 90, price: 3500 }],
-      skills: ["Wiring", "Installation", "Repairs", "Maintenance"],
-    },
-    {
-      id: "2",
-      name: "Abdullah Malik",
-      profession: "Interior Designer",
-      rating: 4.8,
-      reviews: 98,
-      personalImage: "/placeholder2.png",
-      location: "Karachi",
-      verified: true,
-      experience: 6,
-      completedJobs: 178,
-      services: [{ duration: 120, price: 2500 }],
-      skills: ["Space Planning", "Color Scheme", "Furniture", "Lighting"],
-    },
-    {
-      id: "3",
-      name: "Ali Ahmad",
-      profession: "Plumber",
-      rating: 4.7,
-      reviews: 156,
-      personalImage: "/placeholder2.png",
-      location: "Islamabad",
-      verified: true,
-      experience: 10,
-      completedJobs: 342,
-      services: [{ duration: 60, price: 2000 }],
-      skills: ["Leak Repair", "Installation", "Drain Cleaning"],
-    },
-  ];
-
+  const providers = useSelector((state) =>
+    Object.values(state.providers.data).slice(0, 3)
+  );
+  const navigate = useNavigate();
   return (
     <section className="bg-gray-50 md:py-16">
       <div className=" px-4 md:px-6">
@@ -70,7 +28,13 @@ export default function FeaturedServiceProviders() {
           ))}
         </div>
         <div className="mt-8 flex justify-center">
-          <Button variant="outline" className="gap-1">
+          <Button
+            variant="outline"
+            className="gap-1"
+            onClick={() => {
+              navigate("services/all");
+            }}
+          >
             View All Providers
           </Button>
         </div>

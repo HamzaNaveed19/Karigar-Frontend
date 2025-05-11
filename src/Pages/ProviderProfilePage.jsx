@@ -27,9 +27,11 @@ export default function ProviderProfile() {
   }, shallowEqual);
 
   useEffect(() => {
+    console.log(currentProvider);
     console.log("RENDERED: PROVIDER PROFILE PAGE!");
     if (!currentProvider) {
-      console.log("DISPATCHED: Book Basic Electrical Repair for RS 100!");
+      console.log("DISPATCHED");
+
       dispatch(fetchProviderById(id));
     }
   }, [id, dispatch, currentProvider]);

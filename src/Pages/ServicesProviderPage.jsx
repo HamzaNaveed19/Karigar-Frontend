@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Search, Filter, MapPin, TriangleAlert } from "lucide-react";
+import { Search, Filter } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchServiceProviders } from "../Redux/Slices/serviceProvidersSlice";
 import Button from "../UI/Button";
@@ -9,6 +9,7 @@ import ServiceProviderCard from "../Components/Provider/ServiceProviderCard";
 import ErrorMessage from "../UI/ErrorMessage";
 import NotFoundMessage from "../UI/NotFoundMessage";
 import LoadingSpinner from "../UI/LoadingSpinner";
+import FilterModal from "../Components/Provider/FilterModal";
 
 export default function ServicesProviderPage() {
   const dispatch = useDispatch();
@@ -18,16 +19,43 @@ export default function ServicesProviderPage() {
 
   const [filteredProviders, setFilteredProviders] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [filters, setFilters] = useState({
+    minRating: null,
+    minExperience: null,
+    minSkills: null,
+    minJobsDone: null,
+    minPrice: null,
+    maxPrice: null,
+    verifiedOnly: false,
+  });
 
   useEffect(() => {
-    console.log("\nRENDERED: SERVICES PAGE!");
     if (status === "idle" || providers.length <= 1) {
-      console.log("DISPATCHED: CALLED IN SERVICES PAGE!");
       dispatch(fetchServiceProviders());
     }
   }, [status, dispatch, data]);
 
-  useEffect(() => {
+  const applyFilters = () => {
+    setIsFilterOpen(false);
+    filterProviders();
+  };
+
+  const resetFilters = () => {
+    setFilters({
+      minRating: null,
+      minExperience: null,
+      minSkills: null,
+      minJobsDone: null,
+      minPrice: null,
+      maxPrice: null,
+      verifiedOnly: false,
+    });
+    filterProviders(true);
+    setIsFilterOpen(false);
+  };
+
+  const filterProviders = (reset = false) => {
     if (status === "succeeded") {
       const formattedCategory = category
         .split("-")
@@ -54,8 +82,47 @@ export default function ServicesProviderPage() {
         );
       }
 
+      if (!reset) {
+        if (filters.minRating !== null) {
+          filtered = filtered.filter(
+            (provider) => provider.rating >= filters.minRating
+          );
+        }
+        if (filters.minExperience !== null) {
+          filtered = filtered.filter(
+            (provider) => provider.experience >= filters.minExperience
+          );
+        }
+        if (filters.minSkills !== null) {
+          filtered = filtered.filter(
+            (provider) => provider.skillCount >= filters.minSkills
+          );
+        }
+        if (filters.minJobsDone !== null) {
+          filtered = filtered.filter(
+            (provider) => provider.completedJobs >= filters.minJobsDone
+          );
+        }
+        if (filters.minPrice !== null || filters.maxPrice !== null) {
+          filtered = filtered.filter((provider) => {
+            const servicePrice = provider.services[0]?.price || 0;
+            return (
+              (filters.minPrice === null || servicePrice >= filters.minPrice) &&
+              (filters.maxPrice === null || servicePrice <= filters.maxPrice)
+            );
+          });
+        }
+        if (filters.verifiedOnly) {
+          filtered = filtered.filter((provider) => provider.verified);
+        }
+      }
+
       setFilteredProviders(filtered);
     }
+  };
+
+  useEffect(() => {
+    filterProviders();
   }, [category, searchQuery, data, status]);
 
   const handleSearchChange = (e) => {
@@ -81,7 +148,7 @@ export default function ServicesProviderPage() {
 
   return (
     <div className="container mx-auto mt-1 px-4 mb-4">
-      <h1 className="mb-3 text-xl font-medium text-gray-500">
+      <h1 className="mb-4 text-xl font-semibold text-gray-500">
         {category === "all"
           ? "All Services"
           : category
@@ -90,31 +157,37 @@ export default function ServicesProviderPage() {
               .join(" ")}
       </h1>
 
-      <div className="mb-4 flex flex-col gap-4 md:flex-row">
+      <div className="mb-8 flex flex-col gap-4 md:flex-row">
         <div className="relative flex-1">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+          <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
           <Input
             type="search"
-            placeholder={`Search By name or location`}
-            className="w-full pl-8"
+            placeholder={`Search by name or location`}
+            className="w-full pl-10"
             value={searchQuery}
             onChange={handleSearchChange}
           />
         </div>
-        <Button variant="outline" className="flex items-center gap-2">
+        <Button
+          variant="outline"
+          className="flex items-center gap-2"
+          onClick={() => setIsFilterOpen(true)}
+        >
           <Filter className="h-4 w-4" />
           Filters
         </Button>
       </div>
 
       {filteredProviders.length > 0 ? (
-        <>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 grid-cols-2">
-            {filteredProviders.map((provider, index) => (
-              <ServiceProviderCard key={index} {...provider} onPage={true} />
-            ))}
-          </div>
-        </>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {filteredProviders.map((provider) => (
+            <ServiceProviderCard
+              key={provider._id}
+              {...provider}
+              onPage={true}
+            />
+          ))}
+        </div>
       ) : (
         <NotFoundMessage
           title="No service providers found"
@@ -123,6 +196,15 @@ export default function ServicesProviderPage() {
           } service providers matching your search. Try adjusting your filters or search query.`}
         />
       )}
+
+      <FilterModal
+        isOpen={isFilterOpen}
+        onClose={() => setIsFilterOpen(false)}
+        filters={filters}
+        setFilters={setFilters}
+        applyFilters={applyFilters}
+        resetFilters={resetFilters}
+      />
     </div>
   );
 }
