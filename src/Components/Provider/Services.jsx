@@ -5,6 +5,7 @@ import { Clock, Hammer } from "lucide-react";
 import BookingModal from "../Booking/BookingModal";
 import { useDispatch, useSelector } from "react-redux";
 import { addBooking } from "../../Redux/Slices/bookingsSlice";
+import { RequireAddress } from "../Authentication/RequireAddress";
 
 function Services({ provider }) {
   const { user } = useSelector((state) => state.auth);
@@ -85,16 +86,18 @@ function Services({ provider }) {
         </div>
 
         {selectedService && (
-          <BookingModal
-            isOpen={isModalOpen}
-            onClose={() => {
-              setIsModalOpen(false);
-              setSelectedService(null);
-            }}
-            onBook={handleBook}
-            bookingTitle={selectedService.name}
-            bookingPrice={selectedService.price}
-          />
+          <RequireAddress>
+            <BookingModal
+              isOpen={isModalOpen}
+              onClose={() => {
+                setIsModalOpen(false);
+                setSelectedService(null);
+              }}
+              onBook={handleBook}
+              bookingTitle={selectedService.name}
+              bookingPrice={selectedService.price}
+            />
+          </RequireAddress>
         )}
       </CardContent>
     </Card>

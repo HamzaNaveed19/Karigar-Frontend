@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { Search, Filter } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchServiceProviders } from "../Redux/Slices/serviceProvidersSlice";
@@ -14,6 +14,7 @@ import FilterModal from "../Components/Provider/FilterModal";
 export default function ServicesProviderPage() {
   const dispatch = useDispatch();
   const { data, status } = useSelector((state) => state.providers);
+  const { user } = useSelector((state) => state.auth);
   const providers = Object.values(data);
   const { category = "all" } = useParams();
 
@@ -30,9 +31,13 @@ export default function ServicesProviderPage() {
     verifiedOnly: false,
   });
 
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const urlSearchQuery = searchParams.get("search") || "";
+
   useEffect(() => {
     if (status === "idle" || providers.length <= 1) {
-      dispatch(fetchServiceProviders());
+      dispatch(fetchServiceProviders(user.location.address));
     }
   }, [status, dispatch, data]);
 
@@ -72,13 +77,17 @@ export default function ServicesProviderPage() {
         );
       }
 
-      if (searchQuery) {
+      const queryToUse = urlSearchQuery || searchQuery;
+      if (queryToUse) {
         filtered = filtered.filter(
           (provider) =>
-            provider.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            provider.name.toLowerCase().includes(queryToUse.toLowerCase()) ||
+            provider.profession
+              .toLowerCase()
+              .includes(queryToUse.toLowerCase()) ||
             provider.location.address
               .toLowerCase()
-              .includes(searchQuery.toLowerCase())
+              .includes(queryToUse.toLowerCase())
         );
       }
 

@@ -65,15 +65,9 @@ export default function ProviderProfileSkeleton() {
         <div className="md:col-span-2 ">
           <Tabs defaultValue="about">
             <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="about">
-                <Skeleton className="h-5 w-16" />
-              </TabsTrigger>
-              <TabsTrigger value="services">
-                <Skeleton className="h-5 w-16" />
-              </TabsTrigger>
-              <TabsTrigger value="reviews">
-                <Skeleton className="h-5 w-16" />
-              </TabsTrigger>
+              <TabsTrigger value="about">About</TabsTrigger>
+              <TabsTrigger value="services">Services</TabsTrigger>
+              <TabsTrigger value="reviews">Reviews</TabsTrigger>
             </TabsList>
 
             <TabsContent

@@ -39,7 +39,6 @@ export const RequireAddress = ({ children }) => {
   const validateForm = () => {
     const newErrors = {};
     if (!formData.city.trim()) newErrors.city = "City is required";
-    if (!formData.country.trim()) newErrors.country = "Country is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -80,7 +79,7 @@ export const RequireAddress = ({ children }) => {
 
   if (showForm) {
     return (
-      <div className="fixed inset-0 bg-white z-50 p-4 flex items-center justify-center">
+      <div className=" inset-0 bg-white z-50 p-4 flex items-center justify-center">
         <div className="max-w-md w-full border border-emerald-500 p-11 rounded-md">
           <h2 className="text-xl text-emerald-600 font-bold mb-2">
             Please Add Your Address

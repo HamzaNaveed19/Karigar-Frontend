@@ -3,8 +3,16 @@ import axios from "axios";
 
 export const fetchServiceProviders = createAsyncThunk(
   "providers/fetchProviders",
-  async () => {
-    const response = await axios.get("http://localhost:5050/provider"); // Minimal data endpoint
+  async (customerAddress) => {
+    function extractCity(address) {
+      const parts = address.split(",");
+      return parts.length >= 3 ? parts[parts.length - 3].trim() : null;
+    }
+
+    const city = extractCity(customerAddress);
+    const response = await axios.get("http://localhost:5050/provider", {
+      params: { city: "Lahore" },
+    }); // Minimal data endpoint
     return response.data;
   }
 );

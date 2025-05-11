@@ -3,6 +3,7 @@ import { AuthModal } from "./AuthModal";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { checkAuth } from "../../Redux/Slices/authSlice";
+import LoadingSpinner from "../../UI/LoadingSpinner";
 
 export const PrivateRoute = ({ children }) => {
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -36,7 +37,7 @@ export const PrivateRoute = ({ children }) => {
   }
 
   if (!isAuthenticated && !isInitialized) {
-    return <div>Loading authentication status...</div>;
+    return <LoadingSpinner />;
   }
 
   if (!isAuthenticated) {

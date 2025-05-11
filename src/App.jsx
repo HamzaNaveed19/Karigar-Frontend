@@ -32,8 +32,10 @@ const App = () => {
           path="services/:category"
           element={
             <PrivateRoute>
-              <CategoryFilter></CategoryFilter>
-              <ServicesProviderPage />
+              <RequireAddress>
+                <CategoryFilter></CategoryFilter>
+                <ServicesProviderPage />
+              </RequireAddress>
             </PrivateRoute>
           }
         />
@@ -57,9 +59,7 @@ const App = () => {
           path="profile/:id"
           element={
             <PrivateRoute>
-              <RequireAddress>
-                <ProviderProfilePage />
-              </RequireAddress>
+              <ProviderProfilePage />
             </PrivateRoute>
           }
         />
