@@ -134,55 +134,127 @@ const Services = () => {
     setError(null)
 
     try {
-      // Prepare the new service object to add
-      const newService = {
-        name: serviceData.name,
-        price: Number(serviceData.price),
-        duration: Number(serviceData.duration),
+      // Check if we're adding or editing
+      if (modalMode === "add") {
+        // Prepare the new service object to add
+        const newService = {
+          name: serviceData.name,
+          price: Number(serviceData.price),
+          duration: Number(serviceData.duration),
+        }
+
+        // Check if the service already exists in the current list of services
+        const isDuplicate = services.some((service) => service.name === newService.name)
+
+        if (isDuplicate) {
+          setError("This service already exists.")
+          setActionLoading(false)
+          return // Prevent adding the duplicate service
+        }
+
+        console.log("Adding service with data:", newService)
+
+        // Send only the new service to add, not the entire services array
+        const response = await fetch(`http://localhost:5050/provider/addServices/${providerId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            services: [newService], // Send only the new service in an array
+          }),
+        })
+
+        if (!response.ok) {
+          const errorText = await response.text()
+          console.error("Server error response:", errorText)
+          throw new Error(`Server returned ${response.status}: ${response.statusText}`)
+        }
+
+        const result = await response.json()
+        console.log("Service added successfully:", result)
+
+        // Update the services state with the new service added to the existing services
+        const updatedServices = [...services, newService]
+        setServices(updatedServices)
+        localStorage.setItem("services", JSON.stringify(updatedServices)) // Persist to localStorage
+        setSuccessMessage("Service added successfully!")
+      } else {
+        // Handle editing existing service
+        // Make sure we have the service ID
+        if (!currentService._id) {
+          throw new Error("Service ID is missing. Cannot update the service.")
+        }
+        
+        const updatedServiceData = {
+          serviceId: currentService._id, // Service ID is required in the body
+          name: serviceData.name,
+          price: Number(serviceData.price),
+          duration: Number(serviceData.duration),
+        }
+
+        console.log("Updating service with data:", updatedServiceData)
+
+        // Call the update API with the correct endpoint structure
+        // URL should include providerId, and body should include serviceId
+        // The URL should match exactly what your backend expects
+        const response = await fetch(`http://localhost:5050/provider/updateService/${providerId}`, {
+          method: "PUT", 
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            serviceId: currentService._id, // Service ID to identify which service to update
+            name: serviceData.name,
+            price: Number(serviceData.price),
+            duration: Number(serviceData.duration),
+          }),
+        })
+
+        if (!response.ok) {
+          const errorText = await response.text()
+          console.error("Server error response:", errorText)
+          throw new Error(`Server returned ${response.status}: ${response.statusText}`)
+        }
+
+        const result = await response.json()
+        console.log("Service updated successfully:", result)
+
+        // Update the service in the local state
+        const updatedServices = services.map((service) => {
+          // Match by _id if available, otherwise by name (fall back)
+          // For updating in local state, we need to make sure we're updating the right service
+          if ((service._id && service._id === currentService._id) || 
+              (!service._id && !currentService._id && service.name === currentService.name)) {
+            return {
+              ...service,
+              name: serviceData.name,
+              price: Number(serviceData.price),
+              duration: Number(serviceData.duration),
+            }
+          }
+          return service
+        })
+
+        setServices(updatedServices)
+        localStorage.setItem("services", JSON.stringify(updatedServices)) // Persist to localStorage
+        setSuccessMessage("Service updated successfully!")
       }
-
-      // Check if the service already exists in the current list of services
-      const isDuplicate = services.some((service) => service.name === newService.name)
-
-      if (isDuplicate) {
-        setError("This service already exists.")
-        setActionLoading(false)
-        return // Prevent adding the duplicate service
-      }
-
-      console.log("Adding service with data:", newService)
-
-      // Send only the new service to add, not the entire services array
-      const response = await fetch(`http://localhost:5050/provider/addServices/${providerId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          services: [newService], // Send only the new service in an array
-        }),
-      })
-
-      if (!response.ok) {
-        const errorText = await response.text()
-        console.error("Server error response:", errorText)
-        throw new Error(`Server returned ${response.status}: ${response.statusText}`)
-      }
-
-      const result = await response.json()
-      console.log("Service added successfully:", result)
-
-      // Update the services state with the new service added to the existing services
-      const updatedServices = [...services, newService]
-      setServices(updatedServices)
-      localStorage.setItem("services", JSON.stringify(updatedServices)) // Persist to localStorage
+      
       setError(null)
     } catch (err) {
-      console.error("Failed to add service:", err)
-      setError(`Failed to add service: ${err.message}. Please check your API connection.`)
+      console.error(`Failed to ${modalMode} service:`, err)
+      setError(`Failed to ${modalMode} service: ${err.message}. Please check your API connection.`)
     } finally {
       setActionLoading(false)
       setIsModalOpen(false)
+      
+      // Clear success message after a delay
+      if (successMessage) {
+        setTimeout(() => {
+          setSuccessMessage(null)
+        }, 3000)
+      }
     }
   }
 
@@ -223,13 +295,20 @@ const Services = () => {
       const updatedServices = services.filter((service) => service.name !== currentService.name)
       setServices(updatedServices)
       localStorage.setItem("services", JSON.stringify(updatedServices)) // Persist updated list to localStorage
-      setError(null)
+      setSuccessMessage("Service deleted successfully!")
     } catch (err) {
       console.error("Failed to delete service:", err)
       setError(`Failed to delete service: ${err.message}. Please check your API connection.`)
     } finally {
       setActionLoading(false)
       setIsConfirmModalOpen(false)
+      
+      // Clear success message after a delay
+      if (successMessage) {
+        setTimeout(() => {
+          setSuccessMessage(null)
+        }, 3000)
+      }
     }
   }
 
@@ -259,6 +338,26 @@ const Services = () => {
               >
                 Retry Connection
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {successMessage && (
+        <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+          <div className="flex">
+            <div className="py-1">
+              <svg
+                className="fill-current h-6 w-6 text-green-500 mr-4"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z" />
+              </svg>
+            </div>
+            <div>
+              <p className="font-bold">Success</p>
+              <p className="text-sm">{successMessage}</p>
             </div>
           </div>
         </div>
@@ -316,8 +415,8 @@ const Services = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {services.map((service) => (
-                  <tr key={service._id}>
+                {services.map((service, index) => (
+                  <tr key={service._id || index}>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">{service.name}</div>
                     </td>
