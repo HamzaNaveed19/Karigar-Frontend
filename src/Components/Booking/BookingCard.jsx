@@ -137,4 +137,4 @@ const BookingCard = ({ Index, booking }) => {
   );
 };
 
-export default BookingCard;
+export default React.memo(BookingCard);

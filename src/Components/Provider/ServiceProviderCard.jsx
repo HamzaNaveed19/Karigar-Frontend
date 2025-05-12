@@ -3,8 +3,9 @@ import Button from "../../UI/Button";
 import Card from "../../UI/Card";
 import CardContent from "../../UI/CardContent";
 import { Link } from "react-router-dom";
+import React from "react";
 
-export default function ServiceProviderCard({
+function ServiceProviderCard({
   _id,
   name,
   profession,
@@ -56,7 +57,7 @@ export default function ServiceProviderCard({
                 <h3
                   className={`${
                     onPage ? "text-sm" : "text-lg"
-                  } font-bold text-gray-900`}
+                  } font-bold text-gray-900 mb-1`}
                 >
                   {name}
                 </h3>
@@ -90,14 +91,14 @@ export default function ServiceProviderCard({
                 <p
                   className={`mt-0.5 ${
                     onPage ? "text-[10px]" : "text-xs"
-                  } text-gray-500`}
+                  } text-gray-500 mt-1 mb-4`}
                 >
                   Starts from Rs {serviceStartingFrom || "500"}
                 </p>
               </div>
             </div>
 
-            <div
+            {/* <div
               className={`${onPage ? "mb-2" : "mb-4"} mt-1 flex items-center ${
                 onPage ? "text-xs" : "text-sm"
               } text-gray-600`}
@@ -108,7 +109,7 @@ export default function ServiceProviderCard({
                 } text-gray-400`}
               />
               <span>{location.address}</span>
-            </div>
+            </div> */}
 
             <div
               className={`mb-3 grid grid-cols-3 gap-1 text-center ${
@@ -170,3 +171,5 @@ export default function ServiceProviderCard({
     </Link>
   );
 }
+
+export default React.memo(ServiceProviderCard);

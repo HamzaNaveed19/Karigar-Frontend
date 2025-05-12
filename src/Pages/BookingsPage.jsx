@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react";
-import { Filter, Search } from "lucide-react";
-import Button from "../UI/Button";
+import { useEffect, useState, useCallback, useMemo } from "react";
+import { Search } from "lucide-react";
 import { Input } from "../UI/Input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../UI/Tabs";
 import NoBooking from "../Components/Booking/NoBooking";
 import Bookings from "../Components/Booking/Bookings";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import {
   fetchUpcomingBookings,
   fetchPastBookings,
@@ -15,12 +14,45 @@ import LoadingSpinner from "../UI/LoadingSpinner";
 import ErrorMessage from "../UI/ErrorMessage";
 
 export default function BookingsPage() {
-  const { isAuthenticated, userId } = useSelector((state) => state.auth);
+  const { isAuthenticated, userId } = useSelector(
+    (state) => state.auth,
+    shallowEqual
+  );
   const dispatch = useDispatch();
   const { upcoming, past, status, error, activeTab } = useSelector(
-    (state) => state.bookings
+    (state) => state.bookings,
+    shallowEqual
   );
   const [searchQuery, setSearchQuery] = useState("");
+
+  const filterBookings = useCallback(
+    (bookings) => {
+      if (!searchQuery) return bookings;
+
+      const query = searchQuery.toLowerCase();
+      return bookings.filter((booking) => {
+        return (
+          booking.bookingTitle?.toLowerCase().includes(query) ||
+          booking.serviceProvider?.name?.toLowerCase().includes(query) ||
+          booking.price?.toString().includes(query) ||
+          booking.status?.toLowerCase().includes(query) ||
+          new Date(booking.bookingDate).toLocaleDateString().includes(query) ||
+          booking.bookingTime?.toLowerCase().includes(query) ||
+          booking.address?.toLowerCase().includes(query)
+        );
+      });
+    },
+    [searchQuery]
+  );
+
+  const filteredUpcoming = useMemo(
+    () => filterBookings(upcoming),
+    [upcoming, filterBookings]
+  );
+  const filteredPast = useMemo(
+    () => filterBookings(past),
+    [past, filterBookings]
+  );
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -32,31 +64,24 @@ export default function BookingsPage() {
     }
   }, [activeTab, status, dispatch, isAuthenticated, userId]);
 
-  const handleTabChange = (value) => {
-    dispatch(setActiveTab(value));
-  };
+  const handleTabChange = useCallback(
+    (value) => {
+      dispatch(setActiveTab(value));
+    },
+    [dispatch]
+  );
 
-  const filterBookings = (bookings) => {
-    if (!searchQuery) return bookings;
+  const handleSearchChange = useCallback(
+    (e) => setSearchQuery(e.target.value),
+    []
+  );
 
-    const query = searchQuery.toLowerCase();
-    return bookings.filter((booking) => {
-      if (booking.bookingTitle?.toLowerCase().includes(query)) return true;
-      if (booking.serviceProvider?.name?.toLowerCase().includes(query))
-        return true;
-      if (booking.price?.toString().includes(query)) return true;
-      if (booking.status?.toLowerCase().includes(query)) return true;
-      const bookingDate = new Date(booking.bookingDate).toLocaleDateString();
-      if (bookingDate.includes(query)) return true;
-      if (booking.bookingTime?.toLowerCase().includes(query)) return true;
-      if (booking.address?.toLowerCase().includes(query)) return true;
-
-      return false;
-    });
-  };
-
-  const filteredUpcoming = filterBookings(upcoming);
-  const filteredPast = filterBookings(past);
+  const isLoading = useMemo(
+    () =>
+      (activeTab === "upcoming" && status.upcoming === "loading") ||
+      (activeTab === "past" && status.past === "loading"),
+    [activeTab, status]
+  );
 
   if (error) {
     return <ErrorMessage />;
@@ -76,7 +101,7 @@ export default function BookingsPage() {
             placeholder="Search by service, provider, price, date, or status"
             className="w-full pl-8"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={handleSearchChange}
           />
         </div>
       </div>
@@ -91,8 +116,7 @@ export default function BookingsPage() {
           <TabsTrigger value="past">Past Bookings</TabsTrigger>
         </TabsList>
 
-        {((activeTab === "upcoming" && status.upcoming === "loading") ||
-          (activeTab === "past" && status.past === "loading")) && (
+        {isLoading && (
           <div className="flex justify-center h-[46.5vh]">
             <LoadingSpinner />
           </div>

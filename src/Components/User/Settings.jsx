@@ -26,9 +26,6 @@ import { ChangePasswordModal } from "./ChangePasswordModal";
 
 function Settings() {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordError, setPasswordError] = useState("");
   const [language, setLanguage] = useState("English");
   const [notifications, setNotifications] = useState({
     email: true,
@@ -40,25 +37,6 @@ function Settings() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { userId } = useSelector((state) => state.auth);
-
-  const handlePasswordChange = (e) => {
-    e.preventDefault();
-
-    if (newPassword !== confirmPassword) {
-      setPasswordError("Passwords do not match");
-      return;
-    }
-
-    if (newPassword.length < 8) {
-      setPasswordError("Password must be at least 8 characters");
-      return;
-    }
-
-    setPasswordError("");
-    setNewPassword("");
-    setConfirmPassword("");
-    setIsPasswordModalOpen(false);
-  };
 
   const handleNotificationChange = (type) => {
     setChangesMade(true);

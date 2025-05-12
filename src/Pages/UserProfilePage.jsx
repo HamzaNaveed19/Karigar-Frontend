@@ -15,10 +15,6 @@ export default function ProfilePage() {
   const [error] = useState(null);
   const { user } = useSelector((state) => state.auth);
 
-  useEffect(() => {
-    console.log("RENDERED: USER PROFILE!");
-  }, [user]);
-
   const handleImageUpload = (e) => {
     if (e.target.files && e.target.files[0]) {
       const reader = new FileReader();

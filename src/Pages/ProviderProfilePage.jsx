@@ -27,11 +27,7 @@ export default function ProviderProfile() {
   }, shallowEqual);
 
   useEffect(() => {
-    console.log(currentProvider);
-    console.log("RENDERED: PROVIDER PROFILE PAGE!");
     if (!currentProvider) {
-      console.log("DISPATCHED");
-
       dispatch(fetchProviderById(id));
     }
   }, [id, dispatch, currentProvider]);
@@ -81,29 +77,31 @@ export default function ProviderProfile() {
                   <h1 className="text-xl font-bold text-gray-800">
                     {currentProvider.name}
                   </h1>
-                  <div className="flex items-center justify-center gap-1">
-                    <p className="text-sm text-emerald-600">
-                      {currentProvider.profession}
-                    </p>
-                    {currentProvider.verified && (
-                      <CheckCircle className="h-4 w-4 text-emerald-500" />
-                    )}
+                  <div className="flex items-center justify-center gap-5">
+                    <div className="flex items-center justify-center">
+                      <p className="text-sm text-emerald-600">
+                        {currentProvider.profession}
+                      </p>
+                      {currentProvider.verified && (
+                        <CheckCircle className="h-4 w-4 text-emerald-500" />
+                      )}
+                    </div>
+                    <div className="flex items-center">
+                      <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                      <span className="ml-1 text-sm font-medium text-gray-800">
+                        {currentProvider.rating}
+                      </span>
+                      <span className="ml-1 text-xs text-gray-500">
+                        ({currentProvider.totalReviews})
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                <div className="mt-4 flex items-center justify-center gap-4">
-                  <div className="flex items-center">
-                    <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-                    <span className="ml-1 text-sm font-medium text-gray-800">
-                      {currentProvider.rating}
-                    </span>
-                    <span className="ml-1 text-xs text-gray-500">
-                      ({currentProvider.totalReviews})
-                    </span>
-                  </div>
+                <div className="mt-4 flex items-center justify-center">
                   <div className="flex items-center text-sm text-gray-600">
                     <MapPin className="h-4 w-4 text-gray-400" />
-                    <span className="ml-1">
+                    <span className="ml-3">
                       {currentProvider.location.address}
                     </span>
                   </div>
@@ -143,9 +141,7 @@ export default function ProviderProfile() {
                 </div>
 
                 <div className="mt-4 text-center">
-                  <p className="text-xs text-gray-500">
-                    Member since {currentProvider.memberSince}
-                  </p>
+                  <p className="text-xs text-gray-500">Member since 2025</p>
                 </div>
               </div>
             </CardContent>
