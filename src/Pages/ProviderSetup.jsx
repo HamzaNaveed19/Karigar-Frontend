@@ -151,14 +151,51 @@ const ProviderSetup = () => {
   }
 
   // Handle file uploads
-  const handleFileChange = (e, field, subField) => {
-    const file = e.target.files[0]
-    if (!file) return
+  // const handleFileChange = (e, field, subField) => {
+  //   const file = e.target.files[0]
+  //   if (!file) return
 
-    // In a real app, you would upload the file to your server or cloud storage
-    // For this example, we'll simulate it with local URLs
-    const fileUrl = URL.createObjectURL(file)
+  //   // In a real app, you would upload the file to your server or cloud storage
+  //   // For this example, we'll simulate it with local URLs
+  //   const fileUrl = URL.createObjectURL(file)
     
+  //   if (subField) {
+  //     setFormData(prev => ({
+  //       ...prev,
+  //       [field]: {
+  //         ...prev[field],
+  //         [subField]: fileUrl
+  //       }
+  //     }))
+  //   } else {
+  //     setFormData(prev => ({
+  //       ...prev,
+  //       [field]: fileUrl
+  //     }))
+  //   }
+  // }
+  
+
+const handleFileChange = async (e, field, subField) => {
+  const file = e.target.files[0]
+  if (!file) return
+
+  try {
+    const formDataToSend = new FormData()
+    formDataToSend.append("profileImage", file)
+
+    // Adjust URL to your actual upload endpoint for files
+    const uploadRes = await fetch("http://localhost:5050/upload", {
+      method: "POST",
+      body: formDataToSend,
+    })
+
+    if (!uploadRes.ok) throw new Error("File upload failed")
+
+    const uploadData = await uploadRes.json()
+
+    const fileUrl = uploadData.imageUrl
+
     if (subField) {
       setFormData(prev => ({
         ...prev,
@@ -173,7 +210,12 @@ const ProviderSetup = () => {
         [field]: fileUrl
       }))
     }
+    if (error) setError(null)
+  } catch (err) {
+    console.error("Upload error:", err)
+    setError("Failed to upload file. Please try again.")
   }
+}
 
   // Get current location
   const getCurrentLocation = () => {
