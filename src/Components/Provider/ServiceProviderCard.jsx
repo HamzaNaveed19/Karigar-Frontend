@@ -28,7 +28,7 @@ function ServiceProviderCard({
         <CardContent className=" flex flex-col h-full">
           <div className="relative flex-shrink-0">
             <img
-              src={"/placeholder2.png"}
+              src={personalImage}
               alt={name}
               className={`w-full object-cover rounded-lg ${
                 onPage ? "h-48" : "h-48 md:h-full"

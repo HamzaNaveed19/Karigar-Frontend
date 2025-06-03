@@ -66,7 +66,7 @@ export default function ProviderProfile() {
                 <div className="relative -mt-12 mb-4 flex justify-center">
                   <div className="h-52 w-52 rounded-full border-4 border-white bg-white shadow-lg">
                     <img
-                      src={"/placeholder2.png"}
+                      src={currentProvider.personalImage}
                       alt={currentProvider.name}
                       className="h-full w-full rounded-full object-cover"
                     />
