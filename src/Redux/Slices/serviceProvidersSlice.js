@@ -6,12 +6,12 @@ export const fetchServiceProviders = createAsyncThunk(
   async (customerAddress) => {
     function extractCity(address) {
       const parts = address.split(",");
-      return parts.length >= 3 ? parts[parts.length - 3].trim() : null;
+      return parts.length >= 3 ? parts[parts.length - 2].trim() : null;
     }
 
     const city = extractCity(customerAddress);
     const response = await axios.get("http://localhost:5050/provider", {
-      params: { city: "Lahore" },
+      params: { city },
     }); // Minimal data endpoint
     return response.data;
   }
