@@ -10,6 +10,7 @@ export const registerUser = createAsyncThunk(
         email,
         phone,
         password,
+        role: "Customer",
       });
       return response.data; // { userId, email }
     } catch (error) {

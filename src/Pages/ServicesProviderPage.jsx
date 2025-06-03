@@ -42,7 +42,7 @@ export default function ServicesProviderPage() {
   });
 
   useEffect(() => {
-    if (status === "idle" || providers.length <= 1) {
+    if (status === "idle") {
       dispatch(fetchServiceProviders(user?.location?.address));
     }
   }, [status, dispatch, providers.length, user?.location?.address]);
